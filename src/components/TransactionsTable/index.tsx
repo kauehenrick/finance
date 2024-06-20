@@ -1,6 +1,24 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { useEffect, useState } from "react";
+
+interface TransactionItemProps {
+    id: number;
+    title: string;
+    amount: number;
+    category: string;
+    createdAt: string;
+    type: string;
+}
 
 export default function TransactionsTable() {
+    const [transactions, setTransactions] = useState<TransactionItemProps[]>([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3000/transactions')
+            .then(response => response.json())
+            .then(data => setTransactions(data));
+    }, [])
+
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
             <Table>
@@ -12,12 +30,26 @@ export default function TransactionsTable() {
                 </TableHeader>
 
                 <TableBody>
-                    <TableRow>
-                        <TableCell>Freelance de Website</TableCell>
-                        <TableCell>R$ 6.000,00</TableCell>
-                        <TableCell>Dev</TableCell>
-                        <TableCell>12/02/2021</TableCell>
-                    </TableRow>
+                    {transactions.map(transactions => (
+                        <TableRow key={transactions.id}>
+
+                            <TableCell>{transactions.title}</TableCell>
+
+                            <TableCell>
+                                {new Intl.NumberFormat('pt-BR', {
+                                    style: 'currency',
+                                    currency: 'brl'
+                                }).format(transactions.amount)}
+                            </TableCell>
+                            
+                            <TableCell>{transactions.category}</TableCell>
+                            
+                            <TableCell className={transactions.type}>
+                                {transactions.createdAt}
+                            </TableCell>
+
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         </div>

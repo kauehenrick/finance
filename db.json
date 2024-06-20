@@ -1,0 +1,20 @@
+{
+    "transactions": [
+        {
+            "id": 1,
+            "title": "Website Freelance",
+            "amount": 2500.50,
+            "category": "Job",
+            "type": "deposit",
+            "createdAt": "2024-04-24 11:00:00"
+        },
+        {
+            "id": 2,
+            "title": "Grocery",
+            "amount": 1000.25,
+            "category": "Food",
+            "type": "withdraw",
+            "createdAt": "2024-04-24 11:00:00"
+        }
+    ]
+}

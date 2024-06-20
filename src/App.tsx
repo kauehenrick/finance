@@ -2,13 +2,30 @@ import Header from "./components/Header";
 import Summary from "./components/Summary";
 import TransactionsTable from "./components/TransactionsTable";
 import './globals.css'
+import NewTransactionModal from "./components/NewTransactionModal";
+import { useState } from "react";
 
 export default function App() {
+  const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
+
+  function handleOpenNewTransactionModal() {
+    setIsNewTransactionModalOpen(true);
+  }
+
+  function handleCloseNewTransactionModal() {
+    setIsNewTransactionModalOpen(false);
+  }
 
   return (
     <>
     <Header />
     <Summary />
+
+    <NewTransactionModal
+      isOpen={isNewTransactionModalOpen}
+      onRequestClose={handleCloseNewTransactionModal}
+    />
+
     <TransactionsTable />
     </>
   )

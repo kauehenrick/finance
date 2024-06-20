@@ -1,16 +1,20 @@
 "use client"
 
+import Modal from 'react-modal';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from '../ui/button';
-import { Dialog, DialogFooter, DialogClose, DialogHeader } from '../ui/dialog'
 import { Input } from '../ui/input'
 import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { Label } from "../ui/label"
 
+interface NewTransactionModalProps {
+    isOpen: boolean;
+    onRequestClose: () => void;
+}
 
 const formSchema = z.object({
     title: z.string().min(4, {
@@ -21,7 +25,7 @@ const formSchema = z.object({
     category: z.string().optional(),
 })
 
-export default function NewTransactionModal() {
+export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
 
@@ -32,12 +36,15 @@ export default function NewTransactionModal() {
     }
 
     return (
-        <Dialog>
-
-            <DialogHeader><p className='font-bold text-lg'>Nova Transação</p></DialogHeader>
-
+        <Modal
+            isOpen={isOpen}
+            onRequestClose={onRequestClose}
+            overlayClassName="react-modal-overlay"
+            className="bg-background flex flex-col w-fit p-5 m-auto rounded-xl"
+        >
+            <p className='font-bold text-lg pb-3'>Nova Transação</p>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-5">
                     <FormField
                         control={form.control}
                         name="title"
@@ -172,18 +179,12 @@ export default function NewTransactionModal() {
                         )}
                     />
 
-                    <DialogFooter>
-                        <DialogClose>
-                            <Button variant="ghost">Cancelar</Button>
-                        </DialogClose>
-
+                    <div className="flex justify-end gap-4">
+                        <Button variant="ghost" className='border'>Cancelar</Button>
                         <Button type="submit">Salvar</Button>
-                    </DialogFooter>
-
+                    </div>
                 </form>
-
             </Form>
-
-        </Dialog>
+        </Modal>
     )
 }

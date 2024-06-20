@@ -64,7 +64,7 @@ export default function Summary() {
                     <CircleArrowDown color="red" />
                 </header>
 
-                <strong className="text-3xl">-{new Intl.NumberFormat('pt-BR', {
+                <strong className="text-3xl">- {new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'brl'
                     }).format(summary.withdraws)}</strong>

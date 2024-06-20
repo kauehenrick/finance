@@ -35,16 +35,16 @@ export default function TransactionsTable() {
 
                             <TableCell>{transactions.title}</TableCell>
 
-                            <TableCell>
+                            <TableCell className={transactions.type}>
                                 {new Intl.NumberFormat('pt-BR', {
                                     style: 'currency',
                                     currency: 'brl'
                                 }).format(transactions.amount)}
                             </TableCell>
-                            
+
                             <TableCell>{transactions.category}</TableCell>
-                            
-                            <TableCell className={transactions.type}>
+
+                            <TableCell>
                                 {transactions.createdAt}
                             </TableCell>
 

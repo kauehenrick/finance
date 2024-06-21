@@ -17,8 +17,12 @@ module.exports = {
       },
     },
     extend: {
+      minHeight: {
+        '100': '25rem',
+      },
       colors: {
         'dark-800': '#09090A',
+        'dark-600': '#262D3E',
         'red': '#e52e4d',
         'green': '#33cc95',
         'blue': '#094CFD',

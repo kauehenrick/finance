@@ -17,18 +17,17 @@ interface NewTransactionModalProps {
 }
 
 const formSchema = z.object({
-    title: z.string().min(4, {
-        message: "O título deve ter ao menos 2 caracteres",
+    title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
+        message: "O título deve ter ao menos 4 caracteres",
     }),
-    amount: z.number(),
-    type: z.string(),
+    amount: z.string({ message: "Este campo deve ser preenchido" }),
+    type: z.string({ message: "Este opção é obrigatória" }),
     category: z.string().optional(),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -40,71 +39,53 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             isOpen={isOpen}
             onRequestClose={onRequestClose}
             overlayClassName="react-modal-overlay"
-            className="bg-background flex flex-col w-fit p-5 m-auto rounded-xl"
+            className="bg-background flex flex-col h-fit w-96 px-5 m-auto rounded-xl"
         >
-            <p className='font-bold text-lg pb-3'>Nova Transação</p>
+            <p className='font-bold text-xl pt-5'>Nova Transação</p>
+
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-5">
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input type='text' placeholder='Descrição' {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center min-h-100 h-fit py-4 space-y-10">
+                    
+                    <div className='space-y-6'>
 
-                    <FormField
-                        control={form.control}
-                        name="amount"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input type='number' placeholder='Preço' {...field}></Input>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input type='text' placeholder='Descrição' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input type="text" placeholder='Categoria' {...field}></Input>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input placeholder='Preço' {...field}></Input>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <RadioGroup className="flex justify-center gap-5" defaultValue="deposit">
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="deposit" id="deposit" />
-                            <Label htmlFor="deposit">Entrada</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="withdraw" id="withdraw" />
-                            <Label htmlFor="withdraw">Saída</Label>
-                        </div>
-                    </RadioGroup>
-
-                    <div className='flex justify-center gap-5'>
-                        <Button className='gap-2'>
-                            <CircleArrowUp color='green' />
-                            <p>Entrada</p>
-                        </Button>
-
-                        <Button className='gap-2'>
-                            <CircleArrowDown color='red' />
-                            <p>Saída</p>
-                        </Button>
+                        <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input type="text" placeholder='Categoria' {...field}></Input>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
 
                     <FormField
@@ -112,66 +93,34 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                         name="type"
                         render={({ field }) => (
                             <FormItem className="space-y-1">
-                                <FormLabel>Theme</FormLabel>
-                                <FormDescription>
-                                    Select the theme for the dashboard.
-                                </FormDescription>
                                 <FormMessage />
+
                                 <RadioGroup
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}
-                                    className="grid max-w-md grid-cols-2 gap-8 pt-2"
+                                    className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
                                 >
                                     <FormItem>
-                                        <FormLabel className="[&:has([data-state=checked])>div]:border-primary">
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
                                             <FormControl>
-                                                <RadioGroupItem value="light" className="sr-only" />
+                                                <RadioGroupItem value="deposit" className="sr-only" />
                                             </FormControl>
-                                            <div className="items-center rounded-md border-2 border-muted p-1 hover:border-accent">
-                                                <div className="space-y-2 rounded-sm bg-[#ecedef] p-2">
-                                                    <div className="space-y-2 rounded-md bg-white p-2 shadow-sm">
-                                                        <div className="h-2 w-[80px] rounded-lg bg-[#ecedef]" />
-                                                        <div className="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
-                                                    </div>
-                                                    <div className="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
-                                                        <div className="h-4 w-4 rounded-full bg-[#ecedef]" />
-                                                        <div className="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
-                                                    </div>
-                                                    <div className="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
-                                                        <div className="h-4 w-4 rounded-full bg-[#ecedef]" />
-                                                        <div className="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
-                                                    </div>
-                                                </div>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowUp color='green' />
+                                                <p>Entrada</p>
                                             </div>
-                                            <span className="block w-full p-2 text-center font-normal">
-                                                Light
-                                            </span>
                                         </FormLabel>
                                     </FormItem>
+
                                     <FormItem>
-                                        <FormLabel className="[&:has([data-state=checked])>div]:border-primary">
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
                                             <FormControl>
-                                                <RadioGroupItem value="dark" className="sr-only" />
+                                                <RadioGroupItem value="withdraw" className="sr-only" />
                                             </FormControl>
-                                            <div className="items-center rounded-md border-2 border-muted bg-popover p-1 hover:bg-accent hover:text-accent-foreground">
-                                                <div className="space-y-2 rounded-sm bg-slate-950 p-2">
-                                                    <div className="space-y-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                                                        <div className="h-2 w-[80px] rounded-lg bg-slate-400" />
-                                                        <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
-                                                    </div>
-                                                    <div className="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                                                        <div className="h-4 w-4 rounded-full bg-slate-400" />
-                                                        <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
-                                                    </div>
-                                                    <div className="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                                                        <div className="h-4 w-4 rounded-full bg-slate-400" />
-                                                        <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
-                                                    </div>
-                                                </div>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowDown color='red' />
+                                                <p>Saída</p>
                                             </div>
-                                            <span className="block w-full p-2 text-center font-normal">
-                                                Dark
-                                            </span>
                                         </FormLabel>
                                     </FormItem>
                                 </RadioGroup>
@@ -180,7 +129,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                     />
 
                     <div className="flex justify-end gap-4">
-                        <Button variant="ghost" className='border'>Cancelar</Button>
+                        <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
                         <Button type="submit">Salvar</Button>
                     </div>
                 </form>

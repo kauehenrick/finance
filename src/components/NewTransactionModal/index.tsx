@@ -21,10 +21,11 @@ const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
         message: "O título deve ter ao menos 4 caracteres",
     }),
-    amount: z.number({
+    //coerce used to fix input number value
+    amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }),
+    }).finite(),
     type: z.string({ message: "Esta opção é obrigatória" }),
     category: z.string().optional(),
 })
@@ -61,7 +62,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input type='text' placeholder='Descrição' {...field} />
+                                        <Input type='text' placeholder='Descrição' {...field} onChange={event => field.onChange(event.target.value)} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

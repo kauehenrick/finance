@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useEffect, useState } from "react";
+import { api } from "@/services/api";
 
 interface TransactionItemProps {
     id: number;
@@ -14,10 +15,9 @@ export default function TransactionsTable() {
     const [transactions, setTransactions] = useState<TransactionItemProps[]>([]);
 
     useEffect(() => {
-        fetch('http://localhost:3000/transactions')
-            .then(response => response.json())
-            .then(data => setTransactions(data));
-    }, [])
+        api.get('transactions')
+            .then(response => setTransactions(response.data));
+    }, []); 
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">

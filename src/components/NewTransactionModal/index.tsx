@@ -9,6 +9,7 @@ import { Input } from '../ui/input'
 import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, /*FormDescription ,*/ FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
+import { api } from '@/services/api';
 //import { Label } from "../ui/label"
 
 interface NewTransactionModalProps {
@@ -20,18 +21,24 @@ const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
         message: "O título deve ter ao menos 4 caracteres",
     }),
-    amount: z.string({ message: "Este campo deve ser preenchido" }),
-    type: z.string({ message: "Este opção é obrigatória" }),
+    amount: z.number({
+        required_error: "Este campo deve ser preenchido",
+        invalid_type_error: "Preço deve ser um número",
+    }),
+    type: z.string({ message: "Esta opção é obrigatória" }),
     category: z.string().optional(),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        api.post('/transactions', values);
+
+        onRequestClose();
     }
 
     return (
@@ -45,7 +52,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center min-h-100 h-fit py-4 space-y-10">
-                    
+
                     <div className='space-y-6'>
 
                         <FormField
@@ -67,7 +74,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input placeholder='Preço' {...field}></Input>
+                                        <Input type='number' placeholder='Preço' {...field}></Input>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -130,7 +137,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
                     <div className="flex justify-end gap-4">
                         <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
-                        <Button type="submit">Salvar</Button>
+                        <Button type="submit" value="submit">Salvar</Button>
                     </div>
                 </form>
             </Form>

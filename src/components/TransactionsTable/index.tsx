@@ -46,6 +46,9 @@ export default function TransactionsTable() {
 
                             <TableCell>
                                 {transactions.createdAt}
+                                {/*new Intl.DateTimeFormat('pt-BR').format(
+                                    new Date(transactions.createdAt)
+                                )*/}
                             </TableCell>
 
                         </TableRow>

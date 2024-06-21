@@ -2,7 +2,6 @@ import logoImg from '../../assets/finance_logo.png';
 import { Button } from '../ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { useState } from 'react';
-import Modal from 'react-modal';
 import NewTransactionModal from '../NewTransactionModal';
 
 export default function Header() {

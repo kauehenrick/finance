@@ -1,23 +1,9 @@
+import { useContext } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { useEffect, useState } from "react";
-import { api } from "@/services/api";
-
-interface TransactionItemProps {
-    id: number;
-    title: string;
-    amount: number;
-    category: string;
-    createdAt: string;
-    type: string;
-}
+import { TransactionsContext } from "@/hooks/TransactionsContext";
 
 export default function TransactionsTable() {
-    const [transactions, setTransactions] = useState<TransactionItemProps[]>([]);
-
-    useEffect(() => {
-        api.get('transactions')
-            .then(response => setTransactions(response.data));
-    }, []); 
+    const transactions = useContext(TransactionsContext);
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">

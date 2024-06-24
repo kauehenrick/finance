@@ -1,23 +1,9 @@
+import { TransactionsContext } from "@/hooks/TransactionsContext";
 import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
-import { useState, useEffect } from "react";
-
-interface TransactionItemProps {
-    id: number;
-    title: string;
-    amount: number;
-    category: string;
-    createdAt: string;
-    type: string;
-}
+import { useContext } from "react";
 
 export default function Summary() {
-    const [transactions, setTransactions] = useState<TransactionItemProps[]>([]);
-
-    useEffect(() => {
-        fetch('http://localhost:3000/transactions')
-            .then(response => response.json())
-            .then(data => setTransactions(data));
-    }, [])
+    const transactions = useContext(TransactionsContext)
 
     const summary = transactions.reduce((acc, transaction) => {
 

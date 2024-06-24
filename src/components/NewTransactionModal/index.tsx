@@ -34,7 +34,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
-
+    
     function onSubmit(values: z.infer<typeof formSchema>) {
         api.post('/transactions', values);
 
@@ -104,7 +104,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
                                 <RadioGroup
                                     onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    defaultValue="deposit"
                                     className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
                                 >
                                     <FormItem>

@@ -18,7 +18,7 @@ export default function App() {
 
   return (
     <>
-    <Header />
+    <Header onOpenNewTransactionModal={handleOpenNewTransactionModal}/>
     <Summary />
 
     <NewTransactionModal

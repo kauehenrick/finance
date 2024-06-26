@@ -33,11 +33,20 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-    });
-    
+        defaultValues: {
+            title: '',
+            amount: 0,
+            type: 'deposit',
+            category: '',
+        },
+    }); 
+
     function onSubmit(values: z.infer<typeof formSchema>) {
+
         api.post('/transactions', values);
 
+        form.reset();
+        
         onRequestClose();
     }
 

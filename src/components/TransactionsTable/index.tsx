@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { TransactionsContext } from "@/hooks/TransactionsContext";
 
 export default function TransactionsTable() {
-    const transactions = useContext(TransactionsContext);
+    const { transactions } = useContext(TransactionsContext);
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">

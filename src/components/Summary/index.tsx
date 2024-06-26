@@ -3,7 +3,7 @@ import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
 import { useContext } from "react";
 
 export default function Summary() {
-    const transactions = useContext(TransactionsContext)
+    const { transactions } = useContext(TransactionsContext)
 
     const summary = transactions.reduce((acc, transaction) => {
 
@@ -21,9 +21,6 @@ export default function Summary() {
         total: 0,
         withdraws: 0,
     })
-
-
-    console.log(summary)
 
     return (
         <div className="flex justify-around w-9/12 m-auto -mt-10">

@@ -1,20 +1,21 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { TransactionStore } from "@/stores/TransactionStore";
+import TransactionStore from "@/stores/TransactionStore";
+import { useEffect } from "react";
 
 export default function TransactionsTable() {
     let store = TransactionStore();
     
     let {transactions, fetchData, isLoading} = store
-
-    //fetchData()
+    
+    useEffect(() => {
+        fetchData();
+      }, []);
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
             {
-                isLoading && <div>Carregando...</div>
+                isLoading && <div className="p-3">Carregando...</div>
             }
-
-           { <button onClick={fetchData}>Carregar</button>}
 
             <Table>
                 <TableHeader>

@@ -1,5 +1,5 @@
 import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
-import { TransactionStore } from "@/stores/TransactionStore";
+import TransactionStore from "@/stores/TransactionStore";
 
 export default function Summary() {
     let store = TransactionStore();

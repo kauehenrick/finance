@@ -15,9 +15,12 @@ interface TransactionStoreProps {
     isLoading: boolean,
     error: null | string | unknown,
     fetchData: () => void,
+    add: (transaction: Transaction) => void,
 }
 
-export const TransactionStore = create<TransactionStoreProps>()((set) => ({
+//type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>; 
+
+const TransactionStore = create<TransactionStoreProps>()((set) => ({
     transactions: [],
     isLoading: false,
     error: null,
@@ -25,10 +28,15 @@ export const TransactionStore = create<TransactionStoreProps>()((set) => ({
         set({ isLoading: true })
         try {
             const response = await axios.get('http://localhost:3000/transactions')
-            console.log(response.data)
             set({ transactions: response.data, isLoading: false })
         } catch (error) {
             set({ error, isLoading: false })
         }
-    }
+    },
+    add: (transaction: Transaction) => 
+        set((state) => ({
+            transactions: [...state.transactions, transaction]
+        }))
 }))
+
+export default TransactionStore;

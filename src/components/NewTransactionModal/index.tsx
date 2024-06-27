@@ -10,6 +10,8 @@ import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { api } from '@/services/api';
+import { TransactionsContext } from '@/hooks/TransactionsContext';
+import { useContext } from 'react';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -39,14 +41,13 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             type: 'deposit',
             category: '',
         },
-    }); 
+    });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-
-        api.post('/transactions', values);
+        api.post('/transactions', {...values, createdAt: new Date()});
 
         form.reset();
-        
+
         onRequestClose();
     }
 
@@ -56,6 +57,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             onRequestClose={onRequestClose}
             overlayClassName="react-modal-overlay"
             className="bg-background flex flex-col h-fit w-96 px-5 m-auto rounded-xl"
+            ariaHideApp={false}
         >
             <p className='font-bold text-xl pt-5'>Nova Transação</p>
 

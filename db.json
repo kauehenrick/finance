@@ -6,7 +6,7 @@
       "amount": 2500.5,
       "category": "Job",
       "type": "deposit",
-      "createdAt": "2024-04-24"
+      "createdAt": "2024-04-24T00:51:06.208Z"
     },
     {
       "id": "2",
@@ -14,7 +14,31 @@
       "amount": 1000.25,
       "category": "Food",
       "type": "withdraw",
-      "createdAt": "2024-04-24"
+      "createdAt": "2024-04-24T00:51:06.208Z"
+    },
+    {
+      "id": "5e2b",
+      "title": "1652",
+      "amount": 120,
+      "type": "withdraw",
+      "category": "1234",
+      "createdAt": "2024-06-27T01:10:15.866Z"
+    },
+    {
+      "id": "50fe",
+      "title": "123412",
+      "amount": 1230,
+      "type": "withdraw",
+      "category": "123123",
+      "createdAt": "2024-06-27T01:11:19.757Z"
+    },
+    {
+      "id": "8aee",
+      "title": "1234",
+      "amount": 1234,
+      "type": "withdraw",
+      "category": "1234",
+      "createdAt": "2024-06-27T01:14:54.132Z"
     }
   ]
 }

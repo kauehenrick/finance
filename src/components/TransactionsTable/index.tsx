@@ -31,10 +31,9 @@ export default function TransactionsTable() {
                             <TableCell>{transactions.category}</TableCell>
 
                             <TableCell>
-                                {transactions.createdAt}
-                                {/*new Intl.DateTimeFormat('pt-BR').format(
+                                {new Intl.DateTimeFormat('pt-BR').format(
                                     new Date(transactions.createdAt)
-                                )*/}
+                                )}
                             </TableCell>
 
                         </TableRow>

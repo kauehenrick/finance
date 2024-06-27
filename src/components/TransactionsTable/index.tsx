@@ -41,7 +41,10 @@ export default function TransactionsTable() {
                             <TableCell>{transactions.category}</TableCell>
 
                             <TableCell>
-                                {new Intl.DateTimeFormat('pt-BR').format(
+                                {new Intl.DateTimeFormat('pt-BR', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short',
+                                }).format(
                                     new Date(transactions.createdAt)
                                 )}
                             </TableCell>

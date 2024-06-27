@@ -5,9 +5,7 @@ export default function Summary() {
     let store = TransactionStore();
     
     let {transactions} = store
-
-    console.log(transactions)
-
+    
     const summary = transactions.reduce((acc, transaction) => {
 
         if (transaction.type === "deposit") {

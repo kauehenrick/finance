@@ -10,6 +10,7 @@ import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import axios from 'axios';
+import TransactionStore from "@/stores/TransactionStore"
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -24,12 +25,15 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).finite(),
+    }).positive({message: "O número deve ser maior que zero"}),
     type: z.string({ message: "Esta opção é obrigatória" }),
     category: z.string().optional(),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
+    let store = TransactionStore();
+    
+    let {add} = store
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -41,8 +45,12 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        axios.post('http://localhost:3000/transactions', {...values, createdAt: new Date()});
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const response = await axios.post('http://localhost:3000/transactions', {...values, createdAt: new Date()});
+
+        console.log(response.data);
+
+        add(response.data);
 
         form.reset();
 

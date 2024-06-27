@@ -1,12 +1,21 @@
-import { useContext } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { TransactionsContext } from "@/hooks/TransactionsContext";
+import { TransactionStore } from "@/stores/TransactionStore";
 
 export default function TransactionsTable() {
-    const { transactions } = useContext(TransactionsContext);
+    let store = TransactionStore();
+    
+    let {transactions, fetchData, isLoading} = store
+
+    //fetchData()
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
+            {
+                isLoading && <div>Carregando...</div>
+            }
+
+           { <button onClick={fetchData}>Carregar</button>}
+
             <Table>
                 <TableHeader>
                     <TableHead>Título</TableHead>

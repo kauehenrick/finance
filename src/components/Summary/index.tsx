@@ -1,9 +1,12 @@
-import { TransactionsContext } from "@/hooks/TransactionsContext";
 import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
-import { useContext } from "react";
+import { TransactionStore } from "@/stores/TransactionStore";
 
 export default function Summary() {
-    const { transactions } = useContext(TransactionsContext)
+    let store = TransactionStore();
+    
+    let {transactions} = store
+
+    console.log(transactions)
 
     const summary = transactions.reduce((acc, transaction) => {
 

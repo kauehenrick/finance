@@ -9,7 +9,7 @@ import { Input } from '../ui/input'
 import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { api } from '@/services/api';
+import axios from 'axios';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -42,7 +42,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        api.post('/transactions', {...values, createdAt: new Date()});
+        axios.post('http://localhost:3000/transactions', {...values, createdAt: new Date()});
 
         form.reset();
 

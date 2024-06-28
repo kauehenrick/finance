@@ -1,11 +1,11 @@
 import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
-import TransactionStore from "@/stores/TransactionStore";
+import { useTransactionStore } from "@/stores/TransactionStore";
 
 export default function Summary() {
-    let store = TransactionStore();
+    let store = useTransactionStore();
     
-    let {transactions} = store
-    
+    let { transactions } = store
+
     const summary = transactions.reduce((acc, transaction) => {
 
         if (transaction.type === "deposit") {

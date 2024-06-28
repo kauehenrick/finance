@@ -10,7 +10,7 @@ import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import axios from 'axios';
-import TransactionStore from "@/stores/TransactionStore"
+import { useTransactionStore } from '@/stores/TransactionStore';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -31,9 +31,9 @@ const formSchema = z.object({
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
-    let store = TransactionStore();
+    let store = useTransactionStore();
     
-    let {add} = store
+    let {addTransaction} = store
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,11 +46,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const response = await axios.post('http://localhost:3000/transactions', {...values, createdAt: new Date()});
+        const response = await axios.post('http://localhost:3000/transactions', {...values, createdAt: new Date(), isActive: true});
 
-        console.log(response.data);
-
-        add(response.data);
+        addTransaction(response.data);
 
         form.reset();
 

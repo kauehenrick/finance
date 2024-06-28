@@ -8,6 +8,7 @@ interface Transaction {
     category: string;
     createdAt: string;
     type: string;
+    isActive: boolean;
 }
 
 interface TransactionStoreProps {
@@ -15,12 +16,13 @@ interface TransactionStoreProps {
     isLoading: boolean,
     error: null | string | unknown,
     fetchData: () => void,
-    add: (transaction: Transaction) => void,
+    addTransaction: (transaction: Transaction) => void,
+    deleteTransaction: (id: string) => void,
 }
 
 //type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>; 
 
-const TransactionStore = create<TransactionStoreProps>()((set) => ({
+export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
     transactions: [],
     isLoading: false,
     error: null,
@@ -33,10 +35,18 @@ const TransactionStore = create<TransactionStoreProps>()((set) => ({
             set({ error, isLoading: false })
         }
     },
-    add: (transaction: Transaction) => 
-        set((state) => ({
-            transactions: [...state.transactions, transaction]
-        }))
+    addTransaction: async (transaction) => {
+        try {
+            set((state) => ({
+                transactions: [...state.transactions, transaction]
+            }))
+        } catch (error) {
+            set({ error })
+        }
+    },
+    deleteTransaction: async (id) => {
+        await axios.delete(
+            `http://localhost:3000/transactions/${id}`
+        );
+    }
 }))
-
-export default TransactionStore;

@@ -1,12 +1,14 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import TransactionStore from "@/stores/TransactionStore";
 import { useEffect } from "react";
+import { useTransactionStore } from "@/stores/TransactionStore";
+import DisableButton from "../DisableButton";
+import UpdateButton from "../UpdateButton";
 
 export default function TransactionsTable() {
-    let store = TransactionStore();
-    
-    let {transactions, fetchData, isLoading} = store
-    
+    let store = useTransactionStore();
+
+    let {transactions, fetchData, isLoading} = store;
+
     useEffect(() => {
         fetchData();
       }, []);
@@ -23,12 +25,12 @@ export default function TransactionsTable() {
                     <TableHead>Valor</TableHead>
                     <TableHead>Categoria</TableHead>
                     <TableHead>Data</TableHead>
+                    <TableHead>Ações</TableHead>
                 </TableHeader>
 
                 <TableBody>
                     {transactions.map(transactions => (
                         <TableRow key={transactions.id}>
-
                             <TableCell>{transactions.title}</TableCell>
 
                             <TableCell className={transactions.type}>
@@ -49,6 +51,10 @@ export default function TransactionsTable() {
                                 )}
                             </TableCell>
 
+                            <TableCell className="flex gap-2.5">
+                                <UpdateButton />
+                                <DisableButton />
+                            </TableCell>    
                         </TableRow>
                     ))}
                 </TableBody>

@@ -4,6 +4,7 @@ import TransactionsTable from "./components/TransactionsTable";
 import './globals.css'
 import NewTransactionModal from "./components/NewTransactionModal";
 import { useState } from "react";
+import { Toaster } from "sonner";
 
 export default function App() {
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
@@ -18,6 +19,8 @@ export default function App() {
 
   return (
     <>
+      <Toaster position="bottom-right" richColors closeButton />
+
       <Header onOpenNewTransactionModal={handleOpenNewTransactionModal} />
 
       <Summary />

@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { create } from "zustand";
+import { deleteTransaction } from '@/components/DisableButton';
+import { toast } from "sonner";
+
 
 interface Transaction {
     id: number;
@@ -20,8 +23,6 @@ interface TransactionStoreProps {
     deleteTransaction: (id: string) => void,
 }
 
-//type TransactionInput = Omit<Transaction, 'id' | 'createdAt'>; 
-
 export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
     transactions: [],
     isLoading: false,
@@ -40,13 +41,17 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
             set((state) => ({
                 transactions: [...state.transactions, transaction]
             }))
+            toast.success("Transação adicionada!");
         } catch (error) {
             set({ error })
         }
     },
-    deleteTransaction: async (id) => {
-        await axios.delete(
-            `http://localhost:3000/transactions/${id}`
-        );
+    deleteTransaction: async (id: string) => {
+        try {
+            await deleteTransaction(id)
+            toast.success("Transação excluída!");
+        } catch (error) {
+            
+        }
     }
 }))

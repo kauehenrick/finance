@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { create } from "zustand";
-import { deleteTransaction } from '@/components/DisableButton';
 import { toast } from "sonner";
 
 
@@ -48,8 +47,18 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
     },
     deleteTransaction: async (id: string) => {
         try {
-            await deleteTransaction(id)
+            await axios.delete(
+                `http://localhost:3000/transactions/${id}`
+              );
+
+              set((state) => ({
+                transactions: state.transactions.filter(
+                  (transaction) => transaction.id!== Number(id)
+                )
+              }));
+
             toast.success("Transação excluída!");
+            
         } catch (error) {
             
         }

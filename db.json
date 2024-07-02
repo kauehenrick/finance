@@ -17,15 +17,6 @@
       "type": "withdraw",
       "createdAt": "2024-04-24T00:51:06.208Z",
       "isActive": true
-    },
-    {
-      "id": "c49f",
-      "title": "1234",
-      "amount": 1234,
-      "type": "withdraw",
-      "category": "1243",
-      "createdAt": "2024-07-01T20:44:58.397Z",
-      "isActive": true
     }
   ]
 }

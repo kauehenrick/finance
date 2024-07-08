@@ -1,13 +1,13 @@
-import axios from 'axios';
 import { create } from "zustand";
 import { toast } from "sonner";
+import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
 
 
 interface Transaction {
-    id: number;
+    id: string;
     title: string;
     amount: number;
-    category: string;
+    category?: string;
     createdAt: string;
     type: string;
     isActive: boolean;
@@ -19,7 +19,6 @@ interface TransactionStoreProps {
     error: null | string | unknown,
     fetchData: () => void,
     addTransaction: (transaction: Transaction) => void,
-    deleteTransaction: (id: string) => void,
 }
 
 export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
@@ -29,13 +28,14 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
     fetchData: async () => {
         set({ isLoading: true })
         try {
-            const response = await axios.get('http://localhost:3000/transactions')
-            set({ transactions: response.data, isLoading: false })
+            const response = await getTransactionsAction();
+            set({ transactions: response, isLoading: false })
         } catch (error) {
             set({ error, isLoading: false })
         }
     },
     addTransaction: async (transaction) => {
+        await addTransactionsAction(transaction)
         try {
             set((state) => ({
                 transactions: [...state.transactions, transaction]
@@ -43,24 +43,6 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
             toast.success("Transação adicionada!");
         } catch (error) {
             set({ error })
-        }
-    },
-    deleteTransaction: async (id: string) => {
-        try {
-            await axios.delete(
-                `http://localhost:3000/transactions/${id}`
-              );
-
-              set((state) => ({
-                transactions: state.transactions.filter(
-                  (transaction) => transaction.id!== Number(id)
-                )
-              }));
-
-            toast.success("Transação excluída!");
-            
-        } catch (error) {
-            
         }
     }
 }))

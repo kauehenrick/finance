@@ -6,7 +6,7 @@ import NewTransactionModal from "./components/NewTransactionModal";
 import { useState } from "react";
 import { Toaster } from "sonner";
 
-export default function App() {
+export default function App(){
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
 
   function handleOpenNewTransactionModal() {

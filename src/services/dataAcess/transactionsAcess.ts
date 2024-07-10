@@ -1,16 +1,7 @@
 import { db } from '../../../firebaseConfig'
+import { TransactionProps } from '@/stores/TransactionStore';
 
 const transactionsReference = db.collection('transactions');
-
-interface TransactionProps {
-    id: string,
-    title: string,
-    amount: number,
-    category?: string | undefined,
-    createdAt: string,
-    type: string,
-    isActive: boolean
-}
 
 export async function addTransactionsAcess(transaction: TransactionProps) {
     const response = await transactionsReference.add(transaction)

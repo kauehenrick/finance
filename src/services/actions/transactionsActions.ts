@@ -1,14 +1,5 @@
 import { addTransactionsAcess, setTransactionsAcess, updateTransactionsAcess, getTransactionsAcess } from "../dataAcess/transactionsAcess";
-
-interface TransactionProps {
-    id: string,
-    title: string,
-    amount: number,
-    category?: string | undefined,
-    createdAt: string,
-    type: string,
-    isActive: boolean
-}
+import { TransactionProps } from "@/stores/TransactionStore";
 
 export async function addTransactionsAction(transaction: TransactionProps) {
     const response = await addTransactionsAcess(transaction);

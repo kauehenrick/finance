@@ -3,13 +3,13 @@ import { toast } from "sonner";
 import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
 
 
-interface Transaction {
+export interface Transaction {
     id: string;
     title: string;
     amount: number;
     category?: string;
     createdAt: string;
-    type: string;
+    type: 'deposit' | 'withdraw';
     isActive: boolean;
 }
 

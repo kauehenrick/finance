@@ -3,22 +3,22 @@ import { toast } from "sonner";
 import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
 
 
-type Transaction = {
-    id: string;
-    title: string;
-    amount: number;
-    category?: string;
-    createdAt: string;
-    type: string;
-    isActive: boolean;
+export type TransactionProps = {
+    id: string,
+    title: string,
+    amount: number,
+    category?: string | undefined,
+    createdAt: string,
+    type: string,
+    isActive: boolean
 }
 
 type TransactionStoreProps = {
-    transactions: Transaction[],
+    transactions: TransactionProps[],
     isLoading: boolean,
     error: null | string | unknown,
     fetchData: () => void,
-    addTransaction: (transaction: Transaction) => void,
+    addTransaction: (transaction: TransactionProps) => void,
 }
 
 export const useTransactionStore = create<TransactionStoreProps>()((set) => ({

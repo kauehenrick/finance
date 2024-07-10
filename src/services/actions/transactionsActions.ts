@@ -1,5 +1,5 @@
 import { addTransactionsAcess, setTransactionsAcess, updateTransactionsAcess, getTransactionsAcess } from "../dataAcess/transactionsAcess";
-import { TransactionProps } from "../dataAcess/transactionsAcess";
+import { TransactionProps } from "@/stores/TransactionStore";
 
 export async function addTransactionsAction(transaction: TransactionProps) {
     const response = await addTransactionsAcess(transaction);

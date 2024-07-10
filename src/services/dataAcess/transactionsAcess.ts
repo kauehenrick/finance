@@ -2,7 +2,7 @@ import { db } from '../../../firebaseConfig'
 
 const transactionsReference = db.collection('transactions');
 
-interface TransactionProps {
+export type TransactionProps = {
     id: string,
     title: string,
     amount: number,

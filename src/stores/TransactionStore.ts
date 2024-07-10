@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
 
 
-interface Transaction {
+type Transaction = {
     id: string;
     title: string;
     amount: number;
@@ -13,7 +13,7 @@ interface Transaction {
     isActive: boolean;
 }
 
-interface TransactionStoreProps {
+type TransactionStoreProps = {
     transactions: Transaction[],
     isLoading: boolean,
     error: null | string | unknown,

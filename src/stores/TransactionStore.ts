@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { toast } from "sonner";
 import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
+import { v4 as uuidv4 } from 'uuid';
 
 
 export type TransactionProps = {
@@ -18,7 +19,7 @@ type TransactionStoreProps = {
     isLoading: boolean,
     error: null | string | unknown,
     fetchData: () => void,
-    addTransaction: (transaction: TransactionProps) => void,
+    addTransaction: (transaction: Omit<TransactionProps, "id">) => void,
 }
 
 export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
@@ -35,10 +36,11 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
         }
     },
     addTransaction: async (transaction) => {
-        await addTransactionsAction(transaction)
+        const data = {...transaction, id: uuidv4()};
+        await addTransactionsAction(data)
         try {
             set((state) => ({
-                transactions: [...state.transactions, transaction]
+                transactions: [...state.transactions, data]
             }))
             toast.success("Transação adicionada!");
         } catch (error) {

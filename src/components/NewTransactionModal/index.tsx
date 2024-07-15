@@ -121,7 +121,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input type="text" placeholder='Local de compra' {...field}></Input>
+                                        <Input type="text" placeholder='Local' {...field}></Input>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

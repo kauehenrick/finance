@@ -19,6 +19,6 @@ export async function updateTransactionsAcess(transaction: TransactionProps, id:
 }
 
 export async function getTransactionsAcess() {
-    const response = await transactionsReference.get();
+    const response = await transactionsReference.get()
     return response;
 }

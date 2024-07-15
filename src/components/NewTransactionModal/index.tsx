@@ -10,7 +10,6 @@ import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { useTransactionStore } from '@/stores/TransactionStore';
-import { v4 as uuidv4 } from 'uuid';
 
 interface NewTransactionModalProps {
     isOpen: boolean;

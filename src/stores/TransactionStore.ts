@@ -8,6 +8,8 @@ export type TransactionProps = {
     id: string,
     title: string,
     amount: number,
+    place?: string | undefined,
+    note?: string | undefined, 
     category?: string | undefined,
     createdAt: string,
     type: string,

@@ -50,7 +50,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
     function onSubmit(values: z.infer<typeof formSchema>) {
 
-        addTransaction({...values, id: uuidv4(), createdAt: new Date().toString(), isActive: true});
+        addTransaction({...values, createdAt: new Date().toString(), isActive: true});
 
         form.reset();
 

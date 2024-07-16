@@ -34,7 +34,7 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).positive({message: "O número deve ser maior que zero"}),
+    }).positive({ message: "O número deve ser maior que zero" }),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
@@ -47,8 +47,8 @@ const formSchema = z.object({
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
     let store = useTransactionStore();
-    
-    let {addTransaction} = store
+
+    let { addTransaction } = store
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -57,6 +57,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             amount: 0,
             type: 'deposit',
             category: '',
+            place: '',
+            date: new Date(),
         },
     });
 
@@ -125,6 +127,47 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
                         <FormField
                             control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        format(field.value, "PPP")
+                                                    ) : (
+                                                        <span>Informe a data</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date: Date) =>
+                                                    date > new Date() || date < new Date("1900-01-01")
+                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        
+                        <FormField
+                            control={form.control}
                             name="note"
                             render={({ field }) => (
                                 <FormItem>
@@ -136,53 +179,53 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             )}
                         />
                     </div>
-                    
-                <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormMessage />
 
-                            <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue="deposit"
-                                className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
-                            >
-                                <FormItem>
-                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
-                                        <FormControl>
-                                            <RadioGroupItem value="deposit" className="sr-only" />
-                                        </FormControl>
-                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                            <CircleArrowUp color='green' />
-                                            <p>Entrada</p>
-                                        </div>
-                                    </FormLabel>
-                                </FormItem>
+                    <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                            <FormItem className="space-y-1">
+                                <FormMessage />
 
-                                <FormItem>
-                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
-                                        <FormControl>
-                                            <RadioGroupItem value="withdraw" className="sr-only" />
-                                        </FormControl>
-                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                            <CircleArrowDown color='red' />
-                                            <p>Saída</p>
-                                        </div>
-                                    </FormLabel>
-                                </FormItem>
-                            </RadioGroup>
-                        </FormItem>
-                    )}
-                />
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue="deposit"
+                                    className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
+                                >
+                                    <FormItem>
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
+                                            <FormControl>
+                                                <RadioGroupItem value="deposit" className="sr-only" />
+                                            </FormControl>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowUp color='green' />
+                                                <p>Entrada</p>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
 
-                <div className="flex justify-end gap-4">
-                    <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
-                    <Button type="submit" value="submit">Salvar</Button>
-                </div>
-            </form>
-        </Form>
+                                    <FormItem>
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
+                                            <FormControl>
+                                                <RadioGroupItem value="withdraw" className="sr-only" />
+                                            </FormControl>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowDown color='red' />
+                                                <p>Saída</p>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
+                                </RadioGroup>
+                            </FormItem>
+                        )}
+                    />
+
+                    <div className="flex justify-end gap-4">
+                        <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
+                        <Button type="submit" value="submit">Salvar</Button>
+                    </div>
+                </form>
+            </Form>
         </Modal >
     )
 }

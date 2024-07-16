@@ -58,7 +58,7 @@ export const columns: ColumnDef<TransactionProps>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "date",
     header: ({ column }) => {
       return (
         <Button
@@ -71,7 +71,7 @@ export const columns: ColumnDef<TransactionProps>[] = [
       )
     },
     cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"))
+      const date = new Date(row.getValue("date"))
       const formatted = new Intl.DateTimeFormat("pt-BR", {
         dateStyle: 'short',
         timeStyle: 'short',

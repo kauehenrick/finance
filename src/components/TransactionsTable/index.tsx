@@ -47,7 +47,7 @@ export default function TransactionsTable() {
                                     dateStyle: 'short',
                                     timeStyle: 'short',
                                 }).format(
-                                    new Date(transactions.createdAt)
+                                    new Date(transactions.date)
                                 )}
                             </TableCell>
 

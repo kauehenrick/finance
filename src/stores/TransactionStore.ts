@@ -9,6 +9,7 @@ export type TransactionProps = {
     title: string,
     amount: number,
     category?: string | undefined,
+    place?: string | undefined,
     note?: string | undefined,
     createdAt: string,
     type: string,

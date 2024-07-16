@@ -33,7 +33,7 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).positive({  message: "O número deve ser maior que zero"  }),
+    }).positive({ message: "O número deve ser maior que zero" }),
     category: z.string().optional(),
     place: z.string({ message: "Este campo dever ser preenchido" }).optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
@@ -58,6 +58,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     function onSubmit(values: z.infer<typeof formSchema>) {
 
         addTransaction({ ...values, isActive: true });
+
+        console.log(values);
 
         form.reset();
 
@@ -137,7 +139,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                         name="date"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <Popover>
+                                <Popover {...field}>
                                     <PopoverTrigger asChild>
                                         <FormControl>
                                             <Button

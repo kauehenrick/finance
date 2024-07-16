@@ -22,5 +22,11 @@ export async function getTransactionsAction(){
     response.forEach((doc) => {
         transactions.push(doc.data());
     })
+    
+    transactions.forEach(e => {
+        const ts = (e.date.seconds + e.date.nanoseconds * 10 ** -9)* 1000;
+        e.date = new Date(ts);
+    })
+
     return transactions;
 }

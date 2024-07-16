@@ -46,9 +46,7 @@ export default function TransactionsTable() {
                                 {new Intl.DateTimeFormat('pt-BR', {
                                     dateStyle: 'short',
                                     timeStyle: 'short',
-                                }).format(
-                                    new Date(transactions.date)
-                                )}
+                                }).format(transactions.date)}
                             </TableCell>
 
                             <TableCell className="flex gap-2.5">

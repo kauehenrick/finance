@@ -16,15 +16,15 @@ export async function updateTransactionsAction(transaction: TransactionProps, id
     return response;
 }
 
-export async function getTransactionsAction(){
+export async function getTransactionsAction() {
     const response = await getTransactionsAcess();
     const transactions: any[] = [];
     response.forEach((doc) => {
         transactions.push(doc.data());
     })
-    
+
     transactions.forEach(e => {
-        const ts = (e.date.seconds + e.date.nanoseconds * 10 ** -9)* 1000;
+        const ts = (e.date.seconds + e.date.nanoseconds * 10 ** -9) * 1000;
         e.date = new Date(ts);
     })
 

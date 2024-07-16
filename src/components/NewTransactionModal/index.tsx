@@ -34,9 +34,10 @@ const formSchema = z.object({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
     }).positive({ message: "O número deve ser maior que zero" }),
-    type: z.string({ message: "Esta opção é obrigatória" }),
     category: z.string().optional(),
+    place: z.string({ message: "Este campo dever ser preenchido" }).optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
+    type: z.string({ message: "Esta opção é obrigatória" }),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
@@ -111,6 +112,19 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                 <FormItem>
                                     <FormControl>
                                         <Input type="text" placeholder='Categoria' {...field}></Input>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="place"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input type="text" placeholder='Local' {...field}></Input>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

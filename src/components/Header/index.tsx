@@ -2,6 +2,7 @@ import logoImg from '../../assets/finance_logo.png';
 import { Button } from '../ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 
+
 interface HeaderProps {
     onOpenNewTransactionModal: () => void;
 }

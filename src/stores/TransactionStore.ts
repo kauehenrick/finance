@@ -10,7 +10,6 @@ export type TransactionProps = {
     amount: number,
     category?: string | undefined,
     place?: string | undefined,
-    note?: string | undefined,
     createdAt: string,
     type: string,
     isActive: boolean

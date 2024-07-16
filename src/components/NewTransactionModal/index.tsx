@@ -10,7 +10,6 @@ import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { useTransactionStore } from '@/stores/TransactionStore';
-import { Textarea } from "@/components/ui/textarea"
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -28,7 +27,6 @@ const formSchema = z.object({
     }).positive({ message: "O número deve ser maior que zero" }),
     category: z.string().optional(),
     place: z.string({ message: "Este campo dever ser preenchido" }).optional(),
-    note: z.string().optional(),
     type: z.string({ message: "Esta opção é obrigatória" }),
 })
 
@@ -117,19 +115,6 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                 <FormItem>
                                     <FormControl>
                                         <Input type="text" placeholder='Local' {...field}></Input>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="note"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Textarea placeholder='Observação' {...field}></Textarea>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -10,6 +10,7 @@ import { CircleArrowUp, CircleArrowDown } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 import { useTransactionStore } from '@/stores/TransactionStore';
+import { Textarea } from "@/components/ui/textarea"
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -24,15 +25,16 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).positive({message: "O número deve ser maior que zero"}),
+    }).positive({ message: "O número deve ser maior que zero" }),
     type: z.string({ message: "Esta opção é obrigatória" }),
     category: z.string().optional(),
+    note: z.string().optional(),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
     let store = useTransactionStore();
-    
-    let {addTransaction} = store
+
+    let { addTransaction } = store
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,7 +48,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
     function onSubmit(values: z.infer<typeof formSchema>) {
 
-        addTransaction({...values, createdAt: new Date().toString(), isActive: true});
+        addTransaction({ ...values, createdAt: new Date().toString(), isActive: true });
 
         form.reset();
 
@@ -101,6 +103,19 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                 <FormItem>
                                     <FormControl>
                                         <Input type="text" placeholder='Categoria' {...field}></Input>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="note"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Textarea placeholder='Observação' {...field}></Textarea>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -35,7 +35,7 @@ const formSchema = z.object({
         invalid_type_error: "Preço deve ser um número",
     }).positive({ message: "O número deve ser maior que zero" }),
     category: z.string().optional(),
-    place: z.string({ message: "Este campo dever ser preenchido" }).optional(),
+    place: z.string().optional(),
     type: z.string({ message: "Esta opção é obrigatória" }),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
 })
@@ -52,6 +52,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             amount: 0,
             type: 'deposit',
             category: '',
+            place: '',
+            date: new Date(),
         },
     });
 

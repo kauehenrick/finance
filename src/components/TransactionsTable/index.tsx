@@ -7,11 +7,11 @@ import UpdateButton from "../UpdateButton";
 export default function TransactionsTable() {
     let store = useTransactionStore();
 
-    let {transactions, fetchData, isLoading} = store;
+    let { transactions, fetchData, isLoading } = store;
 
     useEffect(() => {
         fetchData();
-      }, []);
+    }, []);
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
@@ -46,13 +46,15 @@ export default function TransactionsTable() {
                                 {new Intl.DateTimeFormat('pt-BR', {
                                     dateStyle: 'short',
                                     timeStyle: 'short',
-                                }).format(new Date(transactions.createdAt))}
+                                }).format(
+                                    (new Date(transactions.date))
+                                )}
                             </TableCell>
 
                             <TableCell className="flex gap-2.5">
                                 <UpdateButton />
                                 <DisableButton />
-                            </TableCell>    
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

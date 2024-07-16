@@ -37,6 +37,7 @@ const formSchema = z.object({
     category: z.string().optional(),
     place: z.string({ message: "Este campo dever ser preenchido" }).optional(),
     type: z.string({ message: "Esta opção é obrigatória" }),
+    date: z.date({ required_error: "Este campo deve ser preenchido" }),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
@@ -56,7 +57,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
     function onSubmit(values: z.infer<typeof formSchema>) {
 
-        addTransaction({ ...values, createdAt: new Date().toString(), isActive: true });
+        addTransaction({ ...values, isActive: true});
 
         form.reset();
 
@@ -112,6 +113,47 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                     <FormControl>
                                         <Input type="text" placeholder='Categoria' {...field}></Input>
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value ? (
+                                                        format(field.value, "PPP")
+                                                    ) : (
+                                                        <span>Informe a data</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date: Date) =>
+                                                    date > new Date() || date < new Date("1900-01-01")
+                                                }
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
                                     <FormMessage />
                                 </FormItem>
                             )}

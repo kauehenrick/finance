@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import moneyBackgroundImg from '../assets/money.jpg'
+import { GoogleLogin } from '@react-oauth/google';
 
 const formSchema = z.object({
     username: z.string({ message: "Este campo deve ser preenchido" }),
@@ -33,6 +34,7 @@ export default function Login() {
     return (
         <div className="bg-background flex flex-row h-screen items-center justify-between">
             <div className="p-5 m-auto">
+
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <p className="font-semibold text-4xl">Bem-vindo de volta!</p>
@@ -71,11 +73,16 @@ export default function Login() {
                             )}
                         />
                         <Button type="submit">Entrar</Button>
+
                     </form>
                 </Form>
+
+
+
             </div>
 
             <img src={moneyBackgroundImg} alt="" className="h-full w-2/4" />
+
         </div>
     )
 }

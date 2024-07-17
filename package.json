@@ -25,6 +25,7 @@
     "date-fns": "^3.6.0",
     "firebase": "8.10.1",
     "immer": "^10.1.1",
+    "jwt-decode": "^4.0.0",
     "lucide": "^0.394.0",
     "lucide-react": "^0.394.0",
     "pnpm": "^9.3.0",

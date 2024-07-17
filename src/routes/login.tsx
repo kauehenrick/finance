@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import moneyBackgroundImg from '../assets/money.jpg'
-import { GoogleLogin } from '@react-oauth/google';
 
 const formSchema = z.object({
     username: z.string({ message: "Este campo deve ser preenchido" }),

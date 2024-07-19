@@ -55,6 +55,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             type: 'deposit',
             category: '',
             place: '',
+            note: '',
             date: new Date(),
         },
     });

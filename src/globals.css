@@ -80,11 +80,11 @@
     }
 }
 
-td.deposit {
+div.deposit {
     color: #33cc95;
 }
 
-td.withdraw {
+div.withdraw {
     color: #e52e4d;
 }
 

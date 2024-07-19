@@ -19,10 +19,11 @@ export async function updateTransactionsAcess(transaction: TransactionProps, id:
 }
 
 export async function getTransactionsAcess() {
-    const todaysMonth = (new Date()).getMonth() + 1;
+    const date = new Date();
+    var firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    var lastDayPastMonth = new Date(firstDayOfMonth.setDate(firstDayOfMonth.getDate() - 1));
 
-    const response = await transactionsReference.orderBy("date").get();
+    const response = await transactionsReference.orderBy("date").where("date", ">=", lastDayPastMonth).get();
     
-    console.log(todaysMonth);
     return response;
 }

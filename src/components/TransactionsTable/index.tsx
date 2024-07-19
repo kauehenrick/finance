@@ -1,8 +1,5 @@
-//import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useEffect } from "react";
 import { useTransactionStore } from "@/stores/TransactionStore";
-//import DisableButton from "../DisableButton";
-//import UpdateButton from "../UpdateButton";
 import { DataTable } from "./data-table"
 import { columns } from "./columns"
 

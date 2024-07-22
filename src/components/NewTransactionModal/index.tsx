@@ -20,6 +20,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { ptBR } from 'date-fns/locale';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -142,7 +143,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                                     )}
                                                 >
                                                     {field.value ? (
-                                                        format(field.value, "PPP")
+                                                        format(field.value, "PPP", { locale: ptBR })
                                                     ) : (
                                                         <span>Informe a data</span>
                                                     )}

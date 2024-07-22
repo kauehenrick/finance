@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,6 +22,17 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { ptBR } from 'date-fns/locale';
+import { Check, ChevronsUpDown } from "lucide-react"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+import { getCategoriesAction } from "@/services/actions/categoriesActions";
+import { useCategoryStore } from "@/stores/CategoryStore";
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -47,9 +59,41 @@ const formSchema = z.object({
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
-    let store = useTransactionStore();
+    let transactionStore = useTransactionStore();
+    let categoryStore = useCategoryStore();
 
-    let { addTransaction } = store
+    let { addTransaction } = transactionStore;
+    let { fetchData } = categoryStore;
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const [open, setOpen] = useState(false)
+    const [value, setValue] = useState("")
+
+    const frameworks = [
+        {
+            value: "next.js",
+            label: "Next.js",
+        },
+        {
+            value: "sveltekit",
+            label: "SvelteKit",
+        },
+        {
+            value: "nuxt.js",
+            label: "Nuxt.js",
+        },
+        {
+            value: "remix",
+            label: "Remix",
+        },
+        {
+            value: "astro",
+            label: "Astro",
+        },
+    ]
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -118,12 +162,49 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             control={form.control}
                             name="category"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input type="text" placeholder='Categoria' {...field}></Input>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
+                                <Popover open={open} onOpenChange={setOpen} {...field}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={open}
+                                            className="w-[200px] justify-between"
+                                        >
+                                            {value
+                                                ? frameworks.find((framework) => framework.value === value)?.label
+                                                : "Selecione a categoria..."}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[200px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder="Pesquise a categoria..." />
+                                            <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
+                                            <CommandList>
+                                                <CommandGroup>
+                                                    {frameworks.map((framework) => (
+                                                        <CommandItem
+                                                            key={framework.value}
+                                                            value={framework.value}
+                                                            onSelect={(currentValue) => {
+                                                                setValue(currentValue === value ? "" : currentValue)
+                                                                setOpen(false)
+                                                            }}
+                                                        >
+                                                            <Check
+                                                                className={cn(
+                                                                    "mr-2 h-4 w-4",
+                                                                    value === framework.value ? "opacity-100" : "opacity-0"
+                                                                )}
+                                                            />
+                                                            {framework.label}
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
                             )}
                         />
 
@@ -194,53 +275,53 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             )}
                         />
                     </div>
-                    
-                <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormMessage />
 
-                            <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue="deposit"
-                                className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
-                            >
-                                <FormItem>
-                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
-                                        <FormControl>
-                                            <RadioGroupItem value="deposit" className="sr-only" />
-                                        </FormControl>
-                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                            <CircleArrowUp color='green' />
-                                            <p>Entrada</p>
-                                        </div>
-                                    </FormLabel>
-                                </FormItem>
+                    <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                            <FormItem className="space-y-1">
+                                <FormMessage />
 
-                                <FormItem>
-                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
-                                        <FormControl>
-                                            <RadioGroupItem value="withdraw" className="sr-only" />
-                                        </FormControl>
-                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                            <CircleArrowDown color='red' />
-                                            <p>Saída</p>
-                                        </div>
-                                    </FormLabel>
-                                </FormItem>
-                            </RadioGroup>
-                        </FormItem>
-                    )}
-                />
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue="deposit"
+                                    className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
+                                >
+                                    <FormItem>
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
+                                            <FormControl>
+                                                <RadioGroupItem value="deposit" className="sr-only" />
+                                            </FormControl>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowUp color='green' />
+                                                <p>Entrada</p>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
 
-                <div className="flex justify-end gap-4">
-                    <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
-                    <Button type="submit" value="submit">Salvar</Button>
-                </div>
-            </form>
-        </Form>
+                                    <FormItem>
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
+                                            <FormControl>
+                                                <RadioGroupItem value="withdraw" className="sr-only" />
+                                            </FormControl>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowDown color='red' />
+                                                <p>Saída</p>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
+                                </RadioGroup>
+                            </FormItem>
+                        )}
+                    />
+
+                    <div className="flex justify-end gap-4">
+                        <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
+                        <Button type="submit" value="submit">Salvar</Button>
+                    </div>
+                </form>
+            </Form>
         </Modal >
     )
 }

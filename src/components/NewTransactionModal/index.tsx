@@ -74,7 +74,6 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             title: '',
             amount: 0,
             type: 'deposit',
-            category: '',
             place: '',
             note: '',
             date: new Date(),
@@ -136,7 +135,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             name="category"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <Select>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger className="w-[240px] gap-2">
                                             <SelectValue
                                                 placeholder="Selecione uma categoria..."
@@ -148,8 +147,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                                 {categories.map(category => (
                                                     <SelectItem
                                                         key={category.id}
-                                                        value={category.value}
-                                                        onChange={field.onChange}
+                                                        value={category.name}
                                                     >
                                                         {category.name}
                                                     </SelectItem>

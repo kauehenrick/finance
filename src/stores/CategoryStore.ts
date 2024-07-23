@@ -10,13 +10,13 @@ type CategoryProps = {
 type CategoryStoreProps = {
     categories: CategoryProps[],
     error: null | string | unknown,
-    fetchData: () => void,
+    getCategories: () => void,
 }
 
 export const useCategoryStore = create<CategoryStoreProps>((set) => ({
     categories: [],
     error: null,
-    fetchData: async () => {
+    getCategories: async () => {
         try {
             const response = await getCategoriesAction();
             set({ categories: response })

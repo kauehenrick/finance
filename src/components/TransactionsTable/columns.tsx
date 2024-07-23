@@ -58,6 +58,20 @@ export const columns: ColumnDef<TransactionProps>[] = [
     },
   },
   {
+    accessorKey: "subcategory",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Subcategoria
+          <ArrowUpDown className="ml-3 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: "date",
     header: ({ column }) => {
       return (

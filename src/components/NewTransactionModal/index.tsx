@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown, Plus } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
@@ -140,7 +140,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             control={form.control}
                             name="category"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
+                                <FormItem className="flex flex-row gap-2 items-center">
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger className="w-[240px] gap-2">
                                             <SelectValue
@@ -162,6 +162,15 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+
+                                    <Button
+                                        variant={"ghost"}
+                                        className="gap-2"
+                                    >
+                                        <Plus size={16}></Plus>
+                                        Criar Nova
+                                    </Button>
+
                                 </FormItem>
                             )}
                         />

@@ -1,4 +1,4 @@
-import { getCategoriesAcess } from "../dataAccess/categoriesAcess";
+import { getCategoriesAcess } from "../dataAccess/categoriesAccess";
 
 export async function getCategoriesAction() {
     const response = await getCategoriesAcess();

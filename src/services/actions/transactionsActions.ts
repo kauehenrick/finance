@@ -1,4 +1,4 @@
-import { addTransactionsAcess, setTransactionsAcess, updateTransactionsAcess, getTransactionsAcess } from "../dataAccess/transactionsAcess";
+import { addTransactionsAcess, setTransactionsAcess, updateTransactionsAcess, getTransactionsAcess } from "../dataAccess/transactionsAccess";
 import { TransactionProps } from "@/stores/TransactionStore";
 
 export async function addTransactionsAction(transaction: TransactionProps) {

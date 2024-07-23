@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,16 +22,15 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { ptBR } from 'date-fns/locale';
-import { Check, ChevronsUpDown } from "lucide-react"
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command"
-import { getCategoriesAction } from "@/services/actions/categoriesActions";
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useCategoryStore } from "@/stores/CategoryStore";
 
 interface NewTransactionModalProps {
@@ -52,7 +51,7 @@ const formSchema = z.object({
         z.literal('deposit'),
         z.literal('withdraw'),
     ], { message: "Esta opção é obrigatória" }),
-    category: z.string().optional(),
+    category: z.string(),
     place: z.string().optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
     note: z.string().optional(),
@@ -63,37 +62,11 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     let categoryStore = useCategoryStore();
 
     let { addTransaction } = transactionStore;
-    let { fetchData } = categoryStore;
+    let { categories, fetchData } = categoryStore;
 
     useEffect(() => {
         fetchData();
     }, []);
-
-    const [open, setOpen] = useState(false)
-    const [value, setValue] = useState("")
-
-    const frameworks = [
-        {
-            value: "next.js",
-            label: "Next.js",
-        },
-        {
-            value: "sveltekit",
-            label: "SvelteKit",
-        },
-        {
-            value: "nuxt.js",
-            label: "Nuxt.js",
-        },
-        {
-            value: "remix",
-            label: "Remix",
-        },
-        {
-            value: "astro",
-            label: "Astro",
-        },
-    ]
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -162,49 +135,30 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             control={form.control}
                             name="category"
                             render={({ field }) => (
-                                <Popover open={open} onOpenChange={setOpen} {...field}>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            role="combobox"
-                                            aria-expanded={open}
-                                            className="w-[200px] justify-between"
-                                        >
-                                            {value
-                                                ? frameworks.find((framework) => framework.value === value)?.label
-                                                : "Selecione a categoria..."}
-                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-[200px] p-0">
-                                        <Command>
-                                            <CommandInput placeholder="Pesquise a categoria..." />
-                                            <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
-                                            <CommandList>
-                                                <CommandGroup>
-                                                    {frameworks.map((framework) => (
-                                                        <CommandItem
-                                                            key={framework.value}
-                                                            value={framework.value}
-                                                            onSelect={(currentValue) => {
-                                                                setValue(currentValue === value ? "" : currentValue)
-                                                                setOpen(false)
-                                                            }}
-                                                        >
-                                                            <Check
-                                                                className={cn(
-                                                                    "mr-2 h-4 w-4",
-                                                                    value === framework.value ? "opacity-100" : "opacity-0"
-                                                                )}
-                                                            />
-                                                            {framework.label}
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            </CommandList>
-                                        </Command>
-                                    </PopoverContent>
-                                </Popover>
+                                <FormItem className="flex flex-col">
+                                    <Select>
+                                        <SelectTrigger className="w-[240px] gap-2">
+                                            <SelectValue
+                                                placeholder="Selecione uma categoria..."
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Categorias</SelectLabel>
+                                                {categories.map(category => (
+                                                    <SelectItem
+                                                        key={category.id}
+                                                        value={category.value}
+                                                        onChange={field.onChange}
+                                                    >
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))
+                                                }
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormItem>
                             )}
                         />
 

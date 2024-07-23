@@ -4,6 +4,7 @@ import { getCategoriesAction } from "@/services/actions/categoriesActions";
 type CategoryProps = {
     id: string,
     name: string,
+    value: string,
 }
 
 type CategoryStoreProps = {

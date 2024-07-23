@@ -32,6 +32,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useCategoryStore } from "@/stores/CategoryStore";
+import { useSubcategoryStore } from '@/stores/SubcategoryStore';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -52,6 +53,7 @@ const formSchema = z.object({
         z.literal('withdraw'),
     ], { message: "Esta opção é obrigatória" }),
     category: z.string(),
+    subcategory: z.string(),
     place: z.string().optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
     note: z.string().optional(),
@@ -60,12 +62,14 @@ const formSchema = z.object({
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
     let transactionStore = useTransactionStore();
     let categoryStore = useCategoryStore();
+    let subcategoryStore = useSubcategoryStore();
 
     let { addTransaction } = transactionStore;
-    let { categories, fetchData } = categoryStore;
-
+    let { categories, getCategories } = categoryStore;
+    let { subcategories, getSubcategories } = subcategoryStore;
     useEffect(() => {
-        fetchData();
+        getCategories();
+        getSubcategories();
     }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -73,6 +77,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         defaultValues: {
             title: '',
             amount: 0,
+            category: '',
+            subcategory: '',
             type: 'deposit',
             place: '',
             note: '',
@@ -150,6 +156,36 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                                         value={category.name}
                                                     >
                                                         {category.name}
+                                                    </SelectItem>
+                                                ))
+                                                }
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="subcategory"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger className="w-[240px] gap-2">
+                                            <SelectValue
+                                                placeholder="Selecione uma subcategoria..."
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Categorias</SelectLabel>
+                                                {subcategories.map(subcategory => (
+                                                    <SelectItem
+                                                        key={subcategory.id}
+                                                        value={subcategory.name}
+                                                    >
+                                                        {subcategory.name}
                                                     </SelectItem>
                                                 ))
                                                 }

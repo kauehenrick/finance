@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown, Plus } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
@@ -38,6 +38,7 @@ interface NewTransactionModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
 }
+import FormDialog from '../FormDialog';
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
@@ -47,7 +48,7 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).positive({ message: "O número deve ser maior que zero" }),
+    }).positive({ message: "O valor deve ser maior que zero" }),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
@@ -65,8 +66,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     let subcategoryStore = useSubcategoryStore();
 
     let { addTransaction } = transactionStore;
-    let { categories, getCategories } = categoryStore;
+    let { categories, getCategories, addCategory } = categoryStore;
     let { subcategories, getSubcategories } = subcategoryStore;
+
     useEffect(() => {
         getCategories();
         getSubcategories();
@@ -87,11 +89,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-
         addTransaction({ ...values, isActive: true });
-
         form.reset();
-
         onRequestClose();
     }
 
@@ -162,14 +161,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
-
-                                    <Button
-                                        variant={"ghost"}
-                                        className="gap-2"
-                                    >
-                                        <Plus size={16}></Plus>
-                                        Criar Nova
-                                    </Button>
+                                    
+                                    <FormDialog inputValue="categoria" addValue={addCategory}/>
 
                                 </FormItem>
                             )}

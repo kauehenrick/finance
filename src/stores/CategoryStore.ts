@@ -1,16 +1,17 @@
 import { create } from "zustand";
-import { getCategoriesAction } from "@/services/actions/categoriesActions";
+import { getCategoriesAction, addCategoriesAction } from "@/services/actions/categoriesActions";
+import { v4 as uuidv4 } from 'uuid';
 
-type CategoryProps = {
+export type CategoryProps = {
     id: string,
     name: string,
-    value: string,
 }
 
 type CategoryStoreProps = {
     categories: CategoryProps[],
     error: null | string | unknown,
     getCategories: () => void,
+    addCategory: (category: Omit<CategoryProps, "id">) => void,
 }
 
 export const useCategoryStore = create<CategoryStoreProps>((set) => ({
@@ -20,6 +21,17 @@ export const useCategoryStore = create<CategoryStoreProps>((set) => ({
         try {
             const response = await getCategoriesAction();
             set({ categories: response })
+        } catch (error) {
+            set({ error })
+        }
+    },
+    addCategory: async (category) => {
+        const data = { ...category, id: uuidv4() };
+        await addCategoriesAction(data);
+        try {
+            set((state) => ({
+                categories: [...state.categories, data]
+            }))
         } catch (error) {
             set({ error })
         }

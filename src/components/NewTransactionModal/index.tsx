@@ -181,7 +181,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>Categorias</SelectLabel>
+                                                <SelectLabel>Subcategorias</SelectLabel>
                                                 {subcategories.map(subcategory => (
                                                     <SelectItem
                                                         key={subcategory.id}

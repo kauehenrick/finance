@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -30,12 +31,9 @@ export default function FormDialog(props: FormDialogProps) {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: '',
-        },
     });
 
-    
+
     function onSubmit(values: z.infer<typeof formSchema>) {
         props.addValue(values)
         form.reset();
@@ -80,7 +78,9 @@ export default function FormDialog(props: FormDialogProps) {
                         />
 
                         <DialogFooter>
-                            <Button type="submit" className="mt-3">Salvar</Button>
+                            <DialogClose asChild>
+                                <Button className="mt-3">Salvar</Button>
+                            </DialogClose>
                         </DialogFooter>
                     </form>
                 </Form>

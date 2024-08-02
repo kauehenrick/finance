@@ -9,12 +9,12 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogClose,
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { useState } from 'react';
 
 type FormDialogProps = {
     inputValue: string
@@ -26,6 +26,8 @@ const formSchema = z.object({
 })
 
 export default function FormDialog(props: FormDialogProps) {
+    let [open, setOpen] = useState(false);
+
     const capitalize = props.inputValue.charAt(0).toUpperCase() + props.inputValue.slice(1);
     const lowerCase = props.inputValue.toLowerCase();
 
@@ -33,17 +35,17 @@ export default function FormDialog(props: FormDialogProps) {
         resolver: zodResolver(formSchema),
     });
 
-
     function onSubmit(values: z.infer<typeof formSchema>) {
         props.addValue(values)
         form.reset();
-        console.log(values)
+        setOpen(false);
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
+                    type="button" 
                     variant={"ghost"}
                     className="gap-2"
                 >
@@ -53,7 +55,12 @@ export default function FormDialog(props: FormDialogProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <form onSubmit={
+                        e => {
+                            e.stopPropagation();
+                            form.handleSubmit(onSubmit)(e)
+                        }}>
+                            
                         <DialogHeader className="font-bold mb-5">
                             <DialogTitle>Adicionar {capitalize}</DialogTitle>
                         </DialogHeader>
@@ -78,9 +85,7 @@ export default function FormDialog(props: FormDialogProps) {
                         />
 
                         <DialogFooter>
-                            <DialogClose asChild>
-                                <Button className="mt-3">Salvar</Button>
-                            </DialogClose>
+                            <Button className="mt-3">Salvar</Button>
                         </DialogFooter>
                     </form>
                 </Form>

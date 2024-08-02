@@ -18,7 +18,7 @@ import { useState } from 'react';
 
 type FormDialogProps = {
     inputValue: string
-    addValue: any,
+    addValue?: any,
 }
 
 const formSchema = z.object({

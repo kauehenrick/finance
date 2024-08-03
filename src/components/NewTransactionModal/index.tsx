@@ -38,6 +38,7 @@ interface NewTransactionModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
 }
+import FormDialog from '../FormDialog';
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
@@ -47,7 +48,7 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).positive({ message: "O número deve ser maior que zero" }),
+    }).positive({ message: "O valor deve ser maior que zero" }),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
@@ -65,8 +66,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     let subcategoryStore = useSubcategoryStore();
 
     let { addTransaction } = transactionStore;
-    let { categories, getCategories } = categoryStore;
+    let { categories, getCategories, addCategory } = categoryStore;
     let { subcategories, getSubcategories } = subcategoryStore;
+
     useEffect(() => {
         getCategories();
         getSubcategories();
@@ -87,11 +89,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-
         addTransaction({ ...values, isActive: true });
-
         form.reset();
-
         onRequestClose();
     }
 
@@ -140,7 +139,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             control={form.control}
                             name="category"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
+                                <FormItem className="flex flex-row gap-2 items-center">
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger className="w-[240px] gap-2">
                                             <SelectValue
@@ -162,6 +161,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+                                    
+                                    <FormDialog inputValue="categoria" addValue={addCategory}/>
+
                                 </FormItem>
                             )}
                         />
@@ -179,7 +181,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
-                                                <SelectLabel>Categorias</SelectLabel>
+                                                <SelectLabel>Subcategorias</SelectLabel>
                                                 {subcategories.map(subcategory => (
                                                     <SelectItem
                                                         key={subcategory.id}

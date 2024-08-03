@@ -5,8 +5,7 @@ describe("FormDialog", () => {
     test("should have a button as trigger to dialog", () => {
         const { getByRole } = render(<FormDialog inputValue="categoria"/>)
         const triggerButton = getByRole("button")
-
-
+        
         expect(triggerButton).toBeTruthy();
     })
 })

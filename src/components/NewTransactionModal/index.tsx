@@ -40,6 +40,8 @@ interface NewTransactionModalProps {
 }
 import FormDialog from '../FormDialog';
 
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
         message: "O título deve ter ao menos 4 caracteres",
@@ -58,6 +60,8 @@ const formSchema = z.object({
     place: z.string().optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
     note: z.string().optional(),
+    image: z.any()
+    .optional(),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
@@ -161,8 +165,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
-                                    
-                                    <FormDialog inputValue="categoria" addValue={addCategory}/>
+
+                                    <FormDialog inputValue="categoria" addValue={addCategory} />
 
                                 </FormItem>
                             )}
@@ -264,6 +268,20 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input type="file" placeholder='Imagem' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                     </div>
 
                     <FormField

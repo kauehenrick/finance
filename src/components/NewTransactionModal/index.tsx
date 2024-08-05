@@ -67,7 +67,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
     let { addTransaction } = transactionStore;
     let { categories, getCategories, addCategory } = categoryStore;
-    let { subcategories, getSubcategories } = subcategoryStore;
+    let { subcategories, getSubcategories, addSubcategory } = subcategoryStore;
 
     useEffect(() => {
         getCategories();
@@ -99,7 +99,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             isOpen={isOpen}
             onRequestClose={onRequestClose}
             overlayClassName="react-modal-overlay"
-            className="bg-background flex flex-col h-fit w-96 px-5 m-auto rounded-xl"
+            className="bg-background flex flex-col h-fit w-196 px-5 m-auto rounded-xl"
             ariaHideApp={false}
         >
             <p className='font-bold text-xl pt-5'>Nova Transação</p>
@@ -172,7 +172,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             control={form.control}
                             name="subcategory"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
+                                <FormItem className="flex flex-row gap-2 items-center">
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <SelectTrigger className="w-[240px] gap-2">
                                             <SelectValue
@@ -194,6 +194,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+
+                                    <FormDialog inputValue="subcategoria" addValue={addSubcategory}/>
+
                                 </FormItem>
                             )}
                         />

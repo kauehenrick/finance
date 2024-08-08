@@ -1,9 +1,9 @@
 import { db } from '../../../firebaseConfig'
-
-const subcategoriesReference = db.collection('subcategories');
+import { collection, query, getDocs } from "firebase/firestore";
 
 export async function getSubcategoriesAccess() {
-    const response = await subcategoriesReference.get();
+    const q = query(collection(db, "subcategories"));
+    const response = await getDocs(q);
 
     return response;
 }

@@ -27,7 +27,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
-    "firebase": "8.10.1",
+    "firebase": "^10.12.5",
     "immer": "^10.1.1",
     "lucide": "^0.394.0",
     "lucide-react": "^0.394.0",

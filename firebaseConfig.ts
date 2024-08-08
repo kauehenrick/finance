@@ -1,10 +1,8 @@
-import firebase from "firebase/app";
-import "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore"
 
-// TODO: Replace the following with your app's Firebase project configuration
-// See: https://support.google.com/firebase/answer/7015592
 const firebaseConfig = {
-  apiKey: "AIzaSyAX0IXkCf1rm5Rj2PrbTFm8ZHBU43Cp6Hg",
+  apiKey: import.meta.env.REACT_APP_FIREBASE_KEY,
   authDomain: "fiance-react.firebaseapp.com",
   projectId: "fiance-react",
   storageBucket: "fiance-react.appspot.com",
@@ -13,9 +11,5 @@ const firebaseConfig = {
   measurementId: "G-XRXNM8DYBN"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-
-// Initialize Cloud Firestore and get a reference to the service
-export const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);

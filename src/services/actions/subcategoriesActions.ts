@@ -1,12 +1,13 @@
-import { getSubcategoriesAccess } from "../dataAccess/subcategoriesAccess";
+import { getSubcategoriesAccess } from '../dataAccess/subcategoriesAccess';
+
 
 export async function getSubcategoriesAction() {
     const response = await getSubcategoriesAccess();
-    
-    const categories: any[] = [];
+
+    const subcategories: any[] = [];
     response.forEach((doc) => {
-        categories.push(doc.data());
+        subcategories.push(doc.data());
     })
 
-    return categories;
+    return subcategories;
 }

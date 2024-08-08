@@ -1,15 +1,9 @@
 import { db } from '../../../firebaseConfig'
-import { CategoryProps } from '@/stores/CategoryStore';
-
-const categoriesReference = db.collection('categories');
-
-export async function addCategoriesAccess(category: CategoryProps) {
-    const response = await categoriesReference.add(category);
-    return response;
-}
+import { collection, query, getDocs } from "firebase/firestore";
 
 export async function getCategoriesAccess() {
-    const response = await categoriesReference.get();
+    const q = query(collection(db, "categories"));
+    const response = await getDocs(q);
 
     return response;
 }

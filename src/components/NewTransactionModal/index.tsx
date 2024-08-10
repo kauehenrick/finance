@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,11 +21,24 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { ptBR } from 'date-fns/locale';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { useCategoryStore } from "@/stores/CategoryStore";
+import { useSubcategoryStore } from '@/stores/SubcategoryStore';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
 }
+import FormDialog from '../FormDialog';
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
@@ -34,37 +48,49 @@ const formSchema = z.object({
     amount: z.coerce.number({
         required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
-    }).positive({ message: "O número deve ser maior que zero" }),
-    category: z.string().optional(),
+    }).positive({ message: "O valor deve ser maior que zero" }),
+    type: z.union([
+        z.literal('deposit'),
+        z.literal('withdraw'),
+    ], { message: "Esta opção é obrigatória" }),
+    category: z.string(),
+    subcategory: z.string(),
     place: z.string().optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
     note: z.string().optional(),
-    type: z.string({ message: "Esta opção é obrigatória" }),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
-    let store = useTransactionStore();
+    let transactionStore = useTransactionStore();
+    let categoryStore = useCategoryStore();
+    let subcategoryStore = useSubcategoryStore();
 
-    let { addTransaction } = store
+    let { addTransaction } = transactionStore;
+    let { categories, getCategories, addCategory } = categoryStore;
+    let { subcategories, getSubcategories } = subcategoryStore;
+
+    useEffect(() => {
+        getCategories();
+        getSubcategories();
+    }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
             amount: 0,
-            type: 'deposit',
             category: '',
+            subcategory: '',
+            type: 'deposit',
             place: '',
+            note: '',
             date: new Date(),
         },
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-
         addTransaction({ ...values, isActive: true });
-
         form.reset();
-
         onRequestClose();
     }
 
@@ -113,11 +139,61 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             control={form.control}
                             name="category"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input type="text" placeholder='Categoria' {...field}></Input>
-                                    </FormControl>
-                                    <FormMessage />
+                                <FormItem className="flex flex-row gap-2 items-center">
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger className="w-[240px] gap-2">
+                                            <SelectValue
+                                                placeholder="Selecione uma categoria..."
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Categorias</SelectLabel>
+                                                {categories.map(category => (
+                                                    <SelectItem
+                                                        key={category.id}
+                                                        value={category.name}
+                                                    >
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))
+                                                }
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                    
+                                    <FormDialog inputValue="categoria" addValue={addCategory}/>
+
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="subcategory"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger className="w-[240px] gap-2">
+                                            <SelectValue
+                                                placeholder="Selecione uma subcategoria..."
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Subcategorias</SelectLabel>
+                                                {subcategories.map(subcategory => (
+                                                    <SelectItem
+                                                        key={subcategory.id}
+                                                        value={subcategory.name}
+                                                    >
+                                                        {subcategory.name}
+                                                    </SelectItem>
+                                                ))
+                                                }
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
                                 </FormItem>
                             )}
                         />
@@ -138,7 +214,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                                     )}
                                                 >
                                                     {field.value ? (
-                                                        format(field.value, "PPP")
+                                                        format(field.value, "PPP", { locale: ptBR })
                                                     ) : (
                                                         <span>Informe a data</span>
                                                     )}
@@ -189,53 +265,53 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             )}
                         />
                     </div>
-                    
-                <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormMessage />
 
-                            <RadioGroup
-                                onValueChange={field.onChange}
-                                defaultValue="deposit"
-                                className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
-                            >
-                                <FormItem>
-                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
-                                        <FormControl>
-                                            <RadioGroupItem value="deposit" className="sr-only" />
-                                        </FormControl>
-                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                            <CircleArrowUp color='green' />
-                                            <p>Entrada</p>
-                                        </div>
-                                    </FormLabel>
-                                </FormItem>
+                    <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                            <FormItem className="space-y-1">
+                                <FormMessage />
 
-                                <FormItem>
-                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
-                                        <FormControl>
-                                            <RadioGroupItem value="withdraw" className="sr-only" />
-                                        </FormControl>
-                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                            <CircleArrowDown color='red' />
-                                            <p>Saída</p>
-                                        </div>
-                                    </FormLabel>
-                                </FormItem>
-                            </RadioGroup>
-                        </FormItem>
-                    )}
-                />
+                                <RadioGroup
+                                    onValueChange={field.onChange}
+                                    defaultValue="deposit"
+                                    className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
+                                >
+                                    <FormItem>
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
+                                            <FormControl>
+                                                <RadioGroupItem value="deposit" className="sr-only" />
+                                            </FormControl>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowUp color='green' />
+                                                <p>Entrada</p>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
 
-                <div className="flex justify-end gap-4">
-                    <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
-                    <Button type="submit" value="submit">Salvar</Button>
-                </div>
-            </form>
-        </Form>
+                                    <FormItem>
+                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
+                                            <FormControl>
+                                                <RadioGroupItem value="withdraw" className="sr-only" />
+                                            </FormControl>
+                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                <CircleArrowDown color='red' />
+                                                <p>Saída</p>
+                                            </div>
+                                        </FormLabel>
+                                    </FormItem>
+                                </RadioGroup>
+                            </FormItem>
+                        )}
+                    />
+
+                    <div className="flex justify-end gap-4">
+                        <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
+                        <Button type="submit" value="submit">Salvar</Button>
+                    </div>
+                </form>
+            </Form>
         </Modal >
     )
 }

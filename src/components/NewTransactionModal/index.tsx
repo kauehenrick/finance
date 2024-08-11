@@ -44,7 +44,7 @@ import FormDialog from '../FormDialog';
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
-        message: "O título deve ter ao menos 4 caracteres",
+        message: "O título deve conter ao menos 4 caracteres",
     }),
     //coerce used to fix input number value
     amount: z.coerce.number({

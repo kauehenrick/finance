@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "sonner";
 import { getCategoriesAction, addCategoriesAction } from "@/services/actions/categoriesActions";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,6 +33,7 @@ export const useCategoryStore = create<CategoryStoreProps>((set) => ({
             set((state) => ({
                 categories: [...state.categories, data]
             }))
+            toast.success("Categoria adicionada!");
         } catch (error) {
             set({ error })
         }

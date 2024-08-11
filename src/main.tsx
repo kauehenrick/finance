@@ -3,31 +3,43 @@ import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import Login from './routes/login.tsx';
 import Home from './routes/home.tsx';
 import OAuthLogin from './routes/oauthLogin.tsx';
-import { GoogleOAuthProvider } from "@react-oauth/google"
+import { useAuthStore } from './stores/AuthStore.ts';
+
+type ChildrenProps = {
+  children?: React.ReactNode
+}
+
+const RequireAuth = ({ children }: ChildrenProps) => {
+  const { isLoggedIn } = useAuthStore();
+  return isLoggedIn ? children : <Navigate to="/userLogin" />
+}
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/login",
     element: <OAuthLogin />,
   },
   {
-    path: "/login",
+    path: "/userLogin",
     element: <Login />,
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/",
+    element: (
+      <RequireAuth>
+        <Home />
+      </RequireAuth>
+    ),
   }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <GoogleOAuthProvider clientId='566701837142-l2um7kls93h7l10qhh6pt23bh3cf9t45.apps.googleusercontent.com'>
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
-  </GoogleOAuthProvider>
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
 )

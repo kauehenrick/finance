@@ -29,7 +29,7 @@ export default function Home() {
                 isOpen={isNewTransactionModalOpen}
                 onRequestClose={handleCloseNewTransactionModal}
             />
-
+            
             <TransactionsTable />
         </>
     )

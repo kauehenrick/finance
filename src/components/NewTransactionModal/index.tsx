@@ -34,16 +34,11 @@ import {
 import { useCategoryStore } from "@/stores/CategoryStore";
 import { useSubcategoryStore } from '@/stores/SubcategoryStore';
 import FormDialog from '../FormDialog';
-import { storage } from '../../../firebaseConfig';
-import { ref, uploadBytes } from "firebase/storage";
-import { v4 as uuidv4 } from 'uuid';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
 }
-
-//const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
@@ -98,10 +93,6 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         addTransaction({ ...values, isActive: true });
-
-        const imageRef = ref(storage, `files/${uuidv4()}`);
-
-        uploadBytes(imageRef, values.image);
 
         form.reset();
         

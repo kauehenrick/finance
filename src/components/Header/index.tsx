@@ -37,7 +37,7 @@ export default function Header({ onOpenNewTransactionModal }: HeaderProps) {
 
                 <Dialog>
                     <DialogTrigger>
-                        <CirclePower size={35} color="white" />
+                        <CirclePower size={30} color="white" />
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>

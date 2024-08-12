@@ -13,7 +13,8 @@ export type TransactionProps = {
     date: Date,
     note?: string | undefined,
     type: string,
-    isActive: boolean
+    isActive: boolean,
+    image?: File,
 }
 
 type TransactionStoreProps = {

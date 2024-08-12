@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown} from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
@@ -33,12 +33,15 @@ import {
 } from "@/components/ui/select"
 import { useCategoryStore } from "@/stores/CategoryStore";
 import { useSubcategoryStore } from '@/stores/SubcategoryStore';
+import FormDialog from '../FormDialog';
+import { storage } from '../../../firebaseConfig';
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
 }
-import FormDialog from '../FormDialog';
 
 //const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -89,12 +92,19 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             place: '',
             note: '',
             date: new Date(),
+            image: '',
         },
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         addTransaction({ ...values, isActive: true });
+
+        const imageRef = ref(storage, `files/${uuidv4()}`);
+
+        uploadBytes(imageRef, values.image);
+
         form.reset();
+        
         onRequestClose();
     }
 

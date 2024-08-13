@@ -92,7 +92,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        addTransaction({ ...values, isActive: true });
+        //addTransaction({ ...values, isActive: true });
+
+        console.log(values);
 
         form.reset();
         

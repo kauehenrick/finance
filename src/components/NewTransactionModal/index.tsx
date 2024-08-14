@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown} from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
@@ -58,11 +58,12 @@ const formSchema = z.object({
     place: z.string().optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
     note: z.string().optional(),
-    image: z.any()
-    .optional(),
+    image: z.instanceof(File)
+        .optional(),
 })
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
+
     let transactionStore = useTransactionStore();
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();
@@ -87,17 +88,14 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             place: '',
             note: '',
             date: new Date(),
-            image: '',
         },
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        //addTransaction({ ...values, isActive: true });
-
-        console.log(values);
+        addTransaction({ ...values, isActive: true });
 
         form.reset();
-        
+
         onRequestClose();
     }
 
@@ -278,10 +276,16 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                         <FormField
                             control={form.control}
                             name="image"
-                            render={({ field }) => (
+                            render={({ field: { value, onChange, ...fieldProps } }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input type="file" placeholder='Imagem' {...field} />
+                                        <Input
+                                            {...fieldProps}
+                                            type="file"
+                                            onChange={(event) =>
+                                                onChange(event.target.files && event.target.files[0])
+                                            }
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

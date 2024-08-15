@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { toast } from "sonner";
 import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
+import { storage } from "../../firebaseConfig";
+import { ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
 export type TransactionProps = {
@@ -14,7 +16,6 @@ export type TransactionProps = {
     note?: string | undefined,
     type: string,
     isActive: boolean,
-    image?: File,
 }
 
 type TransactionStoreProps = {

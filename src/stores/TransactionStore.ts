@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import {addTransactionsAction, getTransactionsAction } from "@/services/actions/transactionsActions";
 import { v4 as uuidv4 } from 'uuid';
 
-
 export type TransactionProps = {
     id: string,
     title: string,
@@ -14,7 +13,7 @@ export type TransactionProps = {
     date: Date,
     note?: string | undefined,
     type: string,
-    isActive: boolean
+    isActive: boolean,
 }
 
 type TransactionStoreProps = {

@@ -33,12 +33,14 @@ import {
 } from "@/components/ui/select"
 import { useCategoryStore } from "@/stores/CategoryStore";
 import { useSubcategoryStore } from '@/stores/SubcategoryStore';
+import FormDialog from '../FormDialog';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
     onRequestClose: () => void;
 }
-import FormDialog from '../FormDialog';
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
@@ -58,9 +60,21 @@ const formSchema = z.object({
     place: z.string().optional(),
     date: z.date({ required_error: "Este campo deve ser preenchido" }),
     note: z.string().optional(),
+    image: z.instanceof(File)
+        .optional(),
 })
 
+async function uploadImage(file: File) {
+    const storage = getStorage();
+    const storageRef = ref(storage, `images/${uuidv4()}_${file.name}`);
+
+    await uploadBytes(storageRef, file);
+
+    return await getDownloadURL(storageRef);
+}
+
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
+
     let transactionStore = useTransactionStore();
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();
@@ -88,9 +102,30 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         },
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        addTransaction({ ...values, isActive: true });
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        let imageUrl = "";
+
+        if (values.image) {
+            try {
+                imageUrl = await uploadImage(values.image);
+            } catch (error) {
+                console.error("Erro ao fazer upload da imagem: ", error);
+                return;
+            }
+        }
+
+        const { image, ...valuesWithoutImage } = values;
+
+        const transactionData = {
+            ...valuesWithoutImage, 
+            image: imageUrl,
+            isActive: true 
+        };
+
+        addTransaction(transactionData);
+
         form.reset();
+
         onRequestClose();
     }
 
@@ -267,6 +302,26 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field: { value, onChange, ...fieldProps } }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input
+                                            {...fieldProps}
+                                            type="file"
+                                            onChange={(event) =>
+                                                onChange(event.target.files && event.target.files[0])
+                                            }
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                     </div>
 
                     <FormField

@@ -1,5 +1,5 @@
 import { db } from '../../../firebaseConfig';
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { getTransactionsAccess } from "../dataAccess/transactionsAccess";
 import { TransactionProps } from "@/stores/TransactionStore";
 
@@ -22,4 +22,9 @@ export async function getTransactionsAction() {
 export async function addTransactionsAction(transaction: TransactionProps) {
     const docRef = doc(db, "transactions", transaction.id);
     await setDoc(docRef, transaction);
+}
+
+export async function updateTransactionsAction(transaction: TransactionProps) {
+    const docRef = doc(db, "transactions", transaction.id);
+    await updateDoc(docRef, transaction);
 }

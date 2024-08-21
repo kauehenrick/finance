@@ -8,10 +8,10 @@ export default function Summary() {
 
     const summary = transactions.reduce((acc, transaction) => {
 
-        if (transaction.type === "deposit") {
+        if (transaction.type === "deposit" && transaction.isActive) {
             acc.deposits += transaction.amount;
             acc.total += transaction.amount;
-        } else {
+        } else if (transaction.isActive) {
             acc.withdraws += transaction.amount;
             acc.total -= transaction.amount;
         }

@@ -12,16 +12,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
 import { Textarea } from "@/components/ui/textarea";
-import { format } from "date-fns";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { ptBR } from 'date-fns/locale';
 import {
     Select,
     SelectContent,
@@ -48,7 +38,7 @@ const formSchema = z.object({
         message: "O título deve conter ao menos 4 caracteres!",
     }),
     //coerce used to fix input number value
-    amount: z.coerce.number().positive({message: "O valor deve ser maior que zero!"}),
+    amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
@@ -56,7 +46,7 @@ const formSchema = z.object({
     category: z.string(),
     subcategory: z.string(),
     place: z.string().optional(),
-    date: z.date({ required_error: "Este campo deve ser preenchido!" }),
+    date: z.coerce.date({ required_error: "Este campo deve ser preenchido!", invalid_type_error: "Insira uma data válida!"}),
     note: z.string().optional(),
     image: z.instanceof(File)
         .optional(),
@@ -115,9 +105,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         const { image, ...valuesWithoutImage } = values;
 
         const transactionData = {
-            ...valuesWithoutImage, 
+            ...valuesWithoutImage,
             image: imageUrl,
-            isActive: true 
+            isActive: true
         };
 
         addTransaction(transactionData);
@@ -161,7 +151,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <MoneyInput form={form} label='' placeholder='Preço' {...field}/>
+                                        <MoneyInput form={form} label='' placeholder='Preço' {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -239,37 +229,16 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             name="date"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "w-[240px] pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP", { locale: ptBR })
-                                                    ) : (
-                                                        <span>Informe a data</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                disabled={(date: Date) =>
-                                                    date > new Date() || date < new Date("1900-01-01")
-                                                }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
+                                    <Input
+                                        className="w-fit"
+                                        type="date"
+                                        {...field}
+                                        value={
+                                            field.value instanceof Date
+                                                ? field.value.toISOString().split('T')[0]
+                                                : field.value
+                                        }
+                                    />
                                     <FormMessage />
                                 </FormItem>
                             )}

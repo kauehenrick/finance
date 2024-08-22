@@ -1,9 +1,21 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { TransactionProps } from "@/stores/TransactionStore"
+import { TransactionProps, useTransactionStore } from "@/stores/TransactionStore"
 import { ArrowUpDown } from "lucide-react"
-import { Button } from "../ui/button"
+import { Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogClose,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { useState } from "react"
 
 export const columns: ColumnDef<TransactionProps>[] = [
   {
@@ -91,6 +103,45 @@ export const columns: ColumnDef<TransactionProps>[] = [
       }).format(date)
 
       return <div className="font-medium">{formatted}</div>
+    },
+  },
+  {
+    id: "disable",
+    header: () => <div>Desativar</div>,
+    cell: ({ row }) => {
+      let [open, setOpen] = useState(false);
+      let transactionStore = useTransactionStore();
+
+      let { disableTransaction } = transactionStore;
+
+      const disableButton = () => {
+        const transaction = row.original;
+
+        disableTransaction({...transaction, isActive: false});
+
+        console.log(transaction)
+        setOpen(false);
+      }
+
+      return (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger>
+            <Trash2 color="red" size={"18px"}></Trash2>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Desativar Produto</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>Deseja realmente desativar o produto?</DialogDescription>
+            <DialogFooter>
+              <div className="flex justify-end gap-4">
+                <DialogClose><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                <Button onClick={disableButton}>Desabilitar</Button>
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )
     },
   },
 ]

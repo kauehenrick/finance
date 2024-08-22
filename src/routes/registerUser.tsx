@@ -14,10 +14,10 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import moneyBackgroundImg from '../assets/money.jpg'
+import moneyBackgroundImg from '../assets/money_3.jpg'
 import { useAuthStore } from "@/stores/AuthStore"
 import { useState } from "react"
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 
@@ -30,16 +30,12 @@ const formSchema = z.object({
     }),
 })
 
-export default function Login() {
+export default function RegisterUser() {
     const [error, setError] = useState(false);
 
     const { login } = useAuthStore()
 
     const navigate = useNavigate();
-    
-    const addUser = () => {
-        navigate("/registerUser")
-    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -50,7 +46,7 @@ export default function Login() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        signInWithEmailAndPassword(auth, values.username, values.password)
+        createUserWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log(user);
@@ -69,9 +65,9 @@ export default function Login() {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
-                        <p className="font-semibold text-4xl">Bem-vindo de volta!</p>
+                        <p className="font-semibold text-4xl">Cadastrar Usuário</p>
 
-                        <p className="text-lg">Acesse sua conta para continuar.</p>
+                        <p className="text-lg">Insira suas credenciais para realizar o cadastro.</p>
 
                         {error && <span className="text-lg text-red">Email ou senha inválidos!</span>}
 
@@ -82,7 +78,7 @@ export default function Login() {
                                 <FormItem>
                                     <FormLabel>Usuário</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Entre com seu usuário" {...field} />
+                                        <Input type="email" placeholder="Informe seu email" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     </FormDescription>
@@ -98,7 +94,7 @@ export default function Login() {
                                 <FormItem>
                                     <FormLabel>Senha</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="Digite sua senha" {...field} />
+                                        <Input type="password" placeholder="Informe sua senha" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     </FormDescription>
@@ -106,15 +102,10 @@ export default function Login() {
                                 </FormItem>
                             )}
                         />
-
-                        <div className="flex justify-between font-semibold">
-                            <p>Não tem uma conta?</p>
-                            <p className="hover:font-bold cursor-pointer" onClick={addUser}>Cadastre-se</p>
-                        </div>
-
-                        <Button type="submit">Entrar</Button>
+                        <Button type="submit">Cadastrar</Button>
                     </form>
                 </Form>
+
             </div>
 
             <img src={moneyBackgroundImg} alt="" className="h-full w-2/4" />

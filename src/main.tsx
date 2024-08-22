@@ -8,6 +8,8 @@ import {
 import Login from './routes/login.tsx';
 import Home from './routes/home.tsx';
 import OAuthLogin from './routes/oauthLogin.tsx';
+import RegisterUser from './routes/registerUser.tsx';
+
 import { useAuthStore } from './stores/AuthStore.ts';
 
 type ChildrenProps = {
@@ -35,6 +37,10 @@ const router = createBrowserRouter([
         <Home />
       </RequireAuth>
     ),
+  },
+  {
+    path: "/registerUser",
+    element: <RegisterUser />,
   }
 ]);
 

@@ -36,6 +36,7 @@ import { useSubcategoryStore } from '@/stores/SubcategoryStore';
 import FormDialog from '../FormDialog';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+import MoneyInput from '../ui/MoneyInput';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -44,21 +45,18 @@ interface NewTransactionModalProps {
 
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
-        message: "O título deve conter ao menos 4 caracteres",
+        message: "O título deve conter ao menos 4 caracteres!",
     }),
     //coerce used to fix input number value
-    amount: z.coerce.number({
-        required_error: "Este campo deve ser preenchido",
-        invalid_type_error: "Preço deve ser um número",
-    }).positive({ message: "O valor deve ser maior que zero" }),
+    amount: z.coerce.number().positive({message: "O valor deve ser maior que zero!"}),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
-    ], { message: "Esta opção é obrigatória" }),
+    ], { message: "Esta opção é obrigatória." }),
     category: z.string(),
     subcategory: z.string(),
     place: z.string().optional(),
-    date: z.date({ required_error: "Este campo deve ser preenchido" }),
+    date: z.date({ required_error: "Este campo deve ser preenchido!" }),
     note: z.string().optional(),
     image: z.instanceof(File)
         .optional(),
@@ -163,7 +161,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input type='number' placeholder='Preço' {...field}></Input>
+                                        <MoneyInput form={form} label='' placeholder='Preço' {...field}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

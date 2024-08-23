@@ -14,53 +14,42 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import moneyBackgroundImg from '../assets/money.jpg'
-import { useAuthStore } from "@/stores/AuthStore"
+import moneyBackgroundImg from '../assets/money_3.jpg'
 import { useState } from "react"
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom"
 
-const formSchema = z.object({
-    username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
-    password: z.string().min(1, { message: "Esse campo deve ser preenchido." }).min(8, { message: "A senha deve conter pelo menos 8 caracteres" }),
-})
+const formSchema = z
+    .object({
+        username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
+        password: z.string().min(1, { message: "Esse campo deve ser preenchido." }).min(8, { message: "A senha deve conter pelo menos 8 caracteres" }),
+        confirmPassword: z.string().min(1, { message: "A confirmação de senha é obrigatória." }),
+    })
+    .refine((data) => data.password == data.confirmPassword, {
+        path: ["confirmPassword"],
+        message: "As senhas não são iguais.",
+    })
 
-export default function Login() {
+export default function RegisterUser() {
     const [error, setError] = useState(false);
 
-    const { login } = useAuthStore()
-
     const navigate = useNavigate();
-
-    const addUser = () => {
-        navigate("/registerUser")
-    }
-
-    const handleGoogleSignIn = async () => {
-        const provider = await new GoogleAuthProvider();
-        signInWithPopup(auth, provider).then((userCredential) => {
-            const user = userCredential.user;
-            navigate("/");
-            login()
-        })
-    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: '',
             password: '',
+            confirmPassword: '',
         },
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        signInWithEmailAndPassword(auth, values.username, values.password)
+        createUserWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                navigate("/");
-                login()
+                navigate("/userLogin");
             })
             .catch((error) => {
                 setError(true);
@@ -69,13 +58,13 @@ export default function Login() {
 
     return (
         <div className="bg-background flex flex-row h-screen items-center justify-between">
-            <div className="flex flex-col p-5 m-auto">
+            <div className="p-5 m-auto">
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
-                        <p className="font-semibold text-4xl">Bem-vindo de volta!</p>
+                        <p className="font-semibold text-4xl">Cadastrar Usuário</p>
 
-                        <p className="text-lg">Acesse sua conta para continuar.</p>
+                        <p className="text-lg">Insira suas credenciais para realizar o cadastro.</p>
 
                         {error && <span className="text-lg text-red">Email ou senha inválidos!</span>}
 
@@ -86,7 +75,7 @@ export default function Login() {
                                 <FormItem>
                                     <FormLabel>Usuário</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Entre com seu usuário" {...field} />
+                                        <Input type="email" placeholder="Informe seu email" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     </FormDescription>
@@ -102,7 +91,7 @@ export default function Login() {
                                 <FormItem>
                                     <FormLabel>Senha</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="Digite sua senha" {...field} />
+                                        <Input type="password" placeholder="Informe sua senha" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     </FormDescription>
@@ -110,32 +99,24 @@ export default function Login() {
                                 </FormItem>
                             )}
                         />
-
-                        <div className="flex justify-between font-semibold">
-                            <p>Não tem uma conta?</p>
-                            <p className="hover:font-bold cursor-pointer" onClick={addUser}>Cadastre-se</p>
-                        </div>
-
-                        <Button type="submit">Entrar</Button>
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Corfirme sua senha</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="Informe sua senha novamente" {...field} />
+                                    </FormControl>
+                                    <FormDescription>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit">Cadastrar</Button>
                     </form>
                 </Form>
-
-                <div className="relative my-5">
-                    <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground">
-                            ou faça login com
-                        </span>
-                    </div>
-                </div>
-
-                <Button className='flex rounded-full gap-2 w-fit self-center' onClick={handleGoogleSignIn}>
-                    <FcGoogle />
-                    <p>Realizar login com o Google</p>
-                </Button>
-
 
             </div>
 

@@ -15,25 +15,24 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import moneyBackgroundImg from '../assets/money_3.jpg'
-import { useAuthStore } from "@/stores/AuthStore"
 import { useState } from "react"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 
-const formSchema = z.object({
-    username: z.string({ message: "Este campo deve ser preenchido" }).min(2, {
-        message: "O título deve conter ao menos 2 caracteres",
-    }),
-    password: z.string({ message: "Este campo deve ser preenchido" }).min(6, {
-        message: "O título deve conter ao menos 6 caracteres",
-    }),
-})
+const formSchema = z
+    .object({
+        username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
+        password: z.string().min(1, { message: "Esse campo deve ser preenchido." }).min(8, { message: "A senha deve conter pelo menos 8 caracteres" }),
+        confirmPassword: z.string().min(1, { message: "A confirmação de senha é obrigatória." }),
+    })
+    .refine((data) => data.password == data.confirmPassword, {
+        path: ["confirmPassword"],
+        message: "As senhas não são iguais.",
+    })
 
 export default function RegisterUser() {
     const [error, setError] = useState(false);
-
-    const { login } = useAuthStore()
 
     const navigate = useNavigate();
 
@@ -42,6 +41,7 @@ export default function RegisterUser() {
         defaultValues: {
             username: '',
             password: '',
+            confirmPassword: '',
         },
     })
 
@@ -50,8 +50,7 @@ export default function RegisterUser() {
             .then((userCredential) => {
                 const user = userCredential.user;
                 console.log(user);
-                navigate("/");
-                login()
+                navigate("/userLogin");
             })
             .catch((error) => {
                 setError(true);
@@ -95,6 +94,21 @@ export default function RegisterUser() {
                                     <FormLabel>Senha</FormLabel>
                                     <FormControl>
                                         <Input type="password" placeholder="Informe sua senha" {...field} />
+                                    </FormControl>
+                                    <FormDescription>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Corfirme sua senha</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="Informe sua senha novamente" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     </FormDescription>

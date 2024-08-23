@@ -43,12 +43,11 @@ interface NewTransactionModalProps {
 }
 
 const formSchema = z.object({
-    title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
+    title: z.string().min(4, {
         message: "O título deve conter ao menos 4 caracteres",
     }),
     //coerce used to fix input number value
     amount: z.coerce.number({
-        required_error: "Este campo deve ser preenchido",
         invalid_type_error: "Preço deve ser um número",
     }).positive({ message: "O valor deve ser maior que zero" }),
     type: z.union([
@@ -117,9 +116,9 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         const { image, ...valuesWithoutImage } = values;
 
         const transactionData = {
-            ...valuesWithoutImage, 
+            ...valuesWithoutImage,
             image: imageUrl,
-            isActive: true 
+            isActive: true
         };
 
         addTransaction(transactionData);

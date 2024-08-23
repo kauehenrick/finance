@@ -22,12 +22,8 @@ import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 
 const formSchema = z.object({
-    username: z.string({ message: "Este campo deve ser preenchido" }).min(2, {
-        message: "O título deve conter ao menos 2 caracteres",
-    }),
-    password: z.string({ message: "Este campo deve ser preenchido" }).min(6, {
-        message: "O título deve conter ao menos 6 caracteres",
-    }),
+    username: z.string().min(1, {message: "Esse campo deve ser preenchido."}).email("Esse não é um email válido."),
+    password: z.string().min(1, {message: "Esse campo deve ser preenchido."}).min(8, {message: "A senha deve conter pelo menos 8 caracteres"}),
 })
 
 export default function Login() {

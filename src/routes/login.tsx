@@ -17,13 +17,14 @@ import { Input } from "@/components/ui/input"
 import moneyBackgroundImg from '../assets/money.jpg'
 import { useAuthStore } from "@/stores/AuthStore"
 import { useState } from "react"
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 
 const formSchema = z.object({
-    username: z.string().min(1, {message: "Esse campo deve ser preenchido."}).email("Esse não é um email válido."),
-    password: z.string().min(1, {message: "Esse campo deve ser preenchido."}).min(8, {message: "A senha deve conter pelo menos 8 caracteres"}),
+    username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
+    password: z.string().min(1, { message: "Esse campo deve ser preenchido." }).min(8, { message: "A senha deve conter pelo menos 8 caracteres" }),
 })
 
 export default function Login() {
@@ -32,9 +33,18 @@ export default function Login() {
     const { login } = useAuthStore()
 
     const navigate = useNavigate();
-    
+
     const addUser = () => {
         navigate("/registerUser")
+    }
+
+    const handleGoogleSignIn = async () => {
+        const provider = await new GoogleAuthProvider();
+        signInWithPopup(auth, provider).then((userCredential) => {
+            const user = userCredential.user;
+            navigate("/");
+            login()
+        })
     }
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -59,7 +69,7 @@ export default function Login() {
 
     return (
         <div className="bg-background flex flex-row h-screen items-center justify-between">
-            <div className="p-5 m-auto">
+            <div className="flex flex-col p-5 m-auto">
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
@@ -109,6 +119,24 @@ export default function Login() {
                         <Button type="submit">Entrar</Button>
                     </form>
                 </Form>
+
+                <div className="relative my-5">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">
+                            ou faça login com
+                        </span>
+                    </div>
+                </div>
+
+                <Button className='flex rounded-full gap-2 w-fit self-center' onClick={handleGoogleSignIn}>
+                    <FcGoogle />
+                    <p>Realizar login com o Google</p>
+                </Button>
+
+
             </div>
 
             <img src={moneyBackgroundImg} alt="" className="h-full w-2/4" />

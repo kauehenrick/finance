@@ -45,22 +45,21 @@ interface NewTransactionModalProps {
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
-    title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
-        message: "O título deve conter ao menos 4 caracteres",
+    title: z.string().min(4, {
+        message: "O título deve conter ao menos 4 caracteres.",
     }),
     //coerce used to fix input number value
     amount: z.coerce.number({
-        required_error: "Este campo deve ser preenchido",
-        invalid_type_error: "Preço deve ser um número",
-    }).positive({ message: "O valor deve ser maior que zero" }),
+        invalid_type_error: "Preço deve ser um número.",
+    }).positive({ message: "O valor deve ser maior que zero." }),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
-    ], { message: "Esta opção é obrigatória" }),
+    ], { message: "Esta opção é obrigatória." }),
     category: z.string(),
     subcategory: z.string(),
     place: z.string().optional(),
-    date: z.date({ required_error: "Este campo deve ser preenchido" }),
+    date: z.date({ message: "Este campo deve ser preenchido." }),
     note: z.string().optional(),
     image: z.any()
         .optional()

@@ -119,7 +119,6 @@ export const columns: ColumnDef<TransactionProps>[] = [
 
         disableTransaction({...transaction, isActive: false});
 
-        console.log(transaction)
         setOpen(false);
       }
 

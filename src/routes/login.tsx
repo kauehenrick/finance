@@ -49,13 +49,11 @@ export default function Login() {
         signInWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log(user);
                 navigate("/");
                 login()
             })
             .catch((error) => {
                 setError(true);
-                console.log(error);
             });
     }
 

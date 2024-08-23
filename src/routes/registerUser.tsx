@@ -49,12 +49,10 @@ export default function RegisterUser() {
         createUserWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log(user);
                 navigate("/userLogin");
             })
             .catch((error) => {
                 setError(true);
-                console.log(error);
             });
     }
 

@@ -69,7 +69,7 @@ export default function Login() {
 
                         <p className="text-lg">Acesse sua conta para continuar.</p>
 
-                        {error && <span className="text-lg text-red">Email ou senah inválidos!</span>}
+                        {error && <span className="text-lg text-red">Email ou senha inválidos!</span>}
 
                         <FormField
                             control={form.control}

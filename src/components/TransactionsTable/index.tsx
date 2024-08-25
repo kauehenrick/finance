@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect } from "react";
 import { TransactionProps, useTransactionStore } from "@/stores/TransactionStore";
 import { DataTable } from "./data-table"
@@ -9,14 +11,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { useAccountStore } from "@/stores/AccountsStore";
+import DataTableDialog from "../DataTableDialog";
 
 export default function TransactionsTable() {
     let store = useTransactionStore();
+    let accountStore = useAccountStore();
 
     let { transactions, fetchData, isLoading } = store;
+    let { accounts, getAccounts, addAccount } = accountStore;
 
     useEffect(() => {
         fetchData();
+        getAccounts();
     }, []);
 
     let transactionsActive: TransactionProps[] = [];
@@ -29,17 +36,25 @@ export default function TransactionsTable() {
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
-            <div className="mt-3 mb-5">
+            <div className="flex mt-3 mb-5 gap-2">
                 <Select>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Selecione a conta" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
+                        {accounts.map(account => (
+                            <SelectItem
+                                key={account.email}
+                                value={account.alias}
+                            >
+                                {account.alias} 
+                            </SelectItem>
+                        ))
+                        }
                     </SelectContent>
                 </Select>
+
+                <DataTableDialog inputValue="conta" addValue={addAccount}/>
             </div>
 
             {isLoading && <div className="p-3">Carregando...</div>}

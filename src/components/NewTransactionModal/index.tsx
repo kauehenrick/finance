@@ -62,11 +62,11 @@ const formSchema = z.object({
     date: z.date({ message: "Este campo deve ser preenchido." }),
     note: z.string().optional(),
     image: z.any()
-        .optional()
         .refine(
             (image) => ACCEPTED_IMAGE_TYPES.includes(image?.type),
             "Apenas formatos .jpg, .jpeg, .png and .webp são suportados."
-        ),
+        )
+        .optional(),
 })
 
 async function uploadImage(file: File) {

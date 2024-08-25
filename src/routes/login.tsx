@@ -21,6 +21,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { useUserStore } from "@/stores/UserStore"
 
 const formSchema = z.object({
     username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
@@ -30,11 +31,15 @@ const formSchema = z.object({
 export default function Login() {
     const [error, setError] = useState(false);
 
+    const userStore = useUserStore();
+
+    let { addUser } = userStore;
+
     const { login } = useAuthStore()
 
     const navigate = useNavigate();
 
-    const addUser = () => {
+    const registerUser = () => {
         navigate("/registerUser")
     }
 
@@ -42,6 +47,11 @@ export default function Login() {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
+            addUser({
+                id: user.uid,
+                email: user.email,
+                name: user.displayName,
+            });
             navigate("/");
             login()
         })
@@ -113,7 +123,7 @@ export default function Login() {
 
                         <div className="flex justify-between font-semibold">
                             <p>Não tem uma conta?</p>
-                            <p className="hover:font-bold cursor-pointer" onClick={addUser}>Cadastre-se</p>
+                            <p className="hover:font-bold cursor-pointer" onClick={registerUser}>Cadastre-se</p>
                         </div>
 
                         <Button type="submit">Entrar</Button>

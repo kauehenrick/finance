@@ -19,6 +19,7 @@ import { useState } from "react"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
+import { useUserStore } from "@/stores/UserStore"
 
 const formSchema = z
     .object({
@@ -33,6 +34,10 @@ const formSchema = z
 
 export default function RegisterUser() {
     const [error, setError] = useState(false);
+
+    const userStore = useUserStore();
+
+    let { addUser } = userStore;
 
     const navigate = useNavigate();
 
@@ -49,7 +54,12 @@ export default function RegisterUser() {
         createUserWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                navigate("/userLogin");
+                addUser({
+                    id: user.uid,
+                    email: user.email,
+                    name: user.displayName,
+                });
+                navigate("/login");
             })
             .catch((error) => {
                 setError(true);

@@ -52,8 +52,8 @@ export default function Login() {
                 email: user.email,
                 name: user.displayName,
             });
+            login(user.email)
             navigate("/");
-            login()
         })
     }
 
@@ -69,8 +69,9 @@ export default function Login() {
         signInWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
+
+                login(user.email)
                 navigate("/");
-                login()
             })
             .catch((error) => {
                 setError(true);
@@ -145,7 +146,6 @@ export default function Login() {
                     <FcGoogle />
                     <p>Realizar login com o Google</p>
                 </Button>
-
 
             </div>
 

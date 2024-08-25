@@ -12,14 +12,19 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useAccountStore } from "@/stores/AccountsStore";
+import { useAuthStore } from "@/stores/AuthStore";
 import DataTableDialog from "../DataTableDialog";
 
 export default function TransactionsTable() {
     let store = useTransactionStore();
     let accountStore = useAccountStore();
+    let authStore = useAuthStore();
 
     let { transactions, fetchData, isLoading } = store;
     let { accounts, getAccounts, addAccount } = accountStore;
+    let { user } = authStore;
+
+    const userAccount = accounts.filter(account => account.email == user);
 
     useEffect(() => {
         fetchData();
@@ -42,7 +47,7 @@ export default function TransactionsTable() {
                         <SelectValue placeholder="Selecione a conta" />
                     </SelectTrigger>
                     <SelectContent>
-                        {accounts.map(account => (
+                        {userAccount.map(account => (
                             <SelectItem
                                 key={account.email}
                                 value={account.alias}

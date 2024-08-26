@@ -68,7 +68,6 @@ async function uploadImage(file: File) {
 }
 
 export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
-
     let transactionStore = useTransactionStore();
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();

@@ -52,7 +52,7 @@ export default function Login() {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
-
+          
             const createUser = () => {
                 addUser({
                     id: user.uid,
@@ -62,9 +62,8 @@ export default function Login() {
             }
 
             users.find(userRegistered => userRegistered.email == user.email) ? null : createUser();
-
+          
             navigate("/");
-            login()
         })
     }
 
@@ -80,8 +79,9 @@ export default function Login() {
         signInWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
+
+                login(user.email)
                 navigate("/");
-                login()
             })
             .catch((error) => {
                 setError(true);
@@ -156,7 +156,6 @@ export default function Login() {
                     <FcGoogle />
                     <p>Realizar login com o Google</p>
                 </Button>
-
 
             </div>
 

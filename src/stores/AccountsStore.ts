@@ -13,7 +13,7 @@ type AccountStoreProps = {
     accounts: AccountProps[],
     error: null | string | unknown,
     getAccounts: () => void,
-    addAccount: (account: Omit<AccountProps, "email">) => void,
+    addAccount: (account: AccountProps) => void,
 }
 
 export const useAccountStore = create<AccountStoreProps>((set) => ({
@@ -28,7 +28,7 @@ export const useAccountStore = create<AccountStoreProps>((set) => ({
         }
     },
     addAccount: async (account) => {
-        const data = { ...account, email: "suporte@invictustech.com.br" };
+        const data = { ...account };
         await addAccountsAction(data);
         try {
             set((state) => ({

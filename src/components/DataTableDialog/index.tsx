@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useState } from 'react';
+import { useAuthStore } from '@/stores/AuthStore';
 
 type DataTableDialogProps = {
     inputValue: string
@@ -29,6 +30,10 @@ const formSchema = z.object({
 
 export default function DataTableDialog(props: DataTableDialogProps) {
     let [open, setOpen] = useState(false);
+    
+    let authStore = useAuthStore();
+
+    let { user } = authStore;
 
     const capitalize = props.inputValue.charAt(0).toUpperCase() + props.inputValue.slice(1);
     const lowerCase = props.inputValue.toLowerCase();
@@ -42,7 +47,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        props.addValue(values)
+        props.addValue({...values, email: user})
         form.reset();
         setOpen(false);
     }

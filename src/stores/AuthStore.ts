@@ -2,16 +2,18 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface AuthStore {
+    user: string | null;
     isLoggedIn: boolean;
-    login: () => void;
+    login: (user: string | null) => void;
     logout: () => void;
 }
 export const useAuthStore = create(
     persist<AuthStore>(
         (set) => ({
             isLoggedIn: false,
-            login: () => {
-                set({ isLoggedIn: true });
+            user: null,
+            login: (user) => {
+                set({ isLoggedIn: true, user: user});
             },
             logout: () => {
                 set({ isLoggedIn: false });

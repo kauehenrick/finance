@@ -20,6 +20,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 import { useUserStore } from "@/stores/UserStore"
+import { useEffect } from "react"
 
 const formSchema = z
     .object({
@@ -37,7 +38,11 @@ export default function RegisterUser() {
 
     const userStore = useUserStore();
 
-    let { addUser } = userStore;
+    let { users, getUsers, addUser } = userStore;
+
+    useEffect(() => {
+        getUsers();
+    }, []);
 
     const navigate = useNavigate();
 
@@ -51,19 +56,24 @@ export default function RegisterUser() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        createUserWithEmailAndPassword(auth, values.username, values.password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                addUser({
-                    id: user.uid,
-                    email: user.email,
-                    name: user.displayName,
+        const createUser = () => {
+            createUserWithEmailAndPassword(auth, values.username, values.password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    addUser({
+                        id: user.uid,
+                        email: user.email,
+                        name: user.displayName,
+                    });
+
+                    navigate("/login");
+                })
+                .catch((error) => {
+                    setError(true);
                 });
-                navigate("/login");
-            })
-            .catch((error) => {
-                setError(true);
-            });
+        }
+
+        users.find(userRegistered => userRegistered.email == values.username) ? null : createUser();
     }
 
     return (

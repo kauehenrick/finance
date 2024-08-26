@@ -21,7 +21,8 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { useUserStore } from "@/stores/UserStore"
+import { useUserStore } from "@/stores/UserStore";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
@@ -33,7 +34,11 @@ export default function Login() {
 
     const userStore = useUserStore();
 
-    let { addUser } = userStore;
+    let { users, getUsers, addUser } = userStore;
+
+    useEffect(() => {
+        getUsers();
+    }, []);
 
     const { login } = useAuthStore()
 
@@ -47,11 +52,17 @@ export default function Login() {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
-            addUser({
-                id: user.uid,
-                email: user.email,
-                name: user.displayName,
-            });
+
+            const createUser = () => {
+                addUser({
+                    id: user.uid,
+                    email: user.email,
+                    name: user.displayName,
+                });
+            }
+
+            users.find(userRegistered => userRegistered.email == user.email) ? null : createUser();
+
             navigate("/");
             login()
         })

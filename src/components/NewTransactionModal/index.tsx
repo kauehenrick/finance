@@ -33,6 +33,8 @@ interface NewTransactionModalProps {
     onRequestClose: () => void;
 }
 
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
         message: "O título deve conter ao menos 4 caracteres!",
@@ -48,7 +50,11 @@ const formSchema = z.object({
     place: z.string().optional(),
     date: z.coerce.date({ required_error: "Este campo deve ser preenchido!", invalid_type_error: "Insira uma data válida!"}),
     note: z.string().optional(),
-    image: z.instanceof(File)
+    image: z.any()
+        .refine(
+            (image) => ACCEPTED_IMAGE_TYPES.includes(image?.type),
+            "Apenas formatos .jpg, .jpeg, .png and .webp são suportados."
+        )
         .optional(),
 })
 

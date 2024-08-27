@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
+import TransactionDetails from "../TransactionDetails"
 
 export const columns: ColumnDef<TransactionProps>[] = [
   {
@@ -117,7 +118,7 @@ export const columns: ColumnDef<TransactionProps>[] = [
       const disableButton = () => {
         const transaction = row.original;
 
-        disableTransaction({...transaction, isActive: false});
+        disableTransaction({ ...transaction, isActive: false });
 
         setOpen(false);
       }
@@ -142,5 +143,14 @@ export const columns: ColumnDef<TransactionProps>[] = [
         </Dialog>
       )
     },
+  },
+  {
+    id: "details",
+    header: () => <div>Detalhes</div>,
+    cell: ({ row }) => {
+      return (
+        <TransactionDetails {...row.original} />
+      )
+    }
   },
 ]

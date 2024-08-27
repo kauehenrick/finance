@@ -21,7 +21,7 @@ export default function TransactionsTable() {
     let authStore = useAuthStore();
 
     let { transactions, fetchData, isLoading } = store;
-    let { accounts, getAccounts, addAccount, setCurrentAccount, currentAccount } = accountStore;
+    let { accounts, getAccounts, addAccount, setCurrentAccount } = accountStore;
     let { user } = authStore;
 
     const userAccount = accounts.filter(account => account.email == user);
@@ -42,7 +42,7 @@ export default function TransactionsTable() {
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
             <div className="flex mt-3 mb-5 gap-2">
-                <Select>
+                <Select onValueChange={(e) => setCurrentAccount(e)}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Selecione a conta" />
                     </SelectTrigger>
@@ -50,8 +50,7 @@ export default function TransactionsTable() {
                         {userAccount.map(account => (
                             <SelectItem
                                 key={account.email}
-                                value={account.alias}
-                                onChange={() => setCurrentAccount(account.id)}
+                                value={account.id}
                             >
                                 {account.alias} 
                             </SelectItem>

@@ -14,6 +14,7 @@ import {
 import { useAccountStore } from "@/stores/AccountsStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import DataTableDialog from "../DataTableDialog";
+import { SelectTestIds } from "./index.test";
 
 export default function TransactionsTable() {
     let store = useTransactionStore();
@@ -21,7 +22,7 @@ export default function TransactionsTable() {
     let authStore = useAuthStore();
 
     let { transactions, fetchData, isLoading } = store;
-    let { accounts, getAccounts, addAccount, setCurrentAccount } = accountStore;
+    let { accounts, getAccounts, addAccount, setCurrentAccount, currentAccount } = accountStore;
     let { user } = authStore;
 
     const userAccount = accounts.filter(account => account.email == user);
@@ -34,7 +35,7 @@ export default function TransactionsTable() {
     let transactionsActive: TransactionProps[] = [];
 
     transactions.forEach(transaction => {
-        if (transaction.isActive) {
+        if (transaction.isActive && transaction.account == currentAccount) {
             transactionsActive.push(transaction);
         }
     })
@@ -44,7 +45,7 @@ export default function TransactionsTable() {
             <div className="flex mt-3 mb-5 gap-2">
                 <Select onValueChange={(e) => setCurrentAccount(e)}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Selecione a conta" />
+                        <SelectValue placeholder="Selecione a conta" data-testid={SelectTestIds.SELECT}/>
                     </SelectTrigger>
                     <SelectContent>
                         {userAccount.map(account => (

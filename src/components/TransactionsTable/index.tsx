@@ -14,7 +14,6 @@ import {
 import { useAccountStore } from "@/stores/AccountsStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import DataTableDialog from "../DataTableDialog";
-import { SelectTestIds } from "./index.test";
 
 export default function TransactionsTable() {
     let store = useTransactionStore();
@@ -45,12 +44,12 @@ export default function TransactionsTable() {
             <div className="flex mt-3 mb-5 gap-2">
                 <Select onValueChange={(e) => setCurrentAccount(e)}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Selecione a conta" data-testid={SelectTestIds.SELECT}/>
+                        <SelectValue placeholder="Selecione a conta"/>
                     </SelectTrigger>
                     <SelectContent>
                         {userAccount.map(account => (
                             <SelectItem
-                                key={account.email}
+                                key={account.id}
                                 value={account.id}
                             >
                                 {account.alias} 

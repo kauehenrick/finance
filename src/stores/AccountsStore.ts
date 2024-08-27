@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import { getAccountsAction, addAccountsAction } from "@/services/actions/accountsActions";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from 'uuid';
 
 export type AccountProps = {
+    id: string,
     email: string,
     alias: string,
     agency?: string,
@@ -13,7 +15,7 @@ type AccountStoreProps = {
     accounts: AccountProps[],
     error: null | string | unknown,
     getAccounts: () => void,
-    addAccount: (account: AccountProps) => void,
+    addAccount: (account: Omit<AccountProps, "id">) => void,
 }
 
 export const useAccountStore = create<AccountStoreProps>((set) => ({
@@ -28,7 +30,7 @@ export const useAccountStore = create<AccountStoreProps>((set) => ({
         }
     },
     addAccount: async (account) => {
-        const data = { ...account };
+        const data = { ...account, id: uuidv4() };
         await addAccountsAction(data);
         try {
             set((state) => ({

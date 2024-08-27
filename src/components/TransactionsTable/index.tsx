@@ -21,7 +21,7 @@ export default function TransactionsTable() {
     let authStore = useAuthStore();
 
     let { transactions, fetchData, isLoading } = store;
-    let { accounts, getAccounts, addAccount } = accountStore;
+    let { accounts, getAccounts, addAccount, setCurrentAccount, currentAccount } = accountStore;
     let { user } = authStore;
 
     const userAccount = accounts.filter(account => account.email == user);
@@ -51,6 +51,7 @@ export default function TransactionsTable() {
                             <SelectItem
                                 key={account.email}
                                 value={account.alias}
+                                onChange={() => setCurrentAccount(account.id)}
                             >
                                 {account.alias} 
                             </SelectItem>

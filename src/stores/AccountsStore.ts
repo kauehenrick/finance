@@ -13,13 +13,16 @@ export type AccountProps = {
 
 type AccountStoreProps = {
     accounts: AccountProps[],
+    currentAccount: string,
     error: null | string | unknown,
     getAccounts: () => void,
     addAccount: (account: Omit<AccountProps, "id">) => void,
+    setCurrentAccount: (id: string) => void,
 }
 
 export const useAccountStore = create<AccountStoreProps>((set) => ({
     accounts: [],
+    currentAccount: '',
     error: null,
     getAccounts: async () => {
         try {
@@ -41,4 +44,7 @@ export const useAccountStore = create<AccountStoreProps>((set) => ({
             set({ error })
         }
     },
+    setCurrentAccount: (id) => {
+        set({ currentAccount: id })
+    }
 }))

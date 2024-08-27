@@ -27,6 +27,7 @@ import FormDialog from '../FormDialog';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import MoneyInput from '../ui/MoneyInput';
+import { useAccountStore } from '@/stores/AccountsStore';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -71,10 +72,12 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
     let transactionStore = useTransactionStore();
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();
+    let accountStore = useAccountStore();
 
     let { addTransaction } = transactionStore;
     let { categories, getCategories, addCategory } = categoryStore;
     let { subcategories, getSubcategories, addSubcategory } = subcategoryStore;
+    let { currentAccount } = accountStore;
 
     useEffect(() => {
         getCategories();
@@ -112,7 +115,8 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         const transactionData = {
             ...valuesWithoutImage,
             image: imageUrl,
-            isActive: true
+            isActive: true,
+            account: currentAccount,
         };
 
         addTransaction(transactionData);

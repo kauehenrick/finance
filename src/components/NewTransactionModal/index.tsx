@@ -127,7 +127,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
             isOpen={isOpen}
             onRequestClose={onRequestClose}
             overlayClassName="react-modal-overlay"
-            className="bg-background flex flex-col h-fit w-fit px-5 m-auto rounded-xl overflow-y-scroll max-h-screen"
+            className="bg-background flex flex-col h-fit w-fit px-5 m-auto rounded-xl"
             ariaHideApp={false}
         >
             <p className='font-bold text-xl pt-5'>Nova Transação</p>

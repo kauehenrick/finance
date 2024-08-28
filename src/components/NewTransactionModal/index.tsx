@@ -114,7 +114,7 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
 
         const transactionData = {
             ...valuesWithoutImage,
-            image: imageUrl,
+            imageUrl: imageUrl,
             isActive: true,
             account: currentAccount,
         };

@@ -12,14 +12,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-
-
-interface HeaderProps {
-    onOpenNewTransactionModal: () => void;
-}
 import { useAuthStore } from '@/stores/AuthStore';
+import NewTransactionModal from '../NewTransactionModal';
 
-export default function Header({ onOpenNewTransactionModal }: HeaderProps) {
+export default function Header() {
     const { logout } = useAuthStore();
 
     return (
@@ -27,8 +23,7 @@ export default function Header({ onOpenNewTransactionModal }: HeaderProps) {
             <img src={logoImg} className="logoImg w-52" />
 
             <div className="flex justify-between items-center gap-5 w-fit">
-
-                <Button onClick={onOpenNewTransactionModal} className='bg-blue text-white hover:text-black' variant="secondary">Nova Transação</Button>
+                <NewTransactionModal />
 
                 <Avatar>
                     <AvatarImage src="https://github.com/kauehenrick.png" alt="avatar" />

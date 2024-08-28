@@ -15,6 +15,7 @@ export type TransactionProps = {
     type: string,
     isActive: boolean,
     imageUrl: string,
+    account: string,
 }
 
 type TransactionStoreProps = {

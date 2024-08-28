@@ -74,7 +74,7 @@ export default function FormDialog(props: FormDialogProps) {
                                     <FormControl>
                                         <Input
                                             id={lowerCase}
-                                            className=""
+                                            placeholder={`Digite o título da ${lowerCase}`}
                                             {...field}
                                             onChange={event => field.onChange(event.target.value)}
                                         />

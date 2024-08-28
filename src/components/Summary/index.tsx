@@ -1,17 +1,21 @@
 import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
 import { useTransactionStore } from "@/stores/TransactionStore";
+import { useAccountStore } from "@/stores/AccountsStore";
 
 export default function Summary() {
     let store = useTransactionStore();
+    let accountStore = useAccountStore();
     
-    let { transactions } = store
+    let { transactions } = store;
+    let { currentAccount } = accountStore;
 
     const summary = transactions.reduce((acc, transaction) => {
+        const transactionValidation = transaction.isActive && transaction.account == currentAccount;
 
-        if (transaction.type === "deposit" && transaction.isActive) {
+        if (transaction.type === "deposit" && transactionValidation) {
             acc.deposits += transaction.amount;
             acc.total += transaction.amount;
-        } else if (transaction.isActive) {
+        } else if (transactionValidation) {
             acc.withdraws += transaction.amount;
             acc.total -= transaction.amount;
         }

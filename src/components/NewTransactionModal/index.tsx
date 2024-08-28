@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect } from 'react';
-import Modal from 'react-modal';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,11 +27,16 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import MoneyInput from '../ui/MoneyInput';
 import { useAccountStore } from '@/stores/AccountsStore';
-
-interface NewTransactionModalProps {
-    isOpen: boolean;
-    onRequestClose: () => void;
-}
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogClose,
+} from "@/components/ui/dialog"
+import { useState } from 'react';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -49,7 +53,7 @@ const formSchema = z.object({
     category: z.string(),
     subcategory: z.string(),
     place: z.string().optional(),
-    date: z.coerce.date({ required_error: "Este campo deve ser preenchido!", invalid_type_error: "Insira uma data válida!"}),
+    date: z.coerce.date({ required_error: "Este campo deve ser preenchido!", invalid_type_error: "Insira uma data válida!" }),
     note: z.string().optional(),
     image: z.any()
         .refine(
@@ -68,7 +72,9 @@ async function uploadImage(file: File) {
     return await getDownloadURL(storageRef);
 }
 
-export default function NewTransactionModal({ isOpen, onRequestClose }: NewTransactionModalProps) {
+export default function NewTransactionModal() {
+    const [open, setOpen] = useState(false)
+
     let transactionStore = useTransactionStore();
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();
@@ -120,232 +126,230 @@ export default function NewTransactionModal({ isOpen, onRequestClose }: NewTrans
         };
 
         addTransaction(transactionData);
-
         form.reset();
-
-        onRequestClose();
+        setOpen(false);
     }
 
     return (
-        <Modal
-            isOpen={isOpen}
-            onRequestClose={onRequestClose}
-            overlayClassName="react-modal-overlay"
-            className="bg-background flex flex-col h-fit w-fit px-5 m-auto rounded-xl"
-            ariaHideApp={false}
-        >
-            <p className='font-bold text-xl pt-5'>Nova Transação</p>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className='bg-blue text-white hover:text-black' variant="secondary">Nova Transação</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Nova Transação</DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center min-h-100 h-fit py-4 space-y-10">
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center min-h-100 h-fit py-4 space-y-10">
+                        <div className='space-y-6'>
 
-                    <div className='space-y-6'>
+                            <FormField
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input type='text' placeholder='Descrição' {...field} onChange={event => field.onChange(event.target.value)} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input type='text' placeholder='Descrição' {...field} onChange={event => field.onChange(event.target.value)} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <MoneyInput form={form} label='' placeholder='Preço' {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <MoneyInput form={form} label='' placeholder='Preço' {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="category"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row gap-2 items-center">
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger className="w-[240px] gap-2">
+                                                <SelectValue
+                                                    placeholder="Selecione uma categoria..."
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Categorias</SelectLabel>
+                                                    {categories.map(category => (
+                                                        <SelectItem
+                                                            key={category.id}
+                                                            value={category.name}
+                                                        >
+                                                            {category.name}
+                                                        </SelectItem>
+                                                    ))
+                                                    }
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
 
-                        <FormField
-                            control={form.control}
-                            name="category"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-row gap-2 items-center">
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger className="w-[240px] gap-2">
-                                            <SelectValue
-                                                placeholder="Selecione uma categoria..."
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Categorias</SelectLabel>
-                                                {categories.map(category => (
-                                                    <SelectItem
-                                                        key={category.id}
-                                                        value={category.name}
-                                                    >
-                                                        {category.name}
-                                                    </SelectItem>
-                                                ))
-                                                }
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
+                                        <FormDialog inputValue="categoria" addValue={addCategory} />
 
-                                    <FormDialog inputValue="categoria" addValue={addCategory} />
+                                    </FormItem>
+                                )}
+                            />
 
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="subcategory"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row gap-2 items-center">
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger className="w-[240px] gap-2">
+                                                <SelectValue
+                                                    placeholder="Selecione uma subcategoria..."
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Subcategorias</SelectLabel>
+                                                    {subcategories.map(subcategory => (
+                                                        <SelectItem
+                                                            key={subcategory.id}
+                                                            value={subcategory.name}
+                                                        >
+                                                            {subcategory.name}
+                                                        </SelectItem>
+                                                    ))
+                                                    }
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
 
-                        <FormField
-                            control={form.control}
-                            name="subcategory"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-row gap-2 items-center">
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger className="w-[240px] gap-2">
-                                            <SelectValue
-                                                placeholder="Selecione uma subcategoria..."
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Subcategorias</SelectLabel>
-                                                {subcategories.map(subcategory => (
-                                                    <SelectItem
-                                                        key={subcategory.id}
-                                                        value={subcategory.name}
-                                                    >
-                                                        {subcategory.name}
-                                                    </SelectItem>
-                                                ))
-                                                }
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
+                                        <FormDialog inputValue="subcategoria" addValue={addSubcategory} />
 
-                                    <FormDialog inputValue="subcategoria" addValue={addSubcategory} />
+                                    </FormItem>
+                                )}
+                            />
 
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="date"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <Input
-                                        className="w-fit"
-                                        type="date"
-                                        {...field}
-                                        value={
-                                            field.value instanceof Date
-                                                ? field.value.toISOString().split('T')[0]
-                                                : field.value
-                                        }
-                                    />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="place"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input type="text" placeholder='Local' {...field}></Input>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="note"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Textarea placeholder='Observação' {...field}></Textarea>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="image"
-                            render={({ field: { value, onChange, ...fieldProps } }) => (
-                                <FormItem>
-                                    <FormControl>
+                            <FormField
+                                control={form.control}
+                                name="date"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
                                         <Input
-                                            {...fieldProps}
-                                            type="file"
-                                            onChange={(event) =>
-                                                onChange(event.target.files && event.target.files[0])
+                                            className="w-fit"
+                                            type="date"
+                                            {...field}
+                                            value={
+                                                field.value instanceof Date
+                                                    ? field.value.toISOString().split('T')[0]
+                                                    : field.value
                                             }
                                         />
-                                    </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="place"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input type="text" placeholder='Local' {...field}></Input>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="note"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Textarea placeholder='Observação' {...field}></Textarea>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="image"
+                                render={({ field: { value, onChange, ...fieldProps } }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input
+                                                {...fieldProps}
+                                                type="file"
+                                                onChange={(event) =>
+                                                    onChange(event.target.files && event.target.files[0])
+                                                }
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
+
+                        <FormField
+                            control={form.control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
                                     <FormMessage />
+
+                                    <RadioGroup
+                                        onValueChange={field.onChange}
+                                        defaultValue="deposit"
+                                        className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
+                                    >
+                                        <FormItem>
+                                            <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
+                                                <FormControl>
+                                                    <RadioGroupItem value="deposit" className="sr-only" />
+                                                </FormControl>
+                                                <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                    <CircleArrowUp color='green' />
+                                                    <p>Entrada</p>
+                                                </div>
+                                            </FormLabel>
+                                        </FormItem>
+
+                                        <FormItem>
+                                            <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
+                                                <FormControl>
+                                                    <RadioGroupItem value="withdraw" className="sr-only" />
+                                                </FormControl>
+                                                <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                    <CircleArrowDown color='red' />
+                                                    <p>Saída</p>
+                                                </div>
+                                            </FormLabel>
+                                        </FormItem>
+                                    </RadioGroup>
                                 </FormItem>
                             )}
                         />
 
-                    </div>
-
-                    <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                            <FormItem className="space-y-1">
-                                <FormMessage />
-
-                                <RadioGroup
-                                    onValueChange={field.onChange}
-                                    defaultValue="deposit"
-                                    className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
-                                >
-                                    <FormItem>
-                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
-                                            <FormControl>
-                                                <RadioGroupItem value="deposit" className="sr-only" />
-                                            </FormControl>
-                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                                <CircleArrowUp color='green' />
-                                                <p>Entrada</p>
-                                            </div>
-                                        </FormLabel>
-                                    </FormItem>
-
-                                    <FormItem>
-                                        <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
-                                            <FormControl>
-                                                <RadioGroupItem value="withdraw" className="sr-only" />
-                                            </FormControl>
-                                            <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                                <CircleArrowDown color='red' />
-                                                <p>Saída</p>
-                                            </div>
-                                        </FormLabel>
-                                    </FormItem>
-                                </RadioGroup>
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="flex justify-end gap-4">
-                        <Button variant="ghost" className='border' onClick={onRequestClose}>Cancelar</Button>
-                        <Button type="submit" value="submit">Salvar</Button>
-                    </div>
-                </form>
-            </Form>
-        </Modal >
+                        <DialogFooter>
+                            <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                            <Button type="submit">Salvar</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
     )
 }

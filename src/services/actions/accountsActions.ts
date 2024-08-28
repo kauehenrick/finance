@@ -1,5 +1,5 @@
 import { db } from '../../../firebaseConfig';
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { getAccountsAccess } from "../dataAccess/accountsAccess";
 import { AccountProps } from "@/stores/AccountsStore";
 
@@ -15,10 +15,6 @@ export async function getAccountsAction() {
 }
 
 export async function addAccountsAction(account: AccountProps) {
-    await addDoc(collection(db, "accounts"), {
-        email: account.email,
-        alias: account.alias,
-        agency: account.agency,
-        number: account.number,
-    });
+    const docRef = doc(db, "accounts", account.id);
+    await setDoc(docRef, account);
 }

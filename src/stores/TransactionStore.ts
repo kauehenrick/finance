@@ -14,6 +14,7 @@ export type TransactionProps = {
     note?: string | undefined,
     type: string,
     isActive: boolean,
+    account: string,
 }
 
 type TransactionStoreProps = {

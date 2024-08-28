@@ -85,7 +85,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                                     <FormControl>
                                         <Input
                                             id={lowerCase}
-                                            className=""
+                                            placeholder="Digite o nome da sua conta"
                                             {...field}
                                             onChange={event => field.onChange(event.target.value)}
                                         />
@@ -104,7 +104,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                                     <FormControl>
                                         <Input
                                             id="agency"
-                                            className=""
+                                            placeholder="Digite o número da sua agência."
                                             {...field}
                                             onChange={event => field.onChange(event.target.value)}
                                         />
@@ -123,7 +123,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                                     <FormControl>
                                         <Input
                                             id="number"
-                                            className=""
+                                            placeholder="Digite o número da sua conta."
                                             {...field}
                                             onChange={event => field.onChange(event.target.value)}
                                         />

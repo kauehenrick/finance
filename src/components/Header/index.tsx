@@ -19,36 +19,37 @@ export default function Header() {
     const { logout } = useAuthStore();
 
     return (
-        <div className="bg-dark-800">
-            <img src={logoImg} className="logoImg w-52" />
+        <div className="bg-dark-800 flex justify-center items-center flex-col h-48">
+            <div className="flex justify-around w-full">
+                <img src={logoImg} className="logoImg w-52"/>
 
-            <div className="flex items-center gap-5">
-                <NewTransactionModal />
+                <div className="flex items-center gap-4">
+                    <Avatar>
+                        <AvatarImage src="https://github.com/kauehenrick.png" alt="avatar" />
+                        <AvatarFallback>KH</AvatarFallback>
+                    </Avatar>
 
-                <Avatar>
-                    <AvatarImage src="https://github.com/kauehenrick.png" alt="avatar" />
-                    <AvatarFallback>KH</AvatarFallback>
-                </Avatar>
-
-                <Dialog>
-                    <DialogTrigger>
-                        <CirclePower size={30} color="white" />
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Realizar logout</DialogTitle>
-                        </DialogHeader>
-                        <DialogDescription>Deseja realmente sair do seu usuário?</DialogDescription>
-                        <DialogFooter>
-                            <div className="flex justify-end gap-4">
-                                <DialogClose><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                                <Button onClick={logout}>Sair</Button>
-                            </div>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
+                    <Dialog>
+                        <DialogTrigger>
+                            <CirclePower size={30} color="white" />
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Realizar logout</DialogTitle>
+                            </DialogHeader>
+                            <DialogDescription>Deseja realmente sair do seu usuário?</DialogDescription>
+                            <DialogFooter>
+                                <div className="flex justify-end">
+                                    <DialogClose><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                                    <Button onClick={logout}>Sair</Button>
+                                </div>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
+
+            <NewTransactionModal />
         </div>
     )
 }

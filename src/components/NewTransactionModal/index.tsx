@@ -35,6 +35,7 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose,
+    DialogDescription,
 } from "@/components/ui/dialog"
 import { useState } from 'react';
 
@@ -136,6 +137,7 @@ export default function NewTransactionModal() {
                 <Button className='bg-blue text-white hover:text-black' variant="secondary">Nova Transação</Button>
             </DialogTrigger>
             <DialogContent>
+                <DialogDescription />
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>

@@ -40,7 +40,7 @@ export default function TransactionsTable() {
     })
 
     return (
-        <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
+        <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-10">
             <div className="flex mt-3 mb-5 gap-2">
                 <Select onValueChange={(e) => setCurrentAccount(e)}>
                     <SelectTrigger className="w-[180px]">

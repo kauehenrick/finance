@@ -77,7 +77,7 @@ export default function RegisterUser() {
     }
 
     return (
-        <div className="bg-background flex flex-row h-screen items-center justify-between">
+        <div className="bg-background flex flex-col h-screen items-center justify-between">
             <div className="p-5 m-auto">
 
                 <Form {...form}>
@@ -140,7 +140,7 @@ export default function RegisterUser() {
 
             </div>
 
-            <img src={moneyBackgroundImg} alt="" className="h-full w-2/4" />
+            <img src={moneyBackgroundImg} alt="" className="h-0" />
 
         </div>
     )

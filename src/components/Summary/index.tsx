@@ -28,7 +28,7 @@ export default function Summary() {
     })
 
     return (
-        <div className="">
+        <div className="flex flex-col items-center gap-3 -mt-7">
 
             <div className="bg-white items-center rounded-xl">
                 <header className="flex justify-between h-15 mb-1">

@@ -1,55 +1,62 @@
-import logoImg from '../../assets/finance_logo.png';
-import { Button } from '../ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
-import { CirclePower } from "lucide-react";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogFooter,
-    DialogClose,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from '../ui/button';
+import { CiLogout } from "react-icons/ci";
 import { useAuthStore } from '@/stores/AuthStore';
-import NewTransactionModal from '../NewTransactionModal';
+
+let greetingMessage = ""
+let currentHour = new Date().getHours()
+
+if (currentHour <= 12) {
+    greetingMessage = "Bom dia";
+} else if (currentHour <= 17) {
+    greetingMessage = "Boa tarde";
+} else {
+    greetingMessage = "Boa Noite";
+}
 
 export default function Header() {
-    const { logout } = useAuthStore();
+    let authStore = useAuthStore();
+
+    let { logout } = authStore;
 
     return (
         <div className="bg-dark-800 flex justify-center items-center flex-col h-48">
-            <div className="flex justify-around w-full">
-                <img src={logoImg} className="logoImg w-52"/>
+            <div className="flex items-center w-full">
+                <div className="flex items-center gap-5 ml-8">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Avatar className='size-16 border-2 border-white'>
+                                <AvatarImage src="https://github.com/kauehenrick.png" alt="avatar" />
+                                <AvatarFallback>KH</AvatarFallback>
+                            </Avatar>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel>Opções</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Button variant="ghost" className="gap-2" onClick={logout}>
+                                    <CiLogout />
+                                    <p>Realizar Logout</p>
+                                </Button>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
-                <div className="flex items-center gap-4">
-                    <Avatar>
-                        <AvatarImage src="https://github.com/kauehenrick.png" alt="avatar" />
-                        <AvatarFallback>KH</AvatarFallback>
-                    </Avatar>
+                    <p className="text-white text-lg">
+                        {greetingMessage} Kauê, <br />
+                        <span className="font-medium text-xl">Seja Bem-vindo!</span>
+                    </p>
 
-                    <Dialog>
-                        <DialogTrigger>
-                            <CirclePower size={30} color="white" />
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Realizar logout</DialogTitle>
-                            </DialogHeader>
-                            <DialogDescription>Deseja realmente sair do seu usuário?</DialogDescription>
-                            <DialogFooter>
-                                <div className="flex justify-end">
-                                    <DialogClose><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                                    <Button onClick={logout}>Sair</Button>
-                                </div>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
                 </div>
             </div>
-
-            <NewTransactionModal />
         </div>
     )
 }

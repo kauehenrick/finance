@@ -21,6 +21,7 @@ import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 import { useUserStore } from "@/stores/UserStore"
 import { useEffect } from "react"
+import logoImg from "../assets/finance_logo.png"
 
 const formSchema = z
     .object({
@@ -69,6 +70,7 @@ export default function RegisterUser() {
                     navigate("/login");
                 })
                 .catch((error) => {
+                    alert(error.message);
                     setError(true);
                 });
         }
@@ -82,7 +84,9 @@ export default function RegisterUser() {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
-                        <p className="font-semibold text-4xl">Cadastrar Usuário</p>
+                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto" />
+
+                        <p className="font-semibold text-4xl m-auto">Cadastrar Usuário</p>
 
                         <p className="text-lg">Insira suas credenciais para realizar o cadastro.</p>
 

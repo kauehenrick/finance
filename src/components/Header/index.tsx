@@ -19,10 +19,10 @@ export default function Header() {
     const { logout } = useAuthStore();
 
     return (
-        <div className="bg-dark-800 flex items-center justify-around h-48">
+        <div className="bg-dark-800">
             <img src={logoImg} className="logoImg w-52" />
 
-            <div className="flex justify-between items-center gap-5 w-fit">
+            <div className="flex items-center gap-5">
                 <NewTransactionModal />
 
                 <Avatar>

@@ -28,9 +28,9 @@ export default function Summary() {
     })
 
     return (
-        <div className="flex justify-around w-9/12 m-auto -mt-10">
+        <div className="">
 
-            <div className="bg-white items-center rounded-xl h-auto w-80 py-8 px-4">
+            <div className="bg-white items-center rounded-xl">
                 <header className="flex justify-between h-15 mb-1">
                     <p>Entradas</p>
 
@@ -46,7 +46,7 @@ export default function Summary() {
             </div>
 
 
-            <div className="bg-white items-center rounded-xl h-auto w-80 py-8 px-4">
+            <div className="bg-white items-center rounded-xl">
                 <header className="flex justify-between mb-1">
                     <p>Saídas</p>
                     <CircleArrowDown color="red" />
@@ -58,7 +58,7 @@ export default function Summary() {
                     }).format(summary.withdraws)}</strong>
             </div>
 
-            <div className="bg-blue items-center rounded-xl text-white h-auto w-80 py-8 px-4">
+            <div className="bg-blue text-white items-center rounded-xl ">
                 <header className="flex justify-between mb-1">
                     <p>Total</p>
                     <CircleDollarSign />

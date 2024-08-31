@@ -82,13 +82,12 @@ export default function Login() {
                 navigate("/");
             })
             .catch((error) => {
-                alert(error.message)
                 setError(true);
             });
     }
 
     return (
-        <div className="bg-background flex flex-col h-screen items-center justify-between">
+        <div className="bg-background flex flex-col md:flex-row h-screen items-center justify-between">
             <div className="flex flex-col p-5 m-auto">
 
                 <Form {...form}>
@@ -160,7 +159,7 @@ export default function Login() {
 
             </div>
 
-            <img src={moneyBackgroundImg} alt="" className="h-0" />
+            <img src={moneyBackgroundImg} alt="" className="max-sm:hidden w-2/4 h-full" />
 
         </div>
     )

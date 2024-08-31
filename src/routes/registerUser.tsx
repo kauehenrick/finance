@@ -70,7 +70,6 @@ export default function RegisterUser() {
                     navigate("/login");
                 })
                 .catch((error) => {
-                    alert(error.message);
                     setError(true);
                 });
         }
@@ -79,7 +78,7 @@ export default function RegisterUser() {
     }
 
     return (
-        <div className="bg-background flex flex-col h-screen items-center justify-between">
+        <div className="bg-background flex flex-col md:flex-row h-screen items-center justify-between">
             <div className="p-5 m-auto">
 
                 <Form {...form}>
@@ -144,7 +143,7 @@ export default function RegisterUser() {
 
             </div>
 
-            <img src={moneyBackgroundImg} alt="" className="h-0" />
+            <img src={moneyBackgroundImg} alt="" className="max-sm:hidden w-2/4 h-full" />
 
         </div>
     )

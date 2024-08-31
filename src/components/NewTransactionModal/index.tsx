@@ -38,6 +38,7 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog"
 import { useState } from 'react';
+import { PlusCircle } from 'lucide-react';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -134,14 +135,17 @@ export default function NewTransactionModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className='bg-blue text-white hover:text-black' variant="secondary">Nova Transação</Button>
+                <Button className='bg-blue text-white hover:text-black rounded-3xl min-w-16' variant="secondary">
+                    <PlusCircle />
+                    <p className='max-sm:hidden ml-2'>Nova Transação</p>
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogDescription />
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
-                <Form {...form}>
+                <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center min-h-100 h-fit py-4 space-y-10">
 
                         <div className='space-y-6'>

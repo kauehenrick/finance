@@ -21,6 +21,7 @@ module.exports = {
         '100': '25rem',
       },
       colors: {
+        'purple-700': '#9A359B',
         'dark-800': '#09090A',
         'dark-600': '#262D3E',
         'red': '#e52e4d',

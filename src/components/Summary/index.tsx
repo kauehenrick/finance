@@ -28,7 +28,7 @@ export default function Summary() {
     })
 
     return (
-        <div className="bg-white rounded-xl w-11/12 m-auto flex flex-col items-center gap-3 -mt-9 py-4">
+        <div className="bg-white rounded-xl w-11/12 md:w-1/4 m-auto flex flex-col items-center gap-3 -mt-9 md:mt-0 py-4">
             <div className="flex bg-white-700 items-center rounded-xl py-3 w-11/12">
                 <div className="border-2 h-[60px] border-green ml-4 mr-6"></div>
 

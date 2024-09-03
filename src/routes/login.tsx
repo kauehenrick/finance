@@ -52,7 +52,7 @@ export default function Login() {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
-            login(user.email)
+            login(user.email, user.displayName)
             navigate("/");
             const createUser = () => {
                 addUser({
@@ -77,7 +77,7 @@ export default function Login() {
         signInWithEmailAndPassword(auth, values.username, values.password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                login(user.email)
+                login(user.email, user.displayName)
                 navigate("/");
             })
             .catch((error) => {

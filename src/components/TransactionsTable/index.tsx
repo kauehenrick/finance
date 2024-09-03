@@ -24,7 +24,7 @@ export default function TransactionsTable() {
     let { accounts, getAccounts, addAccount, setCurrentAccount, currentAccount } = accountStore;
     let { user } = authStore;
 
-    const userAccount = accounts.filter(account => account.email == user);
+    const userAccount = accounts.filter(account => account.email == user.userEmail);
 
     useEffect(() => {
         fetchData();

@@ -41,10 +41,12 @@ export default function TransactionsTable() {
 
     return (
         <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
-            <div className="flex mt-3 mb-5 gap-2">
+            {isLoading && <div className="p-3">Carregando...</div>}
+
+            <div className="flex mt-3 gap-2">
                 <Select onValueChange={(e) => setCurrentAccount(e)}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Selecione a conta"/>
+                        <SelectValue placeholder="Selecione a conta" />
                     </SelectTrigger>
                     <SelectContent>
                         {userAccount.map(account => (
@@ -52,17 +54,15 @@ export default function TransactionsTable() {
                                 key={account.id}
                                 value={account.id}
                             >
-                                {account.alias} 
+                                {account.alias}
                             </SelectItem>
                         ))
                         }
                     </SelectContent>
                 </Select>
 
-                <DataTableDialog inputValue="conta" addValue={addAccount}/>
+                <DataTableDialog inputValue="conta" addValue={addAccount} />
             </div>
-
-            {isLoading && <div className="p-3">Carregando...</div>}
 
             <DataTable columns={columns} data={transactionsActive} />
         </div>

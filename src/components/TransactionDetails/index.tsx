@@ -15,7 +15,7 @@ export default function TransactionDetails(transaction: TransactionProps) {
     return (
         <Dialog>
             <DialogTrigger>
-                <PlusCircle size={18} />
+                <PlusCircle size={18} className="ml-5"/>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

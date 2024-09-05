@@ -6,20 +6,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown, Check, ChevronsUpDown } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
 import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { useCategoryStore } from "@/stores/CategoryStore";
 import { useSubcategoryStore } from '@/stores/SubcategoryStore';
 import FormDialog from '../FormDialog';
@@ -51,7 +42,6 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 

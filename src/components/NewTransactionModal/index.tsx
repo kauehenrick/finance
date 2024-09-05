@@ -189,7 +189,7 @@ export default function NewTransactionModal() {
                                 control={form.control}
                                 name="category"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row gap-2 items-center">
+                                    <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
@@ -251,7 +251,7 @@ export default function NewTransactionModal() {
                                 control={form.control}
                                 name="subcategory"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row gap-2 items-center">
+                                    <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <FormControl>

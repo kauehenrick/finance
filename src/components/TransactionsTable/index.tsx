@@ -69,8 +69,6 @@ export default function TransactionsTable() {
                 </div>
             </div>
 
-            {isLoading && <div className="p-3">Carregando...</div>}
-
             <DataTable columns={columns} data={transactionsActive} />
         </div>
     )

@@ -14,6 +14,7 @@ import {
 import { useAccountStore } from "@/stores/AccountsStore";
 import { useAuthStore } from "@/stores/AuthStore";
 import DataTableDialog from "../DataTableDialog";
+import NewTransactionModal from "../NewTransactionModal";
 
 export default function TransactionsTable() {
     let store = useTransactionStore();
@@ -40,28 +41,32 @@ export default function TransactionsTable() {
     })
 
     return (
-        <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-20">
-            {isLoading && <div className="p-3">Carregando...</div>}
+        <div className="bg-white border rounded-lg p-2 w-10/12 m-auto mt-10">
+            <div className="flex justify-between mt-3 mb-5 gap-2 mx-5">
+                <div className="flex">
+                    <Select onValueChange={(e) => setCurrentAccount(e)}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Selecione a conta" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {userAccount.map(account => (
+                                <SelectItem
+                                    key={account.id}
+                                    value={account.id}
+                                >
+                                    {account.alias}
+                                </SelectItem>
+                            ))
+                            }
+                        </SelectContent>
+                    </Select>
 
-            <div className="flex mt-3 gap-2 p-2 border w-fit rounded-lg">
-                <Select onValueChange={(e) => setCurrentAccount(e)}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Selecione a conta" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {userAccount.map(account => (
-                            <SelectItem
-                                key={account.id}
-                                value={account.id}
-                            >
-                                {account.alias}
-                            </SelectItem>
-                        ))
-                        }
-                    </SelectContent>
-                </Select>
+                    <DataTableDialog inputValue="conta" addValue={addAccount} />
+                </div>
 
-                <DataTableDialog inputValue="conta" addValue={addAccount} />
+                <div className="max-sm:hidden">
+                    <NewTransactionModal />
+                </div>
             </div>
 
             <DataTable columns={columns} data={transactionsActive} />

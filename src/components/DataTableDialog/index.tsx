@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -65,6 +66,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
+                <DialogDescription />
                 <Form {...form}>
                     <form onSubmit={
                         e => {

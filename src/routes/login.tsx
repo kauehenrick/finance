@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { useUserStore } from "@/stores/UserStore";
 import { useEffect } from "react";
+import logoImg from "../assets/finance_logo.png"
 
 const formSchema = z.object({
     username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
@@ -86,11 +87,13 @@ export default function Login() {
     }
 
     return (
-        <div className="bg-background flex flex-row h-screen items-center justify-between">
+        <div className="bg-background flex flex-col md:flex-row h-screen items-center justify-between">
             <div className="flex flex-col p-5 m-auto">
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
+                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto"/>
+
                         <p className="font-semibold text-4xl">Bem-vindo de volta!</p>
 
                         <p className="text-lg">Acesse sua conta para continuar.</p>
@@ -156,7 +159,7 @@ export default function Login() {
 
             </div>
 
-            <img src={moneyBackgroundImg} alt="" className="h-full w-2/4" />
+            <img src={moneyBackgroundImg} alt="" className="max-sm:hidden w-2/4 h-full" />
 
         </div>
     )

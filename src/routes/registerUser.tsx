@@ -21,6 +21,7 @@ import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 import { useUserStore } from "@/stores/UserStore"
 import { useEffect } from "react"
+import logoImg from "../assets/finance_logo.png"
 
 const formSchema = z
     .object({
@@ -77,12 +78,14 @@ export default function RegisterUser() {
     }
 
     return (
-        <div className="bg-background flex flex-row h-screen items-center justify-between">
+        <div className="bg-background flex flex-col md:flex-row h-screen items-center justify-between">
             <div className="p-5 m-auto">
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
-                        <p className="font-semibold text-4xl">Cadastrar Usuário</p>
+                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto" />
+
+                        <p className="font-semibold text-4xl m-auto">Cadastrar Usuário</p>
 
                         <p className="text-lg">Insira suas credenciais para realizar o cadastro.</p>
 
@@ -140,7 +143,7 @@ export default function RegisterUser() {
 
             </div>
 
-            <img src={moneyBackgroundImg} alt="" className="h-full w-2/4" />
+            <img src={moneyBackgroundImg} alt="" className="max-sm:hidden w-2/4 h-full" />
 
         </div>
     )

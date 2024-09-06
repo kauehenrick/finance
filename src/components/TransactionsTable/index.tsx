@@ -45,8 +45,8 @@ export default function TransactionsTable() {
             
             {isLoading && <div className="p-3">Carregando...</div>}
 
-            <div className="flex justify-between mt-3 gap-2 mx-5">
-                <div className="flex">
+            <div className="flex justify-between mt-3 gap-2">
+                <div className="flex border rounded-lg p-2">
                     <Select onValueChange={(e) => setCurrentAccount(e)}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Selecione a conta" />
@@ -67,7 +67,7 @@ export default function TransactionsTable() {
                     <DataTableDialog inputValue="conta" addValue={addAccount} />
                 </div>
 
-                <div className="max-sm:hidden">
+                <div className="max-sm:hidden mr-2">
                     <NewTransactionModal />
                 </div>
             </div>

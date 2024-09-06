@@ -6,20 +6,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown, Check, ChevronsUpDown, PlusCircle } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
 import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { useCategoryStore } from "@/stores/CategoryStore";
 import { useSubcategoryStore } from '@/stores/SubcategoryStore';
 import FormDialog from '../FormDialog';
@@ -38,7 +29,20 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog"
 import { useState } from 'react';
-import { PlusCircle } from 'lucide-react';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -180,28 +184,57 @@ export default function NewTransactionModal() {
                                 control={form.control}
                                 name="category"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row gap-2 items-center">
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <SelectTrigger className="w-[240px] gap-2">
-                                                <SelectValue
-                                                    placeholder="Selecione uma categoria..."
-                                                />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Categorias</SelectLabel>
-                                                    {categories.map(category => (
-                                                        <SelectItem
-                                                            key={category.id}
-                                                            value={category.name}
-                                                        >
-                                                            {category.name}
-                                                        </SelectItem>
-                                                    ))
-                                                    }
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                    <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        role="combobox"
+                                                        className={cn(
+                                                            "w-[250px] justify-between",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value
+                                                            ? categories.find(
+                                                                (category) => category.name === field.value
+                                                            )?.name
+                                                            : "Selecione a categoria"}
+                                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-[200px] p-0">
+                                                <Command>
+                                                    <CommandInput placeholder="Pesquisar..." />
+                                                    <CommandList>
+                                                        <CommandEmpty>No category found.</CommandEmpty>
+                                                        <CommandGroup>
+                                                            {categories.map((category) => (
+                                                                <CommandItem
+                                                                    value={category.name}
+                                                                    key={category.id}
+                                                                    onSelect={() => {
+                                                                        form.setValue("category", category.name)
+                                                                    }}
+                                                                >
+                                                                    <Check
+                                                                        className={cn(
+                                                                            "mr-2 h-4 w-4",
+                                                                            category.name === field.value
+                                                                                ? "opacity-100"
+                                                                                : "opacity-0"
+                                                                        )}
+                                                                    />
+                                                                    {category.name}
+                                                                </CommandItem>
+                                                            ))}
+                                                        </CommandGroup>
+                                                    </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
 
                                         <FormDialog inputValue="categoria" addValue={addCategory} />
 
@@ -213,28 +246,57 @@ export default function NewTransactionModal() {
                                 control={form.control}
                                 name="subcategory"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row gap-2 items-center">
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <SelectTrigger className="w-[240px] gap-2">
-                                                <SelectValue
-                                                    placeholder="Selecione uma subcategoria..."
-                                                />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Subcategorias</SelectLabel>
-                                                    {subcategories.map(subcategory => (
-                                                        <SelectItem
-                                                            key={subcategory.id}
-                                                            value={subcategory.name}
-                                                        >
-                                                            {subcategory.name}
-                                                        </SelectItem>
-                                                    ))
-                                                    }
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                    <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant="outline"
+                                                        role="combobox"
+                                                        className={cn(
+                                                            "w-[250px] justify-between",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value
+                                                            ? subcategories.find(
+                                                                (subcategory) => subcategory.name === field.value
+                                                            )?.name
+                                                            : "Selecione a subcategoria"}
+                                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-[200px] p-0">
+                                                <Command>
+                                                    <CommandInput placeholder="Pesquisar..." />
+                                                    <CommandList>
+                                                        <CommandEmpty>Nenhuma subcategoria encontrada.</CommandEmpty>
+                                                        <CommandGroup>
+                                                            {subcategories.map((subcategory) => (
+                                                                <CommandItem
+                                                                    value={subcategory.name}
+                                                                    key={subcategory.id}
+                                                                    onSelect={() => {
+                                                                        form.setValue("subcategory", subcategory.name)
+                                                                    }}
+                                                                >
+                                                                    <Check
+                                                                        className={cn(
+                                                                            "mr-2 h-4 w-4",
+                                                                            subcategory.name === field.value
+                                                                                ? "opacity-100"
+                                                                                : "opacity-0"
+                                                                        )}
+                                                                    />
+                                                                    {subcategory.name}
+                                                                </CommandItem>
+                                                            ))}
+                                                        </CommandGroup>
+                                                    </CommandList>
+                                                </Command>
+                                            </PopoverContent>
+                                        </Popover>
 
                                         <FormDialog inputValue="subcategoria" addValue={addSubcategory} />
 

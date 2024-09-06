@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown, Check, ChevronsUpDown } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown, Check, ChevronsUpDown, PlusCircle } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTransactionStore } from '@/stores/TransactionStore';
@@ -26,6 +26,7 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose,
+    DialogDescription,
 } from "@/components/ui/dialog"
 import { useState } from 'react';
 import {
@@ -138,13 +139,17 @@ export default function NewTransactionModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className='bg-blue text-white hover:text-black' variant="secondary">Nova Transação</Button>
+                <Button className='bg-blue text-white hover:text-black rounded-3xl min-w-16' variant="secondary">
+                    <PlusCircle />
+                    <p className='max-sm:hidden ml-2'>Nova Transação</p>
+                </Button>
             </DialogTrigger>
             <DialogContent>
+                <DialogDescription />
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
-                <Form {...form}>
+                <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center min-h-100 h-fit py-4 space-y-10">
 
                         <div className='space-y-6'>

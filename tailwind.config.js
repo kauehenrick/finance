@@ -21,6 +21,7 @@ module.exports = {
         '100': '25rem',
       },
       colors: {
+        'purple-700': '#9A359B',
         'dark-800': '#09090A',
         'dark-600': '#262D3E',
         'red': '#e52e4d',
@@ -30,10 +31,11 @@ module.exports = {
         'text-title': '#363f5f',
         'text-body': '#969cb3',
         'bg-gray': '#202024',
+        'white-700': '#f9f6f2',
+        background: '#f0f2f5',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#f0f2f5",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",

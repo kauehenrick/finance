@@ -1,11 +1,11 @@
-import { CircleArrowUp, CircleArrowDown, CircleDollarSign } from "lucide-react";
 import { useTransactionStore } from "@/stores/TransactionStore";
 import { useAccountStore } from "@/stores/AccountsStore";
+import { priceFormatter } from "@/lib/formatter";
 
 export default function Summary() {
     let store = useTransactionStore();
     let accountStore = useAccountStore();
-    
+
     let { transactions } = store;
     let { currentAccount } = accountStore;
 
@@ -28,46 +28,27 @@ export default function Summary() {
     })
 
     return (
-        <div className="flex justify-around w-9/12 m-auto -mt-10">
+        <div className="bg-white rounded-xl w-11/12 md:w-1/4 m-auto flex flex-col items-center gap-3 -mt-9 md:mt-0 py-4">
+            <div className="flex bg-white-700 items-center rounded-xl py-3 w-11/12">
+                <div className="border-2 h-[60px] border-green ml-4 mr-6"></div>
 
-            <div className="bg-white items-center rounded-xl h-auto w-80 py-8 px-4">
-                <header className="flex justify-between h-15 mb-1">
-                    <p>Entradas</p>
+                <div>
+                    <p className="mb-1">Saldo total</p>
 
-                    <div>
-                        <CircleArrowUp color="green" />
-                    </div>
-                </header>
-
-                <strong className="text-3xl">{new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'brl'
-                    }).format(summary.deposits)}</strong>
+                    <strong className="text-2xl">{priceFormatter.format(summary.total)}</strong>
+                </div>
             </div>
 
+            <div className="flex flex-col bg-white-700 rounded-xl py-3 pl-5 w-11/12">
+                <p className="mb-1">Entradas</p>
 
-            <div className="bg-white items-center rounded-xl h-auto w-80 py-8 px-4">
-                <header className="flex justify-between mb-1">
-                    <p>Saídas</p>
-                    <CircleArrowDown color="red" />
-                </header>
-
-                <strong className="text-3xl">- {new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'brl'
-                    }).format(summary.withdraws)}</strong>
+                <p className="text-2xl text-green font-bold">{priceFormatter.format(summary.deposits)}</p>
             </div>
 
-            <div className="bg-blue items-center rounded-xl text-white h-auto w-80 py-8 px-4">
-                <header className="flex justify-between mb-1">
-                    <p>Total</p>
-                    <CircleDollarSign />
-                </header>
+            <div className="flex flex-col bg-white-700 rounded-xl py-3 pl-5 w-11/12">
+                <p className="mb-1">Saídas</p>
 
-                <strong className="text-3xl"> {new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'brl'
-                    }).format(summary.total)}</strong>
+                <p className="text-2xl text-red font-bold">-{priceFormatter.format(summary.withdraws)}</p>
             </div>
         </div>
     )

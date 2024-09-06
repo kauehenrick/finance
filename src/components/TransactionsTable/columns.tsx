@@ -126,7 +126,7 @@ export const columns: ColumnDef<TransactionProps>[] = [
       return (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger>
-            <Trash2 color="red" size={"18px"}></Trash2>
+            <Trash2 color="red" size={"18px"} className="ml-5"></Trash2>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -149,7 +149,7 @@ export const columns: ColumnDef<TransactionProps>[] = [
     header: () => <div>Detalhes</div>,
     cell: ({ row }) => {
       return (
-        <TransactionDetails {...row.original} />
+        <TransactionDetails {...row.original}/>
       )
     }
   },

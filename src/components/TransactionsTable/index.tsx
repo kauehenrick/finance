@@ -46,7 +46,7 @@ export default function TransactionsTable() {
             {isLoading && <div className="p-3">Carregando...</div>}
 
             <div className="flex justify-between mt-3 gap-2">
-                <div className="flex border rounded-lg p-2">
+                <div className="flex border rounded-lg p-2 gap-2">
                     <Select onValueChange={(e) => setCurrentAccount(e)}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Selecione a conta" />

@@ -22,6 +22,7 @@ import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { useUserStore } from "@/stores/UserStore";
+import { useAccountStore } from "@/stores/AccountsStore"
 import { useEffect } from "react";
 import logoImg from "../assets/finance_logo.png"
 
@@ -34,8 +35,10 @@ export default function Login() {
     const [error, setError] = useState(false);
 
     const userStore = useUserStore();
+    const accountStore = useAccountStore();
 
     let { users, getUsers, addUser } = userStore;
+    let { setCurrentAccount } = accountStore;
 
     useEffect(() => {
         getUsers();
@@ -53,6 +56,7 @@ export default function Login() {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
+            setCurrentAccount("");
             login(user.email, user.displayName)
             navigate("/");
             const createUser = () => {
@@ -79,6 +83,7 @@ export default function Login() {
             .then((userCredential) => {
                 const user = userCredential.user;
                 login(user.email, user.displayName)
+                setCurrentAccount("");
                 navigate("/");
             })
             .catch((error) => {

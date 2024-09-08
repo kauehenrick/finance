@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: `${import.meta.env.VITE_FIREBASE_API_KEY}`,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "fiance-react.firebaseapp.com",
   projectId: "fiance-react",
   storageBucket: "fiance-react.appspot.com",
   messagingSenderId: "566701837142",
-  appId: `${import.meta.env.VITE_FIREBASE_ID}`,
+  appId: import.meta.env.VITE_FIREBASE_ID,
   measurementId: "G-XRXNM8DYBN"
 };
 

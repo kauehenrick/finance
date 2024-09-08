@@ -1,13 +1,22 @@
 import { useTransactionStore } from "@/stores/TransactionStore";
 import { useAccountStore } from "@/stores/AccountsStore";
+import { useAuthStore } from "@/stores/AuthStore";
 import { priceFormatter } from "@/lib/formatter";
 
 export default function Summary() {
-    let store = useTransactionStore();
+    let transactionStore = useTransactionStore();
     let accountStore = useAccountStore();
+    let authStore = useAuthStore();
 
-    let { transactions } = store;
-    let { currentAccount } = accountStore;
+    let { transactions } = transactionStore;
+    let { accounts, currentAccount } = accountStore;
+    let { user } = authStore;
+
+    const userAccount = accounts.filter(account => account.email == user.userEmail);
+
+    if (userAccount.length > 0 && currentAccount == "") {
+        currentAccount = accounts[0].id;
+    }
 
     const summary = transactions.reduce((acc, transaction) => {
         const transactionValidation = transaction.isActive && transaction.account == currentAccount;

@@ -14,7 +14,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-
 import {
     Table,
     TableBody,
@@ -23,8 +22,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-
 import { Input } from "@/components/ui/input"
+import NewTransactionModal from "../NewTransactionModal"
+import SelectAccount from "../SelectAccount"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -56,18 +56,34 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div>
-            <div className="flex items-center py-4">
-                <Input
-                    placeholder="Filtrar transações..."
-                    value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("title")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
+        <>
+            <div className="flex justify-between items-center mt-3 mb-6 mx-5">
+                <div className="flex flex-col md:flex-row gap-5">
+                    <div className="flex flex-col gap-2">
+                        <p className="text-sm font-medium">Selecione a conta:</p>
+
+                        <SelectAccount />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <p className="text-sm font-medium">Pesquisar transação:</p>
+
+                        <Input
+                            placeholder="Filtrar transações..."
+                            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+                            onChange={(event) =>
+                                table.getColumn("title")?.setFilterValue(event.target.value)
+                            }
+                            className="w-80"
+                        />
+                    </div>
+                </div>
+
+                <div className="max-sm:hidden mr-2">
+                    <NewTransactionModal />
+                </div>
             </div>
-            
+
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -130,6 +146,6 @@ export function DataTable<TData, TValue>({
                     Próximo
                 </Button>
             </div>
-        </div>
+        </>
     )
 }

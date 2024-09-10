@@ -12,7 +12,7 @@ export default function TransactionsTable() {
     let accountStore = useAccountStore()
     let authStore = useAuthStore();
 
-    let { user } = authStore;
+    let { user, getUserInfo } = authStore;
     let { transactions, fetchData, isLoading } = transactionStore;
     let { accounts, currentAccount } = accountStore;
 
@@ -20,7 +20,9 @@ export default function TransactionsTable() {
         fetchData();
     }, []);
 
-    const userAccount = accounts.filter(account => account.email == user.userEmail);
+    const decryptedUser = getUserInfo(user);
+
+    const userAccount = accounts.filter(account => account.email == decryptedUser.userEmail);
 
     if (userAccount.length > 0 && currentAccount == "") {
         currentAccount = accounts[0].id;

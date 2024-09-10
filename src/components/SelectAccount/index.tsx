@@ -17,9 +17,11 @@ export default function SelectAccount() {
     let accountStore = useAccountStore();
 
     let { accounts, getAccounts, addAccount, setCurrentAccount } = accountStore;
-    let { user } = authStore;
+    let { user, getUserInfo } = authStore;
 
-    const userAccount = accounts.filter(account => account.email == user.userEmail);
+    const decryptedUser = getUserInfo(user);
+
+    const userAccount = accounts.filter(account => account.email == decryptedUser.userEmail);
 
     useEffect(() => {
         getAccounts();

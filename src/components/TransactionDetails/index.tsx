@@ -22,7 +22,7 @@ export default function TransactionDetails(transaction: TransactionProps) {
                 <DialogHeader>
                     <DialogTitle className="text-xl">Detalhes da Transação</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="h-[650px] py-4">
+                <ScrollArea className="h-[600px] py-4">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col border-2 rounded-lg px-4 py-2 gap-1">
                             <p className="font-semibold text-lg">Descrição</p>

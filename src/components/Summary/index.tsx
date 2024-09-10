@@ -10,9 +10,11 @@ export default function Summary() {
 
     let { transactions } = transactionStore;
     let { accounts, currentAccount } = accountStore;
-    let { user } = authStore;
+    let { user, getUserInfo } = authStore;
 
-    const userAccount = accounts.filter(account => account.email == user.userEmail);
+    const decryptedUser = getUserInfo(user);
+
+    const userAccount = accounts.filter(account => account.email == decryptedUser.userEmail);
 
     if (userAccount.length > 0 && currentAccount == "") {
         currentAccount = accounts[0].id;

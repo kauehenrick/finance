@@ -150,7 +150,7 @@ export default function NewTransactionModal() {
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="h-[750px]">
+                <ScrollArea className="h-[600px]">
                     <Form {...form} >
                         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
 
@@ -412,7 +412,7 @@ export default function NewTransactionModal() {
                                     </FormItem>
                                 )}
                             />
-                            <DialogFooter className="self-end">
+                            <DialogFooter className="w-full flex self-end">
                                 <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
                                 <Button type="submit">Salvar</Button>
                             </DialogFooter>

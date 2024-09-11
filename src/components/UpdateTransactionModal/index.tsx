@@ -35,6 +35,8 @@ import {
 import { cn } from "@/lib/utils";
 import { ScrollArea } from '../ui/scroll-area';
 import { TransactionProps } from '@/stores/TransactionStore';
+import { useAccountStore } from "@/stores/AccountsStore";
+import { useTransactionStore } from "@/stores/TransactionStore";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -61,18 +63,22 @@ const formSchema = z.object({
 async function uploadImage(file: File) {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${uuidv4()}_${file.name}`);
-
     await uploadBytes(storageRef, file);
-
     return await getDownloadURL(storageRef);
 }
 
 export default function UpdateTransactionModal(transaction: TransactionProps) {
+    //const [open, setOpen] = useState(false)
+
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();
+    let accountStore = useAccountStore();
+    let transactionStore = useTransactionStore()
 
     let { categories, addCategory } = categoryStore;
     let { subcategories, addSubcategory } = subcategoryStore;
+    let { currentAccount } = accountStore;
+    let { updateTransaction } = transactionStore;
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -88,11 +94,37 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
         },
     });
 
-    return (
-        <ScrollArea className="h-[600px]">
-            <Form {...form} >
-                <form /*onSubmit={form.handleSubmit(onSubmit)}*/ className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        let imageUrl = "";
 
+        if (values.image) {
+            try {
+                imageUrl = await uploadImage(values.image);
+            } catch (error) {
+                console.error("Erro ao fazer upload da imagem: ", error);
+                return;
+            }
+        }
+
+        const { image, ...valuesWithoutImage } = values;
+
+        const transactionData = {
+            ...valuesWithoutImage,
+            imageUrl: imageUrl,
+            isActive: true,
+            account: currentAccount,
+            id: transaction.id,
+        };
+
+        updateTransaction(transactionData);
+        form.reset();
+        //setOpen(false);
+    }
+
+    return (
+        <Form {...form} >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
+                <ScrollArea className="h-[500px]">
                     <div className='space-y-6'>
 
                         <FormField
@@ -316,12 +348,12 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                         control={form.control}
                         name="type"
                         render={({ field }) => (
-                            <FormItem className="space-y-1">
+                            <FormItem className="space-y-1 py-5">
                                 <FormMessage />
 
                                 <RadioGroup
                                     onValueChange={field.onChange}
-                                    defaultValue="deposit"
+                                    defaultValue={transaction.type}
                                     className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
                                 >
                                     <FormItem>
@@ -351,12 +383,13 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                             </FormItem>
                         )}
                     />
-                    <DialogFooter className="w-full flex self-end">
-                        <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                        <Button type="submit">Salvar</Button>
-                    </DialogFooter>
-                </form>
-            </Form>
-        </ScrollArea>
+                </ScrollArea>
+                <DialogFooter className="w-full flex self-end">
+                    <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                    <Button type="submit">Salvar</Button>
+                </DialogFooter>
+            </form>
+        </Form>
+
     )
 } 

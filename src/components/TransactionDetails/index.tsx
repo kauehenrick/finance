@@ -11,6 +11,7 @@ import {
 import { Button } from "../ui/button";
 import { priceFormatter, dateFormatter } from "@/lib/formatter";
 import { ScrollArea } from "../ui/scroll-area";
+import UpdateTransactionModal from "../UpdateTransactionModal";
 
 export default function TransactionDetails(transaction: TransactionProps) {
     return (
@@ -59,7 +60,17 @@ export default function TransactionDetails(transaction: TransactionProps) {
                     </div>
                 </ScrollArea>
                 <DialogFooter>
-                    <Button>Editar Transação</Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button>Editar Transação</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Editar Transação</DialogTitle>
+                            </DialogHeader>
+                            <UpdateTransactionModal {...transaction} />
+                        </DialogContent>
+                    </Dialog>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

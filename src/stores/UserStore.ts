@@ -5,6 +5,7 @@ export type UserProps = {
     id: string;
     name: string | null;
     email: string | null;
+    userSubscription: Date;
 }
 
 type UserStoreProps = {

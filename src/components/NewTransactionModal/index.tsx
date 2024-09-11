@@ -146,15 +146,14 @@ export default function NewTransactionModal() {
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogDescription />
+            <DialogDescription className="hidden"/>
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="h-[600px]">
                     <Form {...form} >
                         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
-
-                            <div className='space-y-6'>
+                        <ScrollArea className="h-[500px] w-full">
+                            <div className='space-y-6 w-[400px] py-2 m-auto'>
 
                                 <FormField
                                     control={form.control}
@@ -412,13 +411,13 @@ export default function NewTransactionModal() {
                                     </FormItem>
                                 )}
                             />
+                            </ScrollArea>
                             <DialogFooter className="w-full flex self-end">
                                 <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
                                 <Button type="submit">Salvar</Button>
                             </DialogFooter>
                         </form>
                     </Form>
-                </ScrollArea>
             </DialogContent>
         </Dialog>
     )

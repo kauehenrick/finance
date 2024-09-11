@@ -68,8 +68,6 @@ async function uploadImage(file: File) {
 }
 
 export default function UpdateTransactionModal(transaction: TransactionProps) {
-    //const [open, setOpen] = useState(false)
-
     let categoryStore = useCategoryStore();
     let subcategoryStore = useSubcategoryStore();
     let accountStore = useAccountStore();
@@ -90,7 +88,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
             type: transaction.type,
             place: transaction.place,
             note: transaction.note,
-            date: new Date(transaction.date),
+            date: transaction.date,
         },
     });
 
@@ -114,18 +112,16 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
             isActive: true,
             account: currentAccount,
             id: transaction.id,
-        };
+        }; 
 
         updateTransaction(transactionData);
-        form.reset();
-        //setOpen(false);
     }
 
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
-                <ScrollArea className="h-[500px]">
-                    <div className='space-y-6'>
+                <ScrollArea className="h-[500px] w-full">
+                    <div className='space-y-6 w-[400px] py-2 m-auto'>
 
                         <FormField
                             control={form.control}
@@ -350,7 +346,6 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                         render={({ field }) => (
                             <FormItem className="space-y-1 py-5">
                                 <FormMessage />
-
                                 <RadioGroup
                                     onValueChange={field.onChange}
                                     defaultValue={transaction.type}
@@ -386,7 +381,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                 </ScrollArea>
                 <DialogFooter className="w-full flex self-end">
                     <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                    <Button type="submit">Salvar</Button>
+                    <DialogClose asChild><Button type="submit">Salvar</Button></DialogClose>
                 </DialogFooter>
             </form>
         </Form>

@@ -3,6 +3,7 @@ import { PlusCircle } from "lucide-react";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -23,6 +24,7 @@ export default function TransactionDetails(transaction: TransactionProps) {
                 <DialogHeader>
                     <DialogTitle className="text-xl">Detalhes da Transação</DialogTitle>
                 </DialogHeader>
+                <DialogDescription className="hidden"/>
                 <ScrollArea className="h-[600px] py-4">
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col border-2 rounded-lg px-4 py-2 gap-1">
@@ -68,6 +70,7 @@ export default function TransactionDetails(transaction: TransactionProps) {
                             <DialogHeader>
                                 <DialogTitle>Editar Transação</DialogTitle>
                             </DialogHeader>
+                            <DialogDescription className="hidden"/>
                             <UpdateTransactionModal {...transaction} />
                         </DialogContent>
                     </Dialog>

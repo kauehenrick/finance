@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -53,6 +54,7 @@ export default function FormDialog(props: FormDialogProps) {
                     Criar Nova
                 </Button>
             </DialogTrigger>
+            <DialogDescription className="hidden"/>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
                     <form onSubmit={

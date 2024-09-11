@@ -65,8 +65,9 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                     Criar Nova
                 </Button>
             </DialogTrigger>
+            <DialogDescription className="hidden"/>
             <DialogContent className="sm:max-w-[425px]">
-                <DialogDescription />
+                <DialogDescription className="hidden"/>
                 <Form {...form}>
                     <form onSubmit={
                         e => {
@@ -134,7 +135,6 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                                 </FormItem>
                             )}
                         />
-
                         <DialogFooter>
                             <Button className="mt-3">Salvar</Button>
                         </DialogFooter>

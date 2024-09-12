@@ -26,7 +26,6 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose,
-    DialogDescription,
 } from "@/components/ui/dialog"
 import { useState } from 'react';
 import {
@@ -44,6 +43,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from '../ui/scroll-area';
+import CreditCard from '../CreditCard';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -53,6 +53,7 @@ const formSchema = z.object({
     }),
     //coerce used to fix input number value
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
+    creditCard: z.string(),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
@@ -146,7 +147,6 @@ export default function NewTransactionModal() {
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogDescription />
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
@@ -155,7 +155,6 @@ export default function NewTransactionModal() {
                         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
 
                             <div className='space-y-6'>
-
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -178,6 +177,16 @@ export default function NewTransactionModal() {
                                                 <MoneyInput form={form} label='' placeholder='Preço' {...field} />
                                             </FormControl>
                                             <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="creditCard"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <CreditCard />
                                         </FormItem>
                                     )}
                                 />

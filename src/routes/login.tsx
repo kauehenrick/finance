@@ -21,10 +21,15 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { useUserStore } from "@/stores/UserStore";
+import { UserProps, useUserStore } from "@/stores/UserStore";
 import { useAccountStore } from "@/stores/AccountsStore"
 import { useEffect } from "react";
 import logoImg from "../assets/finance_logo.png"
+
+type userLoginProps = {
+    email: string | null,
+    displayName: string | null,
+}
 
 const formSchema = z.object({
     username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
@@ -52,34 +57,40 @@ export default function Login() {
         navigate("/registerUser")
     }
 
+    function validateSubscription(isUserRegistered: UserProps, func: Function) {
+        const isUserSubscribed = isUserRegistered.userSubscription >= new Date();
+        if (isUserSubscribed) {
+            func()
+        } else {
+            setErrorMessage("Assinatura expirada.");
+        }
+    }
+
+    function handleLogin(user: userLoginProps) {
+        setCurrentAccount("");
+        login(user.email, user.displayName);
+        navigate("/");
+    }
+
     const handleGoogleSignIn = async () => {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
-            const createUser = () => {
+
+            const isUserRegistered = users.find(userRegistered => userRegistered.email == user.email);
+
+            const onLogin = () => {
+                handleLogin(user);
+            }
+
+            if (isUserRegistered) {
+                validateSubscription(isUserRegistered, onLogin)
+            } else {
                 addUser({
                     email: user.email,
                     name: user.displayName,
                 });
-            }
-
-            const loginValidationPattern = () => {
-                createUser();
-                setCurrentAccount("");
-                login(user.email, user.displayName)
-                navigate("/");
-            }
-
-            const isUserRegistered = users.find(userRegistered => userRegistered.email == user.email);
-            if (!isUserRegistered) {
-                loginValidationPattern();
-            } else {
-                const isUserSubscribed = isUserRegistered.userSubscription >= new Date();
-                if (isUserSubscribed) {
-                    loginValidationPattern();
-                } else {
-                    setErrorMessage("Assinatura expirada.");
-                }
+                onLogin();
             }
         })
     }
@@ -94,18 +105,17 @@ export default function Login() {
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         const isUserEmailValid = users.find(userRegistered => userRegistered.email == values.username)
+
         if (isUserEmailValid) {
             signInWithEmailAndPassword(auth, values.username, values.password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    const isUserSubscribed = isUserEmailValid.userSubscription >= new Date();
-                    if (isUserSubscribed) {
-                        login(user.email, user.displayName)
-                        setCurrentAccount("");
-                        navigate("/");
-                    } else {
-                        setErrorMessage("Assinatura expirada.");
+
+                    const onLogin = () => {
+                        handleLogin(user)
                     }
+
+                    validateSubscription(isUserEmailValid, onLogin);
                 })
                 .catch((error) => {
                     setErrorMessage("Email ou senha inválidos.");

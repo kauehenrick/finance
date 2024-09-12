@@ -32,7 +32,7 @@ const formSchema = z.object({
 })
 
 export default function Login() {
-    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const userStore = useUserStore();
     const accountStore = useAccountStore();
@@ -56,17 +56,31 @@ export default function Login() {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
-            setCurrentAccount("");
-            login(user.email, user.displayName)
-            navigate("/");
             const createUser = () => {
                 addUser({
-                    id: user.uid,
                     email: user.email,
                     name: user.displayName,
                 });
             }
-            users.find(userRegistered => userRegistered.email == user.email) ? null : createUser();
+
+            const loginValidationPattern = () => {
+                createUser();
+                setCurrentAccount("");
+                login(user.email, user.displayName)
+                navigate("/");
+            }
+
+            const isUserRegistered = users.find(userRegistered => userRegistered.email == user.email);
+            if (!isUserRegistered) {
+                loginValidationPattern();
+            } else {
+                const isUserSubscribed = isUserRegistered.userSubscription >= new Date();
+                if (isUserSubscribed) {
+                    loginValidationPattern();
+                } else {
+                    setErrorMessage("Assinatura expirada.");
+                }
+            }
         })
     }
 
@@ -79,16 +93,26 @@ export default function Login() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        signInWithEmailAndPassword(auth, values.username, values.password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                login(user.email, user.displayName)
-                setCurrentAccount("");
-                navigate("/");
-            })
-            .catch((error) => {
-                setError(true);
-            });
+        const isUserEmailValid = users.find(userRegistered => userRegistered.email == values.username)
+        if (isUserEmailValid) {
+            signInWithEmailAndPassword(auth, values.username, values.password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    const isUserSubscribed = isUserEmailValid.userSubscription >= new Date();
+                    if (isUserSubscribed) {
+                        login(user.email, user.displayName)
+                        setCurrentAccount("");
+                        navigate("/");
+                    } else {
+                        setErrorMessage("Assinatura expirada.");
+                    }
+                })
+                .catch((error) => {
+                    setErrorMessage("Email ou senha inválidos.");
+                })
+        } else {
+            setErrorMessage("Usuário não encontrado.");
+        }
     }
 
     return (
@@ -97,13 +121,13 @@ export default function Login() {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
-                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto"/>
+                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto" />
 
                         <p className="font-semibold text-4xl">Bem-vindo de volta!</p>
 
                         <p className="text-lg">Acesse sua conta para continuar.</p>
 
-                        {error && <span className="text-lg text-red">Email ou senha inválidos!</span>}
+                        {errorMessage === "" ? null : <span className="text-lg text-red">{errorMessage}</span>}
 
                         <FormField
                             control={form.control}

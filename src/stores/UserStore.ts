@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { getUsersAction, addUsersAction } from "@/services/actions/usersActions";
+import { v4 as uuidv4 } from 'uuid';
 
 export type UserProps = {
     id: string;
@@ -12,7 +13,7 @@ type UserStoreProps = {
     users: UserProps[],
     error: null | string | unknown,
     getUsers: () => void,
-    addUser: (user: UserProps) => void,
+    addUser: (user: Omit<UserProps, "userSubscription" | "id">) => void,
 }
 
 export const useUserStore = create<UserStoreProps>((set) => ({
@@ -27,7 +28,9 @@ export const useUserStore = create<UserStoreProps>((set) => ({
         }
     },
     addUser: async (user) => {
-        const data = { ...user };
+        const today = new Date();
+        const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        const data = { ...user, userSubscription: nextMonth, id: uuidv4() };
         await addUsersAction(data);
         try {
             set((state) => ({

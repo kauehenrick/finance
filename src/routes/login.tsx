@@ -79,12 +79,8 @@ export default function Login() {
 
             const isUserRegistered = users.find(userRegistered => userRegistered.email == user.email);
 
-            const onLogin = () => {
-                handleLogin(user);
-            }
-
             if (isUserRegistered) {
-                validateSubscription(isUserRegistered, onLogin)
+                validateSubscription(isUserRegistered, () => handleLogin(user))
             } else {
                 addUser({
                     email: user.email,
@@ -111,11 +107,7 @@ export default function Login() {
                 .then((userCredential) => {
                     const user = userCredential.user;
 
-                    const onLogin = () => {
-                        handleLogin(user)
-                    }
-
-                    validateSubscription(isUserEmailValid, onLogin);
+                    validateSubscription(isUserEmailValid, () => handleLogin(user));
                 })
                 .catch((error) => {
                     setErrorMessage("Email ou senha inválidos.");

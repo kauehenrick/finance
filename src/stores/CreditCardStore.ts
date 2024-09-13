@@ -5,11 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 export type CreditCardProps = {
     id: string,
-    userId: string,
+    userId: string | null,
     alias: string,
-    number: string;
+    number: number;
     expiry: string;
-    cvc: string;
+    cvc: number;
     name: string;
 }
 

@@ -19,6 +19,7 @@ import {
 import { Button } from '../ui/button';
 import { Plus } from 'lucide-react';
 import { useCreditCardStore } from '@/stores/CreditCardStore';
+import { useAuthStore } from '@/stores/AuthStore';
 
 type FocusedField = 'number' | 'expiry' | 'cvc' | 'name' | '';
 
@@ -32,9 +33,9 @@ interface PaymentFormState {
 
 const formSchema = z.object({
     alias: z.string().min(1, { message: "Este campo deve ser preenchido" }),
-    number: z.string().min(13, { message: "O número do cartão deve conter 13 caracteres" }),
-    expiry: z.string().min(4, { message: "Este campo deve ser preenchido" }),
-    cvc: z.string().min(3, { message: "Este campo deve ser preenchido" }).max(3, { message: "Este campo possuí apenas 3 digitos" }),
+    number: z.coerce.number({ invalid_type_error: "Esse campo aceita apenas números" }).min(13, { message: "O número do cartão deve conter no mínimo 13 caracteres" }),
+    expiry: z.string().min(1, { message: "Este campo deve ser preenchido" }).max(4, { message: "Data inválida" }),
+    cvc: z.coerce.number({ invalid_type_error: "Esse campo aceita apenas números" }).min(3, { message: "O CVC possuí 3 digitos" }),
     name: z.string().min(1, { message: "Este campo deve ser preenchido" }),
 })
 
@@ -49,16 +50,20 @@ export default function CreditCard() {
     });
 
     const creditCardStore = useCreditCardStore();
+    let authStore = useAuthStore();
 
+    let { user, getUserInfo } = authStore;
     const { addCreditCard } = creditCardStore;
+
+    const decryptedUser = getUserInfo(user)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             alias: '',
-            number: '',
+            number: undefined,
             expiry: '',
-            cvc: '',
+            cvc: undefined,
             name: '',
         }
     });
@@ -74,7 +79,7 @@ export default function CreditCard() {
     }
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        addCreditCard({ ...values, userId: "" })
+        addCreditCard({ ...values, userId: decryptedUser.userEmail })
         form.reset();
         setOpen(false);
     }
@@ -137,10 +142,13 @@ export default function CreditCard() {
                                         <FormControl>
                                             <Input
                                                 type="number"
-                                                name="number"
+                                                name={field.name}
                                                 placeholder="Número do cartão"
                                                 value={state.number}
-                                                onChange={handleInputChange}
+                                                onChange={(event) => {
+                                                    field.onChange(event);
+                                                    handleInputChange(event);
+                                                }}
                                                 onFocus={handleInputFocus}
                                             />
                                         </FormControl>
@@ -158,10 +166,13 @@ export default function CreditCard() {
                                         <FormControl>
                                             <Input
                                                 type="name"
-                                                name="name"
+                                                name={field.name}
                                                 placeholder="Nome"
                                                 value={state.name}
-                                                onChange={handleInputChange}
+                                                onChange={(event) => {
+                                                    field.onChange(event);
+                                                    handleInputChange(event);
+                                                }}
                                                 onFocus={handleInputFocus}
                                             />
                                         </FormControl>
@@ -180,10 +191,13 @@ export default function CreditCard() {
                                             <FormControl>
                                                 <Input
                                                     type="expiry"
-                                                    name="expiry"
+                                                    name={field.name}
                                                     placeholder="Data expiração (MM/AA)"
                                                     value={state.expiry}
-                                                    onChange={handleInputChange}
+                                                    onChange={(event) => {
+                                                        field.onChange(event);
+                                                        handleInputChange(event);
+                                                    }}
                                                     onFocus={handleInputFocus}
 
                                                 />
@@ -195,19 +209,21 @@ export default function CreditCard() {
 
                                 <FormField
                                     control={form.control}
-                                    name="expiry"
+                                    name="cvc"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel></FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="cvc"
-                                                    name="cvc"
+                                                    name={field.name}
                                                     placeholder="CVC"
                                                     value={state.cvc}
-                                                    onChange={handleInputChange}
+                                                    onChange={(event) => {
+                                                        field.onChange(event);
+                                                        handleInputChange(event);
+                                                    }}
                                                     onFocus={handleInputFocus}
-
                                                 />
                                             </FormControl>
                                             <FormMessage />

@@ -86,7 +86,7 @@ export default function Login() {
                     email: user.email,
                     name: user.displayName,
                 });
-                onLogin();
+                handleLogin(user)
             }
         })
     }

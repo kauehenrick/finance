@@ -21,10 +21,15 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { useUserStore } from "@/stores/UserStore";
+import { UserProps, useUserStore } from "@/stores/UserStore";
 import { useAccountStore } from "@/stores/AccountsStore"
 import { useEffect } from "react";
 import logoImg from "../assets/finance_logo.png"
+
+type userLoginProps = {
+    email: string | null,
+    displayName: string | null,
+}
 
 const formSchema = z.object({
     username: z.string().min(1, { message: "Esse campo deve ser preenchido." }).email("Esse não é um email válido."),
@@ -32,7 +37,7 @@ const formSchema = z.object({
 })
 
 export default function Login() {
-    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const userStore = useUserStore();
     const accountStore = useAccountStore();
@@ -52,21 +57,37 @@ export default function Login() {
         navigate("/registerUser")
     }
 
+    function validateSubscription(isUserRegistered: UserProps, func: Function) {
+        const isUserSubscribed = isUserRegistered.userSubscription >= new Date();
+        if (isUserSubscribed) {
+            func()
+        } else {
+            setErrorMessage("Assinatura expirada.");
+        }
+    }
+
+    function handleLogin(user: userLoginProps) {
+        setCurrentAccount("");
+        login(user.email, user.displayName);
+        navigate("/");
+    }
+
     const handleGoogleSignIn = async () => {
         const provider = await new GoogleAuthProvider();
         signInWithPopup(auth, provider).then((userCredential) => {
             const user = userCredential.user;
-            setCurrentAccount("");
-            login(user.email, user.displayName)
-            navigate("/");
-            const createUser = () => {
+
+            const isUserRegistered = users.find(userRegistered => userRegistered.email == user.email);
+
+            if (isUserRegistered) {
+                validateSubscription(isUserRegistered, () => handleLogin(user))
+            } else {
                 addUser({
-                    id: user.uid,
                     email: user.email,
                     name: user.displayName,
                 });
+                handleLogin(user)
             }
-            users.find(userRegistered => userRegistered.email == user.email) ? null : createUser();
         })
     }
 
@@ -79,16 +100,21 @@ export default function Login() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        signInWithEmailAndPassword(auth, values.username, values.password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                login(user.email, user.displayName)
-                setCurrentAccount("");
-                navigate("/");
-            })
-            .catch((error) => {
-                setError(true);
-            });
+        const isUserEmailValid = users.find(userRegistered => userRegistered.email == values.username)
+
+        if (isUserEmailValid) {
+            signInWithEmailAndPassword(auth, values.username, values.password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    validateSubscription(isUserEmailValid, () => handleLogin(user));
+                })
+                .catch((error) => {
+                    setErrorMessage("Email ou senha inválidos.");
+                })
+        } else {
+            setErrorMessage("Usuário não encontrado.");
+        }
     }
 
     return (
@@ -97,13 +123,13 @@ export default function Login() {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col">
-                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto"/>
+                        <img src={logoImg} alt="Logo Finance" className="w-52 m-auto" />
 
                         <p className="font-semibold text-4xl">Bem-vindo de volta!</p>
 
                         <p className="text-lg">Acesse sua conta para continuar.</p>
 
-                        {error && <span className="text-lg text-red">Email ou senha inválidos!</span>}
+                        {errorMessage === "" ? null : <span className="text-lg text-red">{errorMessage}</span>}
 
                         <FormField
                             control={form.control}

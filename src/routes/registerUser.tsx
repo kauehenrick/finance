@@ -61,8 +61,8 @@ export default function RegisterUser() {
             createUserWithEmailAndPassword(auth, values.username, values.password)
                 .then((userCredential) => {
                     const user = userCredential.user;
+
                     addUser({
-                        id: user.uid,
                         email: user.email,
                         name: user.displayName,
                     });

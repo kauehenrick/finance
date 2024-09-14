@@ -26,7 +26,6 @@ import {
     DialogTitle,
     DialogTrigger,
     DialogClose,
-    DialogDescription,
 } from "@/components/ui/dialog"
 import { useState } from 'react';
 import {
@@ -44,6 +43,10 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from '../ui/scroll-area';
+import CreditCard from '../CreditCard';
+import { useCreditCardStore } from '@/stores/CreditCardStore';
+import { useAuthStore } from '@/stores/AuthStore';
+import type { CreditCardProps } from '@/stores/CreditCardStore';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -53,6 +56,7 @@ const formSchema = z.object({
     }),
     //coerce used to fix input number value
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
+    creditCard: z.string(),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),
@@ -82,19 +86,34 @@ async function uploadImage(file: File) {
 export default function NewTransactionModal() {
     const [open, setOpen] = useState(false)
 
-    let transactionStore = useTransactionStore();
-    let categoryStore = useCategoryStore();
-    let subcategoryStore = useSubcategoryStore();
-    let accountStore = useAccountStore();
+    const transactionStore = useTransactionStore();
+    const categoryStore = useCategoryStore();
+    const subcategoryStore = useSubcategoryStore();
+    const accountStore = useAccountStore();
+    const creditCardStore = useCreditCardStore();
+    const authStore = useAuthStore();
 
     let { addTransaction } = transactionStore;
     let { categories, getCategories, addCategory } = categoryStore;
     let { subcategories, getSubcategories, addSubcategory } = subcategoryStore;
     let { currentAccount } = accountStore;
+    let { creditCards, getCreditCards } = creditCardStore;
+    let { user, getUserInfo } = authStore;
+
+    const decryptedUser = getUserInfo(user);
+
+    const validCreditCards: CreditCardProps[]  = []
+
+    creditCards.forEach(card => {
+        if (card.userId === decryptedUser.userEmail) {
+            validCreditCards.push(card);
+        }
+    })
 
     useEffect(() => {
         getCategories();
         getSubcategories();
+        getCreditCards();
     }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -146,7 +165,6 @@ export default function NewTransactionModal() {
                 </Button>
             </DialogTrigger>
             <DialogContent>
-            <DialogDescription className="hidden"/>
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
@@ -154,7 +172,6 @@ export default function NewTransactionModal() {
                         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
                         <ScrollArea className="h-[500px] w-full">
                             <div className='space-y-6 w-[400px] py-2 m-auto'>
-
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -177,6 +194,68 @@ export default function NewTransactionModal() {
                                                 <MoneyInput form={form} label='' placeholder='Preço' {...field} />
                                             </FormControl>
                                             <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="creditCard"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            className={cn(
+                                                                "w-[250px] justify-between",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            {field.value
+                                                                ? validCreditCards.find(
+                                                                    (creditCard) => creditCard.alias === field.value
+                                                                )?.alias
+                                                                : "Selecione o cartão de crédito"}
+                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-[200px] p-0">
+                                                    <Command>
+                                                        <CommandInput placeholder="Pesquisar..." />
+                                                        <CommandList>
+                                                            <CommandEmpty>Nenhum cartão encontrado.</CommandEmpty>
+                                                            <CommandGroup>
+                                                                {validCreditCards.map((creditCard) => (
+                                                                    <CommandItem
+                                                                        value={creditCard.alias}
+                                                                        key={creditCard.id}
+                                                                        onSelect={() => {
+                                                                            form.setValue("creditCard", creditCard.alias)
+                                                                        }}
+                                                                    >
+                                                                        <Check
+                                                                            className={cn(
+                                                                                "mr-2 h-4 w-4",
+                                                                                creditCard.name === field.value
+                                                                                    ? "opacity-100"
+                                                                                    : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                        {creditCard.alias}
+                                                                    </CommandItem>
+                                                                ))}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
+
+                                            <CreditCard />
+
                                         </FormItem>
                                     )}
                                 />
@@ -210,7 +289,7 @@ export default function NewTransactionModal() {
                                                     <Command>
                                                         <CommandInput placeholder="Pesquisar..." />
                                                         <CommandList>
-                                                            <CommandEmpty>No category found.</CommandEmpty>
+                                                            <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
                                                             <CommandGroup>
                                                                 {categories.map((category) => (
                                                                     <CommandItem

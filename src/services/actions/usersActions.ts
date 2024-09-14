@@ -1,5 +1,5 @@
 import { db } from '../../../firebaseConfig';
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { getUsersAccess } from '../dataAccess/usersAccess';
 import { UserProps } from '@/stores/UserStore';
 
@@ -11,12 +11,15 @@ export async function getUsersAction() {
         users.push(doc.data());
     })
 
+    users.forEach(e => {
+        const ts = (e.userSubscription.seconds + e.userSubscription.nanoseconds * 10 ** -9) * 1000;
+        e.userSubscription = new Date(ts);
+    })
+
     return users;
 }
 
 export async function addUsersAction(user: UserProps) {
-    await addDoc(collection(db, "users"), {
-        name: user.name,
-        email: user.email,
-    });
+    const docRef = doc(db, "users", user.id);
+    await setDoc(docRef, user);
 }

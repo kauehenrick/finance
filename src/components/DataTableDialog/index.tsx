@@ -9,7 +9,6 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogDescription
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -34,7 +33,8 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     
     let authStore = useAuthStore();
 
-    let { user } = authStore;
+    let { user, getUserInfo } = authStore;
+    const decryptedUser = getUserInfo(user)
 
     const capitalize = props.inputValue.charAt(0).toUpperCase() + props.inputValue.slice(1);
     const lowerCase = props.inputValue.toLowerCase();
@@ -48,7 +48,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        props.addValue({...values, email: user})
+        props.addValue({...values, email: decryptedUser.userEmail})
         form.reset();
         setOpen(false);
     }
@@ -65,9 +65,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                     Criar Nova
                 </Button>
             </DialogTrigger>
-            <DialogDescription className="hidden"/>
             <DialogContent className="sm:max-w-[425px]">
-                <DialogDescription className="hidden"/>
                 <Form {...form}>
                     <form onSubmit={
                         e => {

@@ -56,7 +56,7 @@ const formSchema = z.object({
     }),
     //coerce used to fix input number value
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
-    creditCard: z.string(),
+    creditCard: z.string().optional(),
     type: z.union([
         z.literal('deposit'),
         z.literal('withdraw'),

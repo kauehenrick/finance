@@ -331,7 +331,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                                     )}
                                 />
 
-                                <img src={transaction.imageUrl} alt="Preview da Imagem" className="border rounded-lg" />
+                                {transaction.imageUrl !== "" ? <img src={transaction.imageUrl} alt="Preview da Imagem" className="border rounded-lg" /> : null}
 
                                 <FormField
                                     control={form.control}

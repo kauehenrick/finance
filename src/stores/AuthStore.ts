@@ -15,14 +15,24 @@ interface AuthStore {
     getUserInfo: (user: userProps) => userProps;
 }
 
+const secretKey = import.meta.env.VITE_ENCRIPT_KEY;
+
 const encrypt = (data: string | null) => {
-    return AES.encrypt(JSON.stringify(data), '').toString()
-}
+    if (!data) return '';
+    return AES.encrypt(JSON.stringify(data), secretKey).toString();
+};
 
 const decrypt = (encryptedData: string) => {
-    const bytes = AES.decrypt(encryptedData, "")
-    return JSON.parse(bytes.toString(enc.Utf8))
-}
+    if (!encryptedData) return null;
+    try {
+        const bytes = AES.decrypt(encryptedData, secretKey);
+        const decryptedText = bytes.toString(enc.Utf8);
+        return decryptedText ? JSON.parse(decryptedText) : null;
+    } catch (error) {
+        console.error("Error decrypting data:", error);
+        return null;
+    }
+};
 
 export const useAuthStore = create(
     persist<AuthStore>(

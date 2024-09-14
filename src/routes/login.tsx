@@ -53,10 +53,6 @@ export default function Login() {
 
     const navigate = useNavigate();
 
-    const registerUser = () => {
-        navigate("/registerUser")
-    }
-
     function validateSubscription(isUserRegistered: UserProps, func: Function) {
         const isUserSubscribed = isUserRegistered.userSubscription >= new Date();
         if (isUserSubscribed) {
@@ -165,7 +161,7 @@ export default function Login() {
 
                         <div className="flex justify-between font-semibold">
                             <p>Não tem uma conta?</p>
-                            <p className="hover:font-bold cursor-pointer" onClick={registerUser}>Cadastre-se</p>
+                            <p className="hover:font-bold cursor-pointer" onClick={() => navigate("/registerUser")}>Cadastre-se</p>
                         </div>
 
                         <Button type="submit">Entrar</Button>

@@ -137,6 +137,12 @@ export default function RegisterUser() {
                                 </FormItem>
                             )}
                         />
+
+                        <div className="flex justify-between font-semibold">
+                            <p>Já tem um conta?</p>
+                            <p className="hover:font-bold cursor-pointer" onClick={() => navigate("/login")}>Fazer login</p>
+                        </div>
+
                         <Button type="submit">Cadastrar</Button>
                     </form>
                 </Form>

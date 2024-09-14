@@ -16,7 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
-import TransactionDetails from "../TransactionDetails"
+import UpdateTransactionModal from "../UpdateTransactionModal"
 
 export const columns: ColumnDef<TransactionProps>[] = [
   {
@@ -145,11 +145,11 @@ export const columns: ColumnDef<TransactionProps>[] = [
     },
   },
   {
-    id: "details",
-    header: () => <div>Detalhes</div>,
+    id: "edit",
+    header: () => <div>Editar</div>,
     cell: ({ row }) => {
       return (
-        <TransactionDetails {...row.original}/>
+        <UpdateTransactionModal {...row.original}/>
       )
     }
   },

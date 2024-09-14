@@ -133,7 +133,6 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                                 </FormItem>
                             )}
                         />
-
                         <DialogFooter>
                             <Button className="mt-3">Salvar</Button>
                         </DialogFooter>

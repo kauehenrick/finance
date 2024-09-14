@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { toast } from "sonner";
-import {addTransactionsAction, getTransactionsAction, updateTransactionsAction } from "@/services/actions/transactionsActions";
+import { addTransactionsAction, getTransactionsAction, updateTransactionsAction } from "@/services/actions/transactionsActions";
 import { v4 as uuidv4 } from 'uuid';
 
 export type TransactionProps = {
@@ -25,6 +25,7 @@ type TransactionStoreProps = {
     fetchData: () => void,
     addTransaction: (transaction: Omit<TransactionProps, "id">) => void,
     disableTransaction: (transaction: TransactionProps) => void,
+    updateTransaction: (transaction: TransactionProps) => void,
 }
 
 export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
@@ -41,7 +42,7 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
         }
     },
     addTransaction: async (transaction) => {
-        const data = {...transaction, id: uuidv4()};
+        const data = { ...transaction, id: uuidv4() };
         await addTransactionsAction(data)
         try {
             set((state) => ({
@@ -57,9 +58,21 @@ export const useTransactionStore = create<TransactionStoreProps>()((set) => ({
         await updateTransactionsAction(data)
         try {
             set((state) => ({
-                transactions: state.transactions.map((transaction) => transaction.id === data.id? {...transaction, isActive: false } : transaction)
+                transactions: state.transactions.map((transaction) => transaction.id === data.id ? { ...transaction, isActive: false } : transaction)
             }))
             toast.success("Transação desativada!");
+        } catch (error) {
+            set({ error })
+        }
+    },
+    updateTransaction: async (transaction) => {
+        const data = transaction;
+        await updateTransactionsAction(data)
+        try {
+            set((state) => ({
+                transactions: state.transactions.map((transaction) => transaction.id === data.id ? { ...transaction, ...data } : transaction)
+            }))
+            toast.success("Transação atualizada!");
         } catch (error) {
             set({ error })
         }

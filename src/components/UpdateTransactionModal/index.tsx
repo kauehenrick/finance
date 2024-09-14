@@ -1,15 +1,13 @@
 "use client"
 
-import { useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { CircleArrowUp, CircleArrowDown, Check, ChevronsUpDown, PlusCircle } from 'lucide-react';
+import { CircleArrowUp, CircleArrowDown, Check, ChevronsUpDown } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { useTransactionStore } from '@/stores/TransactionStore';
 import { Textarea } from "@/components/ui/textarea";
 import { useCategoryStore } from "@/stores/CategoryStore";
 import { useSubcategoryStore } from '@/stores/SubcategoryStore';
@@ -17,17 +15,15 @@ import FormDialog from '../FormDialog';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import MoneyInput from '../ui/MoneyInput';
-import { useAccountStore } from '@/stores/AccountsStore';
 import {
     Dialog,
     DialogContent,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
+    DialogFooter,
     DialogClose,
+    DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from 'react';
 import {
     Command,
     CommandEmpty,
@@ -43,10 +39,10 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from '../ui/scroll-area';
-import CreditCard from '../CreditCard';
-import { useCreditCardStore } from '@/stores/CreditCardStore';
-import { useAuthStore } from '@/stores/AuthStore';
-import type { CreditCardProps } from '@/stores/CreditCardStore';
+import { TransactionProps } from '@/stores/TransactionStore';
+import { useAccountStore } from "@/stores/AccountsStore";
+import { useTransactionStore } from "@/stores/TransactionStore";
+import { Pen } from "lucide-react";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -54,13 +50,8 @@ const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
         message: "O título deve conter ao menos 4 caracteres!",
     }),
-    //coerce used to fix input number value
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
-    creditCard: z.string(),
-    type: z.union([
-        z.literal('deposit'),
-        z.literal('withdraw'),
-    ], { message: "Esta opção é obrigatória." }),
+    type: z.string(),
     category: z.string(),
     subcategory: z.string(),
     place: z.string().optional(),
@@ -77,56 +68,32 @@ const formSchema = z.object({
 async function uploadImage(file: File) {
     const storage = getStorage();
     const storageRef = ref(storage, `images/${uuidv4()}_${file.name}`);
-
     await uploadBytes(storageRef, file);
-
     return await getDownloadURL(storageRef);
 }
 
-export default function NewTransactionModal() {
-    const [open, setOpen] = useState(false)
+export default function UpdateTransactionModal(transaction: TransactionProps) {
+    let categoryStore = useCategoryStore();
+    let subcategoryStore = useSubcategoryStore();
+    let accountStore = useAccountStore();
+    let transactionStore = useTransactionStore()
 
-    const transactionStore = useTransactionStore();
-    const categoryStore = useCategoryStore();
-    const subcategoryStore = useSubcategoryStore();
-    const accountStore = useAccountStore();
-    const creditCardStore = useCreditCardStore();
-    const authStore = useAuthStore();
-
-    let { addTransaction } = transactionStore;
-    let { categories, getCategories, addCategory } = categoryStore;
-    let { subcategories, getSubcategories, addSubcategory } = subcategoryStore;
+    let { categories, addCategory } = categoryStore;
+    let { subcategories, addSubcategory } = subcategoryStore;
     let { currentAccount } = accountStore;
-    let { creditCards, getCreditCards } = creditCardStore;
-    let { user, getUserInfo } = authStore;
-
-    const decryptedUser = getUserInfo(user);
-
-    const validCreditCards: CreditCardProps[]  = []
-
-    creditCards.forEach(card => {
-        if (card.userId === decryptedUser.userEmail) {
-            validCreditCards.push(card);
-        }
-    })
-
-    useEffect(() => {
-        getCategories();
-        getSubcategories();
-        getCreditCards();
-    }, []);
+    let { updateTransaction } = transactionStore;
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: '',
-            amount: 0,
-            category: '',
-            subcategory: '',
-            type: 'deposit',
-            place: '',
-            note: '',
-            date: new Date(),
+            title: transaction.title,
+            amount: transaction.amount,
+            category: transaction.category,
+            subcategory: transaction.subcategory,
+            type: transaction.type,
+            place: transaction.place,
+            note: transaction.note,
+            date: transaction.date,
         },
     });
 
@@ -149,27 +116,23 @@ export default function NewTransactionModal() {
             imageUrl: imageUrl,
             isActive: true,
             account: currentAccount,
+            id: transaction.id,
         };
 
-        addTransaction(transactionData);
-        form.reset();
-        setOpen(false);
+        updateTransaction(transactionData);
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog>
             <DialogTrigger asChild>
-                <Button className='bg-blue text-white hover:text-black rounded-3xl min-w-16' variant="secondary">
-                    <PlusCircle />
-                    <p className='max-sm:hidden ml-2'>Nova Transação</p>
-                </Button>
+                <Pen size={18} className="ml-3 hover:cursor-pointer" />
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Nova Transação</DialogTitle>
+                    <DialogTitle>Editar transação</DialogTitle>
                 </DialogHeader>
-                    <Form {...form} >
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
+                <Form {...form} >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
                         <ScrollArea className="h-[500px] w-full">
                             <div className='space-y-6 w-[400px] py-2 m-auto'>
                                 <FormField
@@ -194,68 +157,6 @@ export default function NewTransactionModal() {
                                                 <MoneyInput form={form} label='' placeholder='Preço' {...field} />
                                             </FormControl>
                                             <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="creditCard"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button
-                                                            variant="outline"
-                                                            role="combobox"
-                                                            className={cn(
-                                                                "w-[250px] justify-between",
-                                                                !field.value && "text-muted-foreground"
-                                                            )}
-                                                        >
-                                                            {field.value
-                                                                ? validCreditCards.find(
-                                                                    (creditCard) => creditCard.alias === field.value
-                                                                )?.alias
-                                                                : "Selecione o cartão de crédito"}
-                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-[200px] p-0">
-                                                    <Command>
-                                                        <CommandInput placeholder="Pesquisar..." />
-                                                        <CommandList>
-                                                            <CommandEmpty>Nenhum cartão encontrado.</CommandEmpty>
-                                                            <CommandGroup>
-                                                                {validCreditCards.map((creditCard) => (
-                                                                    <CommandItem
-                                                                        value={creditCard.alias}
-                                                                        key={creditCard.id}
-                                                                        onSelect={() => {
-                                                                            form.setValue("creditCard", creditCard.alias)
-                                                                        }}
-                                                                    >
-                                                                        <Check
-                                                                            className={cn(
-                                                                                "mr-2 h-4 w-4",
-                                                                                creditCard.name === field.value
-                                                                                    ? "opacity-100"
-                                                                                    : "opacity-0"
-                                                                            )}
-                                                                        />
-                                                                        {creditCard.alias}
-                                                                    </CommandItem>
-                                                                ))}
-                                                            </CommandGroup>
-                                                        </CommandList>
-                                                    </Command>
-                                                </PopoverContent>
-                                            </Popover>
-
-                                            <CreditCard />
-
                                         </FormItem>
                                     )}
                                 />
@@ -289,7 +190,7 @@ export default function NewTransactionModal() {
                                                     <Command>
                                                         <CommandInput placeholder="Pesquisar..." />
                                                         <CommandList>
-                                                            <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
+                                                            <CommandEmpty>No category found.</CommandEmpty>
                                                             <CommandGroup>
                                                                 {categories.map((category) => (
                                                                     <CommandItem
@@ -430,6 +331,8 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
+                                <img src={transaction.imageUrl} alt="Preview da Imagem" className="border rounded-lg" />
+
                                 <FormField
                                     control={form.control}
                                     name="image"
@@ -455,12 +358,11 @@ export default function NewTransactionModal() {
                                 control={form.control}
                                 name="type"
                                 render={({ field }) => (
-                                    <FormItem className="space-y-1">
+                                    <FormItem className="space-y-1 py-5">
                                         <FormMessage />
-
                                         <RadioGroup
                                             onValueChange={field.onChange}
-                                            defaultValue="deposit"
+                                            defaultValue={transaction.type}
                                             className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
                                         >
                                             <FormItem>
@@ -490,14 +392,14 @@ export default function NewTransactionModal() {
                                     </FormItem>
                                 )}
                             />
-                            </ScrollArea>
-                            <DialogFooter className="w-full flex self-end">
-                                <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                                <Button type="submit">Salvar</Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
+                        </ScrollArea>
+                        <DialogFooter className="w-full flex self-end">
+                            <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                            <DialogClose asChild><Button type="submit">Salvar</Button></DialogClose>
+                        </DialogFooter>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     )
-}
+} 

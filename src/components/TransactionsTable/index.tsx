@@ -14,7 +14,7 @@ export default function TransactionsTable() {
 
     let { user, getUserInfo } = authStore;
     let { transactions, fetchData, isLoading } = transactionStore;
-    let { accounts, currentAccount } = accountStore;
+    let { accounts, currentAccount, setCurrentAccount } = accountStore;
 
     useEffect(() => {
         fetchData();
@@ -25,7 +25,7 @@ export default function TransactionsTable() {
     const userAccount = accounts.filter(account => account.email == decryptedUser.userEmail);
 
     if (userAccount.length > 0 && currentAccount == "") {
-        currentAccount = accounts[0].id;
+        setCurrentAccount(accounts[0].id);
     }
 
     let transactionsActive: TransactionProps[] = [];
@@ -38,7 +38,7 @@ export default function TransactionsTable() {
 
     return (
         <div className="bg-white border rounded-lg p-2 w-11/12 m-auto mt-10">
-            {isLoading ? <div className="p-3">Carregando...</div> : <DataTable columns={columns} data={transactionsActive}/>} 
+            {isLoading ? <div className="p-3">Carregando...</div> : <DataTable columns={columns} data={transactionsActive} />}
         </div>
     )
 }

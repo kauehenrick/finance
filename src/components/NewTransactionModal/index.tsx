@@ -54,7 +54,6 @@ const formSchema = z.object({
     title: z.string({ message: "Este campo deve ser preenchido" }).min(4, {
         message: "O título deve conter ao menos 4 caracteres!",
     }),
-    //coerce used to fix input number value
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
     creditCard: z.string().optional(),
     type: z.union([
@@ -102,7 +101,7 @@ export default function NewTransactionModal() {
 
     const decryptedUser = getUserInfo(user);
 
-    const validCreditCards: CreditCardProps[]  = []
+    const validCreditCards: CreditCardProps[] = []
 
     creditCards.forEach(card => {
         if (card.userId === decryptedUser.userEmail) {
@@ -142,13 +141,14 @@ export default function NewTransactionModal() {
             }
         }
 
-        const { image, ...valuesWithoutImage } = values;
+        const { image, creditCard, ...valuesWithoutImage } = values;
 
         const transactionData = {
             ...valuesWithoutImage,
             imageUrl: imageUrl,
             isActive: true,
             account: currentAccount,
+            creditCard: creditCard !== undefined ? creditCard : ''
         };
 
         addTransaction(transactionData);
@@ -168,8 +168,8 @@ export default function NewTransactionModal() {
                 <DialogHeader>
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
-                    <Form {...form} >
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
+                <Form {...form} >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
                         <ScrollArea className="h-[500px] w-full">
                             <div className='space-y-6 w-[400px] py-2 m-auto'>
                                 <FormField
@@ -490,13 +490,13 @@ export default function NewTransactionModal() {
                                     </FormItem>
                                 )}
                             />
-                            </ScrollArea>
-                            <DialogFooter className="w-full flex self-end">
-                                <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                                <Button type="submit">Salvar</Button>
-                            </DialogFooter>
-                        </form>
-                    </Form>
+                        </ScrollArea>
+                        <DialogFooter className="w-full flex self-end">
+                            <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                            <Button type="submit">Salvar</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     )

@@ -55,6 +55,7 @@ const formSchema = z.object({
         message: "O título deve conter ao menos 4 caracteres!",
     }),
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
+    installments: z.coerce.number().positive({ message: "O valor de parcelas deve ser maior que zero!" }),
     creditCard: z.string().optional(),
     type: z.union([
         z.literal('deposit'),
@@ -120,6 +121,7 @@ export default function NewTransactionModal() {
         defaultValues: {
             title: '',
             amount: 0,
+            installments: 1,
             category: '',
             subcategory: '',
             type: 'deposit',
@@ -141,17 +143,29 @@ export default function NewTransactionModal() {
             }
         }
 
-        const { image, creditCard, ...valuesWithoutImage } = values;
+        const { image, creditCard, installments, amount, date, ...valuesWithoutImage } = values;
 
-        const transactionData = {
-            ...valuesWithoutImage,
-            imageUrl: imageUrl,
-            isActive: true,
-            account: currentAccount,
-            creditCard: creditCard !== undefined ? creditCard : ''
-        };
+        let counter = 0;
 
-        addTransaction(transactionData);
+        do {
+            const installmentAmount = amount / installments;
+            const installmentDate = new Date(date.getFullYear(), date.getMonth() + counter, date.getDate());
+
+            const transactionData = {
+                ...valuesWithoutImage,
+                amount: installmentAmount,
+                imageUrl: imageUrl,
+                isActive: true,
+                account: currentAccount,
+                creditCard: creditCard !== undefined ? creditCard : '',
+                date: installmentDate,
+            };
+
+            addTransaction(transactionData);
+
+            counter++;
+        } while (counter < installments)
+
         form.reset();
         setOpen(false);
     }
@@ -192,6 +206,19 @@ export default function NewTransactionModal() {
                                         <FormItem>
                                             <FormControl>
                                                 <MoneyInput form={form} label='' placeholder='Preço' {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="installments"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input type='number' placeholder='Quantidade de parcelas' {...field} onChange={event => field.onChange(event.target.value)} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>

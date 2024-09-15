@@ -134,7 +134,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                 <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
                         <ScrollArea className="h-[500px] w-full">
-                            <div className='space-y-6 w-[400px] py-2 m-auto'>
+                            <div className='space-y-6 w-fit py-2 m-auto'>
                                 <FormField
                                     control={form.control}
                                     name="title"

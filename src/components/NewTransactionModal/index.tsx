@@ -169,9 +169,9 @@ export default function NewTransactionModal() {
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
                 <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="h-fit py-4 space-y-10">
                         <ScrollArea className="h-[500px] w-full">
-                            <div className='space-y-6 w-[400px] py-2 m-auto'>
+                            <div className='space-y-6 w-fit py-2 m-auto'>
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -202,7 +202,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="creditCard"
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
+                                        <FormItem className="flex flex-row w-fit gap-2 items-center border rounded-lg p-2">
                                             <Popover>
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -468,7 +468,7 @@ export default function NewTransactionModal() {
                                                     <FormControl>
                                                         <RadioGroupItem value="deposit" className="sr-only" />
                                                     </FormControl>
-                                                    <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                    <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-800 font-bold text-white w-32 gap-2.5 p-3">
                                                         <CircleArrowUp color='green' />
                                                         <p>Entrada</p>
                                                     </div>

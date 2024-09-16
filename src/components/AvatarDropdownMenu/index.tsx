@@ -20,7 +20,7 @@ export default function AvatarDropdownMenu() {
         <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Avatar className='size-16 border-2 border-white'>
-                                <AvatarImage src="https://github.com/kauehenrick.png" alt="avatar" />
+                                <AvatarImage src="https://yt3.googleusercontent.com/kIC21pG1bAoywUyx5lsUyW9yBAZpd7qy7Acaooz7m0FN52EtBKkC7lQf4uAENCpKYj9taG2sSA=s160-c-k-c0x00ffffff-no-rj" alt="avatar" />
                                 <AvatarFallback>KH</AvatarFallback>
                             </Avatar>
                         </DropdownMenuTrigger>

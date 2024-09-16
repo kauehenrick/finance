@@ -132,9 +132,9 @@ export default function Login() {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Usuário</FormLabel>
+                                    <FormLabel>Email</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Entre com seu usuário" {...field} />
+                                        <Input type="email" placeholder="Entre com seu email" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                     </FormDescription>

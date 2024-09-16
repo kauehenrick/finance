@@ -96,7 +96,7 @@ export default function RegisterUser() {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Usuário</FormLabel>
+                                    <FormLabel>Email</FormLabel>
                                     <FormControl>
                                         <Input type="email" placeholder="Informe seu email" {...field} />
                                     </FormControl>

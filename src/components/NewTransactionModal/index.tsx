@@ -85,7 +85,9 @@ async function uploadImage(file: File) {
 }
 
 export default function NewTransactionModal() {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
+    const [noteVisible, setNoteVisible] = useState(true);
+    const [attachmentVisible, setAttachmentVisible] = useState(true);
 
     const transactionStore = useTransactionStore();
     const categoryStore = useCategoryStore();
@@ -171,9 +173,49 @@ export default function NewTransactionModal() {
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
                 <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="h-fit py-4 space-y-10">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="h-fit py-4 m-auto">
                         <ScrollArea className="h-[500px] w-full">
-                            <div className='space-y-7 w-fit py-2 m-auto'>
+                        <FormField
+                                    control={form.control}
+                                    name="type"
+                                    render={({ field }) => (
+                                        <FormItem className="mb-3">
+                                            <FormMessage />
+
+                                            <RadioGroup
+                                                onValueChange={field.onChange}
+                                                defaultValue="deposit"
+                                                className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
+                                            >
+                                                <FormItem>
+                                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="deposit" className="sr-only" />
+                                                        </FormControl>
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-800 font-bold text-white w-32 gap-2.5 p-3">
+                                                            <CircleArrowUp color='green' />
+                                                            <p>Entrada</p>
+                                                        </div>
+                                                    </FormLabel>
+                                                </FormItem>
+
+                                                <FormItem>
+                                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="withdraw" className="sr-only" />
+                                                        </FormControl>
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                            <CircleArrowDown color='red' />
+                                                            <p>Saída</p>
+                                                        </div>
+                                                    </FormLabel>
+                                                </FormItem>
+                                            </RadioGroup>
+                                        </FormItem>
+                                    )}
+                                />
+
+                            <div className='flex flex-col space-y-6'>
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -181,7 +223,7 @@ export default function NewTransactionModal() {
                                         <FormItem>
                                             <FormLabel>Descrição</FormLabel>
                                             <FormControl>
-                                                <Input type='text' {...field} onChange={event => field.onChange(event.target.value)} />
+                                                <Input className='w-[450px]' type='text' {...field} onChange={event => field.onChange(event.target.value)} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -416,19 +458,14 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
-                                <div className='flex'>
-                                    <MdOutlineMessage />
-                                    <MdRepeat />
-                                    <GoPaperclip />
-                                </div>
-
                                 <FormField
                                     control={form.control}
                                     name="place"
                                     render={({ field }) => (
                                         <FormItem>
+                                            <FormLabel className={noteVisible ? 'hidden' : 'block'}>Local</FormLabel>
                                             <FormControl>
-                                                <Input type="text" placeholder='Local' {...field}></Input>
+                                                <Input className={noteVisible ? 'hidden' : 'block'} type="text" {...field}></Input>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -440,8 +477,9 @@ export default function NewTransactionModal() {
                                     name="note"
                                     render={({ field }) => (
                                         <FormItem>
+                                            <FormLabel className={noteVisible ? 'hidden' : 'block'}>Observação</FormLabel>
                                             <FormControl>
-                                                <Textarea placeholder='Observação' {...field}></Textarea>
+                                                <Textarea className={noteVisible ? 'hidden' : 'block'} {...field}></Textarea>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -460,6 +498,7 @@ export default function NewTransactionModal() {
                                                     onChange={(event) =>
                                                         onChange(event.target.files && event.target.files[0])
                                                     }
+                                                    className={attachmentVisible ? 'hidden' : 'block'}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -467,47 +506,23 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
+                                <div className='flex w-full justify-center gap-8'>
+                                    <div className='flex flex-col items-center gap-1'>
+                                        <p className='font-semibold text-sm'>Observação</p>
+                                        <MdOutlineMessage size={62} className='border rounded-full p-2 hover:cursor-pointer' onClick={() => setNoteVisible(!noteVisible)} />
+                                    </div>
+
+                                    <div className='flex flex-col items-center gap-1'>
+                                        <p className='font-semibold text-sm'>Repetir</p>
+                                        <MdRepeat size={62} className='border rounded-full p-2 hover:cursor-pointer' />
+                                    </div>
+
+                                    <div className='flex flex-col items-center gap-1'>
+                                        <p className='font-semibold text-sm'>Anexo</p>
+                                        <GoPaperclip size={62} className='border rounded-full p-2 hover:cursor-pointer' onClick={() => setAttachmentVisible(!attachmentVisible)} />
+                                    </div>
+                                </div>
                             </div>
-
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem className="space-y-1">
-                                        <FormMessage />
-
-                                        <RadioGroup
-                                            onValueChange={field.onChange}
-                                            defaultValue="deposit"
-                                            className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
-                                        >
-                                            <FormItem>
-                                                <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="deposit" className="sr-only" />
-                                                    </FormControl>
-                                                    <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-800 font-bold text-white w-32 gap-2.5 p-3">
-                                                        <CircleArrowUp color='green' />
-                                                        <p>Entrada</p>
-                                                    </div>
-                                                </FormLabel>
-                                            </FormItem>
-
-                                            <FormItem>
-                                                <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="withdraw" className="sr-only" />
-                                                    </FormControl>
-                                                    <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                                        <CircleArrowDown color='red' />
-                                                        <p>Saída</p>
-                                                    </div>
-                                                </FormLabel>
-                                            </FormItem>
-                                        </RadioGroup>
-                                    </FormItem>
-                                )}
-                            />
                         </ScrollArea>
                         <DialogFooter className="w-full flex self-end">
                             <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>

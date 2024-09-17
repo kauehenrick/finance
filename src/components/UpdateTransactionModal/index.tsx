@@ -134,7 +134,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                 <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
                         <ScrollArea className="h-[500px] w-full">
-                            <div className='space-y-6 w-fit py-2 m-auto'>
+                            <div className='flex flex-col items-center'>
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -352,46 +352,45 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                                     )}
                                 />
 
+                                <FormField
+                                    control={form.control}
+                                    name="type"
+                                    render={({ field }) => (
+                                        <FormItem className="space-y-1 py-5">
+                                            <FormMessage />
+                                            <RadioGroup
+                                                onValueChange={field.onChange}
+                                                defaultValue={transaction.type}
+                                                className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
+                                            >
+                                                <FormItem>
+                                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="deposit" className="sr-only" />
+                                                        </FormControl>
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                            <CircleArrowUp color='green' />
+                                                            <p>Entrada</p>
+                                                        </div>
+                                                    </FormLabel>
+                                                </FormItem>
+
+                                                <FormItem>
+                                                    <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="withdraw" className="sr-only" />
+                                                        </FormControl>
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                            <CircleArrowDown color='red' />
+                                                            <p>Saída</p>
+                                                        </div>
+                                                    </FormLabel>
+                                                </FormItem>
+                                            </RadioGroup>
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
-
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem className="space-y-1 py-5">
-                                        <FormMessage />
-                                        <RadioGroup
-                                            onValueChange={field.onChange}
-                                            defaultValue={transaction.type}
-                                            className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
-                                        >
-                                            <FormItem>
-                                                <FormLabel className="[&:has([data-state=checked])>div]:bg-green [&:has([data-state=checked])>div]:bg-opacity-60">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="deposit" className="sr-only" />
-                                                    </FormControl>
-                                                    <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                                        <CircleArrowUp color='green' />
-                                                        <p>Entrada</p>
-                                                    </div>
-                                                </FormLabel>
-                                            </FormItem>
-
-                                            <FormItem>
-                                                <FormLabel className="[&:has([data-state=checked])>div]:bg-red [&:has([data-state=checked])>div]:bg-opacity-60">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="withdraw" className="sr-only" />
-                                                    </FormControl>
-                                                    <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
-                                                        <CircleArrowDown color='red' />
-                                                        <p>Saída</p>
-                                                    </div>
-                                                </FormLabel>
-                                            </FormItem>
-                                        </RadioGroup>
-                                    </FormItem>
-                                )}
-                            />
                         </ScrollArea>
                         <DialogFooter className="w-full flex self-end">
                             <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>

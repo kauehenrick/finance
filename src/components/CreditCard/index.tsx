@@ -87,14 +87,7 @@ export default function CreditCard() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button
-                    type="button"
-                    variant={"ghost"}
-                    className="gap-2"
-                >
-                    <Plus size={16}></Plus>
-                    Cadastrar novo
-                </Button>
+                <Plus size={16} className='hover:cursor-pointer'/>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

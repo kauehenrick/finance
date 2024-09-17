@@ -32,7 +32,7 @@ module.exports = {
         'text-body': '#969cb3',
         'bg-gray': '#202024',
         'white-700': '#f9f6f2',
-        background: '#f0f2f5',
+        background: '#F6F5F2',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

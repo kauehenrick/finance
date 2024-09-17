@@ -63,6 +63,7 @@ export default function MoneyInput(props: TextInputProps) {
                   handleChange(_change, ev.target.value);
                 }}
                 value={value}
+                className='w-[220px]'
               />
             </FormControl>
           </FormItem>

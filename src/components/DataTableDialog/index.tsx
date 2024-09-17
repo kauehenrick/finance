@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription
 } from "@/components/ui/dialog"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -33,8 +34,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     
     let authStore = useAuthStore();
 
-    let { user, getUserInfo } = authStore;
-    const decryptedUser = getUserInfo(user)
+    let { user } = authStore;
 
     const capitalize = props.inputValue.charAt(0).toUpperCase() + props.inputValue.slice(1);
     const lowerCase = props.inputValue.toLowerCase();
@@ -48,7 +48,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        props.addValue({...values, email: decryptedUser.userEmail})
+        props.addValue({...values, email: user})
         form.reset();
         setOpen(false);
     }
@@ -66,6 +66,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
+                <DialogDescription />
                 <Form {...form}>
                     <form onSubmit={
                         e => {
@@ -133,6 +134,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                                 </FormItem>
                             )}
                         />
+
                         <DialogFooter>
                             <Button className="mt-3">Salvar</Button>
                         </DialogFooter>

@@ -26,7 +26,7 @@ const formSchema = z.object({
     name: z.string({ message: "Este campo deve ser preenchido" })
 })
 
-export default function FormDialog(props: FormDialogProps) {
+export default function FormDialog(props: FormDialogProps) {    
     let [open, setOpen] = useState(false);
 
     const capitalize = props.inputValue.charAt(0).toUpperCase() + props.inputValue.slice(1);
@@ -45,16 +45,9 @@ export default function FormDialog(props: FormDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button
-                    type="button" 
-                    variant={"ghost"}
-                    className="gap-2"
-                >
-                    <Plus size={16}></Plus>
-                    Criar Nova
-                </Button>
+                    <Plus className='hover:cursor-pointer' size={16} />
             </DialogTrigger>
-            <DialogDescription className="hidden"/>
+            <DialogDescription className="hidden" />
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
                     <form onSubmit={
@@ -62,7 +55,7 @@ export default function FormDialog(props: FormDialogProps) {
                             e.stopPropagation();
                             form.handleSubmit(onSubmit)(e)
                         }}>
-                            
+
                         <DialogHeader className="font-bold mb-5">
                             <DialogTitle>Adicionar {capitalize}</DialogTitle>
                         </DialogHeader>

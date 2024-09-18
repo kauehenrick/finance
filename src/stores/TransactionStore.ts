@@ -7,6 +7,7 @@ export type TransactionProps = {
     id: string,
     title: string,
     amount: number,
+    creditCard?: string,
     category?: string | undefined,
     subcategory?: string | undefined,
     place?: string | undefined,

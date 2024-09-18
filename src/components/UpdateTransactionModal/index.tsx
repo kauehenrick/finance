@@ -43,6 +43,13 @@ import { TransactionProps } from '@/stores/TransactionStore';
 import { useAccountStore } from "@/stores/AccountsStore";
 import { useTransactionStore } from "@/stores/TransactionStore";
 import { Pen } from "lucide-react";
+import CreditCard from "../CreditCard";
+import { useCreditCardStore } from "@/stores/CreditCardStore";
+import type { CreditCardProps } from "@/stores/CreditCardStore";
+import { useAuthStore } from "@/stores/AuthStore";
+import { MdOutlineMessage, MdRepeat } from "react-icons/md";
+import { GoPaperclip } from "react-icons/go";
+import { useState } from "react";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -51,6 +58,7 @@ const formSchema = z.object({
         message: "O título deve conter ao menos 4 caracteres!",
     }),
     amount: z.coerce.number().positive({ message: "O valor deve ser maior que zero!" }),
+    creditCard: z.string().optional(),
     type: z.string(),
     category: z.string(),
     subcategory: z.string(),
@@ -73,15 +81,32 @@ async function uploadImage(file: File) {
 }
 
 export default function UpdateTransactionModal(transaction: TransactionProps) {
-    let categoryStore = useCategoryStore();
-    let subcategoryStore = useSubcategoryStore();
-    let accountStore = useAccountStore();
-    let transactionStore = useTransactionStore()
+    const [noteVisible, setNoteVisible] = useState(true);
+    const [attachmentVisible, setAttachmentVisible] = useState(true);
+
+    const categoryStore = useCategoryStore();
+    const subcategoryStore = useSubcategoryStore();
+    const accountStore = useAccountStore();
+    const transactionStore = useTransactionStore()
+    const creditCardStore = useCreditCardStore();
+    const authStore = useAuthStore();
 
     let { categories, addCategory } = categoryStore;
     let { subcategories, addSubcategory } = subcategoryStore;
     let { currentAccount } = accountStore;
     let { updateTransaction } = transactionStore;
+    let { creditCards } = creditCardStore;
+    let { user, getUserInfo } = authStore;
+
+    const decryptedUser = getUserInfo(user);
+
+    const validCreditCards: CreditCardProps[] = []
+
+    creditCards.forEach(card => {
+        if (card.userId === decryptedUser.userEmail) {
+            validCreditCards.push(card);
+        }
+    })
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -89,6 +114,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
             title: transaction.title,
             amount: transaction.amount,
             category: transaction.category,
+            creditCard: transaction.creditCard,
             subcategory: transaction.subcategory,
             type: transaction.type,
             place: transaction.place,
@@ -132,235 +158,19 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                     <DialogTitle>Editar transação</DialogTitle>
                 </DialogHeader>
                 <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center items-center h-fit py-4 space-y-10">
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
                         <ScrollArea className="h-[500px] w-full">
-                            <div className='flex flex-col items-center'>
-                                <FormField
-                                    control={form.control}
-                                    name="title"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input type='text' placeholder='Descrição' {...field} onChange={event => field.onChange(event.target.value)} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <MoneyInput form={form} label='' placeholder='Preço' {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="category"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button
-                                                            variant="outline"
-                                                            role="combobox"
-                                                            className={cn(
-                                                                "w-[250px] justify-between",
-                                                                !field.value && "text-muted-foreground"
-                                                            )}
-                                                        >
-                                                            {field.value
-                                                                ? categories.find(
-                                                                    (category) => category.name === field.value
-                                                                )?.name
-                                                                : "Selecione a categoria"}
-                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-[200px] p-0">
-                                                    <Command>
-                                                        <CommandInput placeholder="Pesquisar..." />
-                                                        <CommandList>
-                                                            <CommandEmpty>No category found.</CommandEmpty>
-                                                            <CommandGroup>
-                                                                {categories.map((category) => (
-                                                                    <CommandItem
-                                                                        value={category.name}
-                                                                        key={category.id}
-                                                                        onSelect={() => {
-                                                                            form.setValue("category", category.name)
-                                                                        }}
-                                                                    >
-                                                                        <Check
-                                                                            className={cn(
-                                                                                "mr-2 h-4 w-4",
-                                                                                category.name === field.value
-                                                                                    ? "opacity-100"
-                                                                                    : "opacity-0"
-                                                                            )}
-                                                                        />
-                                                                        {category.name}
-                                                                    </CommandItem>
-                                                                ))}
-                                                            </CommandGroup>
-                                                        </CommandList>
-                                                    </Command>
-                                                </PopoverContent>
-                                            </Popover>
-
-                                            <FormDialog inputValue="categoria" addValue={addCategory} />
-
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="subcategory"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row gap-2 items-center border rounded-lg p-2">
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button
-                                                            variant="outline"
-                                                            role="combobox"
-                                                            className={cn(
-                                                                "w-[250px] justify-between",
-                                                                !field.value && "text-muted-foreground"
-                                                            )}
-                                                        >
-                                                            {field.value
-                                                                ? subcategories.find(
-                                                                    (subcategory) => subcategory.name === field.value
-                                                                )?.name
-                                                                : "Selecione a subcategoria"}
-                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-[200px] p-0">
-                                                    <Command>
-                                                        <CommandInput placeholder="Pesquisar..." />
-                                                        <CommandList>
-                                                            <CommandEmpty>Nenhuma subcategoria encontrada.</CommandEmpty>
-                                                            <CommandGroup>
-                                                                {subcategories.map((subcategory) => (
-                                                                    <CommandItem
-                                                                        value={subcategory.name}
-                                                                        key={subcategory.id}
-                                                                        onSelect={() => {
-                                                                            form.setValue("subcategory", subcategory.name)
-                                                                        }}
-                                                                    >
-                                                                        <Check
-                                                                            className={cn(
-                                                                                "mr-2 h-4 w-4",
-                                                                                subcategory.name === field.value
-                                                                                    ? "opacity-100"
-                                                                                    : "opacity-0"
-                                                                            )}
-                                                                        />
-                                                                        {subcategory.name}
-                                                                    </CommandItem>
-                                                                ))}
-                                                            </CommandGroup>
-                                                        </CommandList>
-                                                    </Command>
-                                                </PopoverContent>
-                                            </Popover>
-
-                                            <FormDialog inputValue="subcategoria" addValue={addSubcategory} />
-
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="date"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-col">
-                                            <Input
-                                                className="w-fit"
-                                                type="date"
-                                                {...field}
-                                                value={
-                                                    field.value instanceof Date
-                                                        ? field.value.toISOString().split('T')[0]
-                                                        : field.value
-                                                }
-                                            />
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="place"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input type="text" placeholder='Local' {...field}></Input>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="note"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Textarea placeholder='Observação' {...field}></Textarea>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                {transaction.imageUrl !== "" ? <img src={transaction.imageUrl} alt="Preview da Imagem" className="border rounded-lg" /> : null}
-
-                                <FormField
-                                    control={form.control}
-                                    name="image"
-                                    render={({ field: { value, onChange, ...fieldProps } }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <Input
-                                                    {...fieldProps}
-                                                    type="file"
-                                                    onChange={(event) =>
-                                                        onChange(event.target.files && event.target.files[0])
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
+                            <div className='flex flex-col space-y-6 m-5'>
                                 <FormField
                                     control={form.control}
                                     name="type"
                                     render={({ field }) => (
-                                        <FormItem className="space-y-1 py-5">
+                                        <FormItem className="mb-3">
                                             <FormMessage />
+
                                             <RadioGroup
                                                 onValueChange={field.onChange}
-                                                defaultValue={transaction.type}
+                                                defaultValue="deposit"
                                                 className="grid max-w-fit grid-cols-2 gap-5 pt-2 m-auto"
                                             >
                                                 <FormItem>
@@ -368,7 +178,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                                                         <FormControl>
                                                             <RadioGroupItem value="deposit" className="sr-only" />
                                                         </FormControl>
-                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-800 font-bold text-white w-32 gap-2.5 p-3">
                                                             <CircleArrowUp color='green' />
                                                             <p>Entrada</p>
                                                         </div>
@@ -390,6 +200,320 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                                         </FormItem>
                                     )}
                                 />
+
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Descrição</FormLabel>
+                                            <FormControl>
+                                                <Input className='w-[450px]' type='text' {...field} onChange={event => field.onChange(event.target.value)} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <div className='flex gap-3 items-center'>
+                                    <FormField
+                                        control={form.control}
+                                        name="amount"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Valor</FormLabel>
+                                                <FormControl>
+                                                    <MoneyInput form={form} label='' placeholder='Preço' {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="date"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Data</FormLabel>
+                                                <Input
+                                                    type="date"
+                                                    {...field}
+                                                    value={
+                                                        field.value instanceof Date
+                                                            ? field.value.toISOString().split('T')[0]
+                                                            : field.value
+                                                    }
+                                                    className='w-[220px] justify-around'
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <div className='flex gap-3'>
+                                    <FormField
+                                        control={form.control}
+                                        name="category"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <div className='flex items-center gap-2'>
+                                                    <FormLabel>Categoria</FormLabel>
+                                                    <FormDialog inputValue="categoria" addValue={addCategory} />
+                                                </div>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant="outline"
+                                                                role="combobox"
+                                                                className={cn(
+                                                                    "w-[220px] justify-between",
+                                                                    !field.value && "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {field.value
+                                                                    ? categories.find(
+                                                                        (category) => category.name === field.value
+                                                                    )?.name
+                                                                    : "Buscar a categoria"}
+                                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-[200px] p-0">
+                                                        <Command>
+                                                            <CommandInput placeholder="Pesquisar..." />
+                                                            <CommandList>
+                                                                <CommandEmpty>Nenhuma categoria encontrada.</CommandEmpty>
+                                                                <CommandGroup>
+                                                                    {categories.map((category) => (
+                                                                        <CommandItem
+                                                                            value={category.name}
+                                                                            key={category.id}
+                                                                            onSelect={() => {
+                                                                                form.setValue("category", category.name)
+                                                                            }}
+                                                                        >
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    "mr-2 h-4 w-4",
+                                                                                    category.name === field.value
+                                                                                        ? "opacity-100"
+                                                                                        : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                            {category.name}
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                </CommandGroup>
+                                                            </CommandList>
+                                                        </Command>
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="subcategory"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <div className='flex items-center gap-2'>
+                                                    <FormLabel>Subcategoria</FormLabel>
+                                                    <FormDialog inputValue="subcategoria" addValue={addSubcategory} />
+                                                </div>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant="outline"
+                                                                role="combobox"
+                                                                className={cn(
+                                                                    "w-[220px] justify-between",
+                                                                    !field.value && "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {field.value
+                                                                    ? subcategories.find(
+                                                                        (subcategory) => subcategory.name === field.value
+                                                                    )?.name
+                                                                    : "Buscar a subcategoria"}
+                                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="min-w-[200px] p-0">
+                                                        <Command>
+                                                            <CommandInput placeholder="Pesquisar..." />
+                                                            <CommandList>
+                                                                <CommandEmpty>Nenhuma subcategoria encontrada.</CommandEmpty>
+                                                                <CommandGroup>
+                                                                    {subcategories.map((subcategory) => (
+                                                                        <CommandItem
+                                                                            value={subcategory.name}
+                                                                            key={subcategory.id}
+                                                                            onSelect={() => {
+                                                                                form.setValue("subcategory", subcategory.name)
+                                                                            }}
+                                                                        >
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    "mr-2 h-4 w-4",
+                                                                                    subcategory.name === field.value
+                                                                                        ? "opacity-100"
+                                                                                        : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                            {subcategory.name}
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                </CommandGroup>
+                                                            </CommandList>
+                                                        </Command>
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <FormField
+                                    control={form.control}
+                                    name="creditCard"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <div className='flex items-center gap-2'>
+                                                <FormLabel>Cartão de crédito</FormLabel>
+                                                <CreditCard />
+                                            </div>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            className={cn(
+                                                                "min-w-[220px] justify-between",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            {field.value
+                                                                ? validCreditCards.find(
+                                                                    (creditCard) => creditCard.alias === field.value
+                                                                )?.alias
+                                                                : "Buscar cartão de crédito"}
+                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-[200px] p-0">
+                                                    <Command>
+                                                        <CommandInput placeholder="Pesquisar..." />
+                                                        <CommandList>
+                                                            <CommandEmpty>Nenhum cartão encontrado.</CommandEmpty>
+                                                            <CommandGroup>
+                                                                {validCreditCards.map((creditCard) => (
+                                                                    <CommandItem
+                                                                        value={creditCard.alias}
+                                                                        key={creditCard.id}
+                                                                        onSelect={() => {
+                                                                            form.setValue("creditCard", creditCard.alias)
+                                                                        }}
+                                                                    >
+                                                                        <Check
+                                                                            className={cn(
+                                                                                "mr-2 h-4 w-4",
+                                                                                creditCard.name === field.value
+                                                                                    ? "opacity-100"
+                                                                                    : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                        {creditCard.alias}
+                                                                    </CommandItem>
+                                                                ))}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="place"
+                                    render={({ field }) => (
+                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                            <FormLabel>Local</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" {...field}></Input>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="note"
+                                    render={({ field }) => (
+                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                            <FormLabel>Observação</FormLabel>
+                                            <FormControl>
+                                                <Textarea {...field}></Textarea>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {transaction.imageUrl !== "" ? <img src={transaction.imageUrl} alt="Preview da Imagem" className={`border rounded-lg $ ${attachmentVisible ? 'hidden' : 'block'}`} /> : null}
+
+                                <FormField
+                                    control={form.control}
+                                    name="image"
+                                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                                        <FormItem className={attachmentVisible ? 'hidden' : 'block'}>
+                                            <FormControl>
+                                                <Input
+                                                    {...fieldProps}
+                                                    type="file"
+                                                    onChange={(event) =>
+                                                        onChange(event.target.files && event.target.files[0])
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <div className='flex w-full justify-center gap-8'>
+                                    <div className='flex flex-col items-center gap-1'>
+                                        <p className='font-semibold text-sm'>Observação</p>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? '' : 'bg-dark-600'}`}>
+                                            <MdOutlineMessage size={50} onClick={() => setNoteVisible(!noteVisible)} />
+                                        </Button>
+                                    </div>
+
+                                    <div className='flex flex-col items-center gap-1'>
+                                        <p className='font-semibold text-sm'>Repetir</p>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600`}>
+                                            <MdRepeat size={50} />
+                                        </Button>
+                                    </div>
+
+                                    <div className='flex flex-col items-center gap-1'>
+                                        <p className='font-semibold text-sm'>Anexo</p>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${attachmentVisible ? '' : 'bg-dark-600'}`}>
+                                            <GoPaperclip size={50} onClick={() => setAttachmentVisible(!attachmentVisible)} />
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                         </ScrollArea>
                         <DialogFooter className="w-full flex self-end">

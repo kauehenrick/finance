@@ -173,9 +173,10 @@ export default function NewTransactionModal() {
                     <DialogTitle>Nova Transação</DialogTitle>
                 </DialogHeader>
                 <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="h-fit py-4 m-auto">
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
                         <ScrollArea className="h-[500px] w-full">
-                        <FormField
+                            <div className='flex flex-col space-y-6 m-5'>
+                                <FormField
                                     control={form.control}
                                     name="type"
                                     render={({ field }) => (
@@ -215,7 +216,6 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
-                            <div className='flex flex-col space-y-6'>
                                 <FormField
                                     control={form.control}
                                     name="title"
@@ -462,10 +462,10 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="place"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className={noteVisible ? 'hidden' : 'block'}>Local</FormLabel>
+                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                            <FormLabel>Local</FormLabel>
                                             <FormControl>
-                                                <Input className={noteVisible ? 'hidden' : 'block'} type="text" {...field}></Input>
+                                                <Input type="text" {...field}></Input>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -476,10 +476,10 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="note"
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className={noteVisible ? 'hidden' : 'block'}>Observação</FormLabel>
+                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                            <FormLabel>Observação</FormLabel>
                                             <FormControl>
-                                                <Textarea className={noteVisible ? 'hidden' : 'block'} {...field}></Textarea>
+                                                <Textarea {...field}></Textarea>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -490,7 +490,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="image"
                                     render={({ field: { value, onChange, ...fieldProps } }) => (
-                                        <FormItem>
+                                        <FormItem className={attachmentVisible ? 'hidden' : 'block'}>
                                             <FormControl>
                                                 <Input
                                                     {...fieldProps}
@@ -498,7 +498,6 @@ export default function NewTransactionModal() {
                                                     onChange={(event) =>
                                                         onChange(event.target.files && event.target.files[0])
                                                     }
-                                                    className={attachmentVisible ? 'hidden' : 'block'}
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -509,17 +508,23 @@ export default function NewTransactionModal() {
                                 <div className='flex w-full justify-center gap-8'>
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Observação</p>
-                                        <MdOutlineMessage size={62} className='border rounded-full p-2 hover:cursor-pointer' onClick={() => setNoteVisible(!noteVisible)} />
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? '' : 'bg-dark-600'}`}>
+                                            <MdOutlineMessage size={50} onClick={() => setNoteVisible(!noteVisible)} />
+                                        </Button>
                                     </div>
 
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Repetir</p>
-                                        <MdRepeat size={62} className='border rounded-full p-2 hover:cursor-pointer' />
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600`}>
+                                            <MdRepeat size={50} />
+                                        </Button>
                                     </div>
 
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Anexo</p>
-                                        <GoPaperclip size={62} className='border rounded-full p-2 hover:cursor-pointer' onClick={() => setAttachmentVisible(!attachmentVisible)} />
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${attachmentVisible ? '' : 'bg-dark-600'}`}>
+                                            <GoPaperclip size={50} onClick={() => setAttachmentVisible(!attachmentVisible)} />
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

@@ -84,6 +84,7 @@ const formSchema = z.object({
         )
         .optional(),
     installments: z.coerce.number().positive({ message: "O número deve ser maior que zero." }).optional(),
+    installmentType: z.string().optional(),
     installmentTime: z.string().optional(),
     installmentEntry: z.coerce.number().nonnegative({ message: "O número deve ser positivo." }).optional(),
 })
@@ -102,7 +103,7 @@ export default function NewTransactionModal() {
     const [noteVisible, setNoteVisible] = useState(false);
     const [attachmentVisible, setAttachmentVisible] = useState(false);
     const [repeatVisible, setRepeatVisible] = useState(false);
-    const [installmentType, setInstallmentType] = useState('');
+    const [installmentTypeControl, setInstallmentTypeControl] = useState('');
 
     const transactionStore = useTransactionStore();
     const categoryStore = useCategoryStore();
@@ -163,7 +164,16 @@ export default function NewTransactionModal() {
             }
         }
 
-        const { image, creditCard, ...valuesWithoutImage } = values;
+        const {
+            image,
+            creditCard,
+            /*installments,
+            installmentEntry,
+            installmentTime,
+            amount,
+            date,*/
+            ...valuesWithoutImage
+        } = values;
 
         const transactionData = {
             ...valuesWithoutImage,
@@ -174,6 +184,7 @@ export default function NewTransactionModal() {
         };
 
         addTransaction(transactionData);
+
         form.reset();
         setOpen(false);
     }
@@ -523,7 +534,63 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
-                                <div className={`space-y-5 ${repeatVisible ? 'block' : 'hidden'}`}>
+                                <FormField
+                                    control={form.control}
+                                    name="installmentType"
+                                    render={({ field }) => (
+                                        <FormItem className="space-y-3">
+                                            <FormLabel>Notify me about...</FormLabel>
+                                            <FormControl>
+                                                <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    className="flex flex-col space-y-1"
+                                                >
+                                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="all" />
+                                                        </FormControl>
+                                                        <FormLabel className="font-normal">
+                                                            All new messages
+                                                        </FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="mentions" />
+                                                        </FormControl>
+                                                        <FormLabel className="font-normal">
+                                                            Direct messages and mentions
+                                                        </FormLabel>
+                                                    </FormItem>
+                                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                                        <FormControl>
+                                                            <RadioGroupItem value="none" />
+                                                        </FormControl>
+                                                        <FormLabel className="font-normal">Nothing</FormLabel>
+                                                    </FormItem>
+                                                </RadioGroup>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <RadioGroup
+                                    value={installmentTypeControl}
+                                    onValueChange={(value: string) => setInstallmentTypeControl(value)}
+                                    className='space-y-3'
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="fixed" />
+                                        <Label htmlFor="r1">é uma despesa fixa</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="variable" />
+                                        <Label htmlFor="r2">é um lançamento parcelado em</Label>
+                                    </div>
+                                </RadioGroup>
+
+                                <div className={`space-y-5 ${installmentTypeControl == 'variable' ? '' : 'hidden'}`}>
                                     <FormField
                                         control={form.control}
                                         name="installmentEntry"
@@ -537,22 +604,7 @@ export default function NewTransactionModal() {
                                         )}
                                     />
 
-                                    <RadioGroup
-                                        value={installmentType}
-                                        onValueChange={(value: string) => setInstallmentType(value)}
-                                        className='space-y-3'
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="fixed" />
-                                            <Label htmlFor="r1">é uma despesa fixa</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="variable" />
-                                            <Label htmlFor="r2">é um lançamento parcelado em</Label>
-                                        </div>
-                                    </RadioGroup>
-
-                                    <div className={`flex justify-around border rounded-lg p-2 ${installmentType == 'variable' ? '' : 'hidden'}`}>
+                                    <div className={`flex justify-around border rounded-lg p-2 ${installmentTypeControl == 'variable' ? '' : 'hidden'}`}>
                                         <FormField
                                             control={form.control}
                                             name="installments"

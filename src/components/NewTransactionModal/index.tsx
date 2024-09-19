@@ -84,6 +84,8 @@ const formSchema = z.object({
         )
         .optional(),
     installments: z.coerce.number().positive({ message: "O número deve ser maior que zero." }).optional(),
+    installmentTime: z.string().optional(),
+    installmentEntry: z.coerce.number().nonnegative({ message: "O número deve ser positivo." }).optional(),
 })
 
 async function uploadImage(file: File) {
@@ -144,6 +146,8 @@ export default function NewTransactionModal() {
             note: '',
             date: new Date(),
             installments: 1,
+            installmentTime: 'months',
+            installmentEntry: 0,
         },
     });
 
@@ -520,6 +524,19 @@ export default function NewTransactionModal() {
                                 />
 
                                 <div className={`space-y-5 ${repeatVisible ? 'block' : 'hidden'}`}>
+                                    <FormField
+                                        control={form.control}
+                                        name="installmentEntry"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <MoneyInput form={form} label='Valor de entrada' placeholder='' {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
                                     <RadioGroup
                                         value={installmentType}
                                         onValueChange={(value: string) => setInstallmentType(value)}
@@ -549,18 +566,28 @@ export default function NewTransactionModal() {
                                             )}
                                         />
 
-                                        <Select>
-                                            <SelectTrigger className="w-[180px]">
-                                                <SelectValue placeholder="Período" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    <SelectLabel>Período</SelectLabel>
-                                                    <SelectItem value="months">Meses</SelectItem>
-                                                    <SelectItem value="weeks">Semanas</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <FormField
+                                            control={form.control}
+                                            name="installmentTime"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Período" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectLabel>Período</SelectLabel>
+                                                                <SelectItem value="months">Meses</SelectItem>
+                                                                <SelectItem value="weeks">Semanas</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}
+                                        />
                                     </div>
                                 </div>
 

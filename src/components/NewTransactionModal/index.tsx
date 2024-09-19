@@ -49,6 +49,16 @@ import { useAuthStore } from '@/stores/AuthStore';
 import type { CreditCardProps } from '@/stores/CreditCardStore';
 import { MdOutlineMessage, MdRepeat } from "react-icons/md";
 import { GoPaperclip } from "react-icons/go";
+import { Label } from '../ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -73,6 +83,7 @@ const formSchema = z.object({
             "Apenas formatos .jpg, .jpeg, .png and .webp são suportados."
         )
         .optional(),
+    installments: z.coerce.number().positive({ message: "O número deve ser maior que zero." }).optional(),
 })
 
 async function uploadImage(file: File) {
@@ -86,8 +97,10 @@ async function uploadImage(file: File) {
 
 export default function NewTransactionModal() {
     const [open, setOpen] = useState(false);
-    const [noteVisible, setNoteVisible] = useState(true);
-    const [attachmentVisible, setAttachmentVisible] = useState(true);
+    const [noteVisible, setNoteVisible] = useState(false);
+    const [attachmentVisible, setAttachmentVisible] = useState(false);
+    const [repeatVisible, setRepeatVisible] = useState(false);
+    const [installmentType, setInstallmentType] = useState('');
 
     const transactionStore = useTransactionStore();
     const categoryStore = useCategoryStore();
@@ -130,6 +143,7 @@ export default function NewTransactionModal() {
             place: '',
             note: '',
             date: new Date(),
+            installments: 1,
         },
     });
 
@@ -462,7 +476,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="place"
                                     render={({ field }) => (
-                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                        <FormItem className={noteVisible ? 'block' : 'hidden'}>
                                             <FormLabel>Local</FormLabel>
                                             <FormControl>
                                                 <Input type="text" {...field}></Input>
@@ -476,7 +490,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="note"
                                     render={({ field }) => (
-                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                        <FormItem className={noteVisible ? 'block' : 'hidden'}>
                                             <FormLabel>Observação</FormLabel>
                                             <FormControl>
                                                 <Textarea {...field}></Textarea>
@@ -490,7 +504,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="image"
                                     render={({ field: { value, onChange, ...fieldProps } }) => (
-                                        <FormItem className={attachmentVisible ? 'hidden' : 'block'}>
+                                        <FormItem className={attachmentVisible ? 'block' : 'hidden'}>
                                             <FormControl>
                                                 <Input
                                                     {...fieldProps}
@@ -505,24 +519,69 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
+                                <div className={`space-y-5 ${repeatVisible ? 'block' : 'hidden'}`}>
+                                    <RadioGroup
+                                        value={installmentType}
+                                        onValueChange={(value: string) => setInstallmentType(value)}
+                                        className='space-y-3'
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="fixed" />
+                                            <Label htmlFor="r1">é uma despesa fixa</Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="variable" />
+                                            <Label htmlFor="r2">é um lançamento parcelado em</Label>
+                                        </div>
+                                    </RadioGroup>
+
+                                    <div className={`flex justify-around border rounded-lg p-2 ${installmentType == 'variable' ? '' : 'hidden'}`}>
+                                        <FormField
+                                            control={form.control}
+                                            name="installments"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <Input type='number' placeholder='Quantidade de parcelas' {...field} onChange={event => field.onChange(event.target.value)} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <Select>
+                                            <SelectTrigger className="w-[180px]">
+                                                <SelectValue placeholder="Período" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Período</SelectLabel>
+                                                    <SelectItem value="months">Meses</SelectItem>
+                                                    <SelectItem value="weeks">Semanas</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+
                                 <div className='flex w-full justify-center gap-8'>
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Observação</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? '' : 'bg-dark-600'}`}>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? 'bg-dark-600' : ''}`}>
                                             <MdOutlineMessage size={50} onClick={() => setNoteVisible(!noteVisible)} />
                                         </Button>
                                     </div>
 
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Repetir</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600`}>
-                                            <MdRepeat size={50} />
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${repeatVisible ? 'bg-dark-600' : ''}`}>
+                                            <MdRepeat size={50} onClick={() => setRepeatVisible(!repeatVisible)} />
                                         </Button>
                                     </div>
 
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Anexo</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${attachmentVisible ? '' : 'bg-dark-600'}`}>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${attachmentVisible ? 'bg-dark-600' : ''}`}>
                                             <GoPaperclip size={50} onClick={() => setAttachmentVisible(!attachmentVisible)} />
                                         </Button>
                                     </div>

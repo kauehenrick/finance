@@ -49,7 +49,6 @@ import { useAuthStore } from '@/stores/AuthStore';
 import type { CreditCardProps } from '@/stores/CreditCardStore';
 import { MdOutlineMessage, MdRepeat } from "react-icons/md";
 import { GoPaperclip } from "react-icons/go";
-import { Label } from '../ui/label';
 import {
     Select,
     SelectContent,
@@ -83,11 +82,15 @@ const formSchema = z.object({
             "Apenas formatos .jpg, .jpeg, .png and .webp são suportados."
         )
         .optional(),
-    installments: z.coerce.number().positive({ message: "O número deve ser maior que zero." }).optional(),
+    installments: z.coerce.number().positive({ message: "O número deve ser maior que zero." }),
     installmentType: z.string().optional(),
     installmentTime: z.string().optional(),
-    installmentEntry: z.coerce.number().nonnegative({ message: "O número deve ser positivo." }).optional(),
+    installmentEntry: z.coerce.number().nonnegative({ message: "O número deve ser positivo." }),
 })
+    .refine(data => data.installmentEntry < data.amount, {
+        message: "O valor de entrada deve ser menor que o total da transação.",
+        path: ['installmentEntry'],
+    })
 
 async function uploadImage(file: File) {
     const storage = getStorage();
@@ -103,7 +106,6 @@ export default function NewTransactionModal() {
     const [noteVisible, setNoteVisible] = useState(false);
     const [attachmentVisible, setAttachmentVisible] = useState(false);
     const [repeatVisible, setRepeatVisible] = useState(false);
-    const [installmentTypeControl, setInstallmentTypeControl] = useState('');
 
     const transactionStore = useTransactionStore();
     const categoryStore = useCategoryStore();
@@ -149,6 +151,7 @@ export default function NewTransactionModal() {
             installments: 1,
             installmentTime: 'months',
             installmentEntry: 0,
+            installmentType: '',
         },
     });
 
@@ -167,15 +170,16 @@ export default function NewTransactionModal() {
         const {
             image,
             creditCard,
-            /*installments,
+            installments,
             installmentEntry,
             installmentTime,
+            installmentType,
             amount,
-            date,*/
+            date,
             ...valuesWithoutImage
         } = values;
 
-        const transactionData = {
+        const transactionDataModel = {
             ...valuesWithoutImage,
             imageUrl: imageUrl,
             isActive: true,
@@ -183,7 +187,38 @@ export default function NewTransactionModal() {
             creditCard: creditCard !== undefined ? creditCard : ''
         };
 
-        addTransaction(transactionData);
+        let counter = 0;
+        let installmentDate = new Date();
+        let remainingAmount = amount;
+
+        do {
+            counter++;
+            let installmentValue;
+
+            if (installmentEntry > 0 && installments > 1) {
+                if (counter === 1) {
+                    installmentValue = installmentEntry;
+                    remainingAmount -= installmentValue;
+                } else {
+                    installmentValue = remainingAmount / (installments - 1);
+                }
+            } else {
+                installmentValue = amount / installments;
+            }
+
+            switch (installmentTime) {
+                case 'months':
+                    installmentDate = new Date(date.getFullYear(), date.getMonth() + (counter - 1), date.getDate());
+                    break;
+                case 'weeks':
+                    installmentDate = new Date(date);
+                    installmentDate.setDate(date.getDate() + (counter - 1) * 7);
+                    break;
+            }
+
+            const transactionData = { ...transactionDataModel, amount: installmentValue, date: installmentDate };
+            addTransaction(transactionData);
+        } while (counter < installments);
 
         form.reset();
         setOpen(false);
@@ -534,63 +569,7 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
-                                <FormField
-                                    control={form.control}
-                                    name="installmentType"
-                                    render={({ field }) => (
-                                        <FormItem className="space-y-3">
-                                            <FormLabel>Notify me about...</FormLabel>
-                                            <FormControl>
-                                                <RadioGroup
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                    className="flex flex-col space-y-1"
-                                                >
-                                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem value="all" />
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">
-                                                            All new messages
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem value="mentions" />
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">
-                                                            Direct messages and mentions
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem value="none" />
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">Nothing</FormLabel>
-                                                    </FormItem>
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <RadioGroup
-                                    value={installmentTypeControl}
-                                    onValueChange={(value: string) => setInstallmentTypeControl(value)}
-                                    className='space-y-3'
-                                >
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="fixed" />
-                                        <Label htmlFor="r1">é uma despesa fixa</Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="variable" />
-                                        <Label htmlFor="r2">é um lançamento parcelado em</Label>
-                                    </div>
-                                </RadioGroup>
-
-                                <div className={`space-y-5 ${installmentTypeControl == 'variable' ? '' : 'hidden'}`}>
+                                <div className={`space-y-3 ${repeatVisible ? '' : 'hidden'}`}>
                                     <FormField
                                         control={form.control}
                                         name="installmentEntry"
@@ -604,7 +583,9 @@ export default function NewTransactionModal() {
                                         )}
                                     />
 
-                                    <div className={`flex justify-around border rounded-lg p-2 ${installmentTypeControl == 'variable' ? '' : 'hidden'}`}>
+                                    <p className='text-sm font-semibold'>Despesa parcelada em</p>
+
+                                    <div className='flex justify-around border rounded-lg p-2'>
                                         <FormField
                                             control={form.control}
                                             name="installments"
@@ -668,7 +649,7 @@ export default function NewTransactionModal() {
                             </div>
                         </ScrollArea>
                         <DialogFooter className="w-full flex self-end">
-                            <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                            <DialogClose asChild><Button variant="ghost" className='border' onClick={() => form.reset}>Cancelar</Button></DialogClose>
                             <Button type="submit">Salvar</Button>
                         </DialogFooter>
                     </form>

@@ -203,7 +203,10 @@ export default function NewTransactionModal() {
                     installmentValue = remainingAmount / (installments - 1);
                 }
             } else {
-                installmentValue = amount / installments;
+                installmentValue = Number((amount / installments).toFixed(2));
+                if (counter === 1) {
+                    installmentValue +=  (amount - (installmentValue * installments));
+                }
             }
 
             switch (installmentTime) {

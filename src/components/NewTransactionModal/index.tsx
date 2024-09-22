@@ -49,6 +49,15 @@ import { useAuthStore } from '@/stores/AuthStore';
 import type { CreditCardProps } from '@/stores/CreditCardStore';
 import { MdOutlineMessage, MdRepeat } from "react-icons/md";
 import { GoPaperclip } from "react-icons/go";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -73,7 +82,15 @@ const formSchema = z.object({
             "Apenas formatos .jpg, .jpeg, .png and .webp são suportados."
         )
         .optional(),
+    installments: z.coerce.number().positive({ message: "O número deve ser maior que zero." }),
+    installmentType: z.string().optional(),
+    installmentTime: z.string().optional(),
+    installmentEntry: z.coerce.number().nonnegative({ message: "O número deve ser positivo." }),
 })
+    .refine(data => data.installmentEntry < data.amount, {
+        message: "O valor de entrada deve ser menor que o total da transação.",
+        path: ['installmentEntry'],
+    })
 
 async function uploadImage(file: File) {
     const storage = getStorage();
@@ -86,8 +103,9 @@ async function uploadImage(file: File) {
 
 export default function NewTransactionModal() {
     const [open, setOpen] = useState(false);
-    const [noteVisible, setNoteVisible] = useState(true);
-    const [attachmentVisible, setAttachmentVisible] = useState(true);
+    const [noteVisible, setNoteVisible] = useState(false);
+    const [attachmentVisible, setAttachmentVisible] = useState(false);
+    const [repeatVisible, setRepeatVisible] = useState(false);
 
     const transactionStore = useTransactionStore();
     const categoryStore = useCategoryStore();
@@ -130,6 +148,10 @@ export default function NewTransactionModal() {
             place: '',
             note: '',
             date: new Date(),
+            installments: 1,
+            installmentTime: 'months',
+            installmentEntry: 0,
+            installmentType: '',
         },
     });
 
@@ -145,9 +167,19 @@ export default function NewTransactionModal() {
             }
         }
 
-        const { image, creditCard, ...valuesWithoutImage } = values;
+        const {
+            image,
+            creditCard,
+            installments,
+            installmentEntry,
+            installmentTime,
+            installmentType,
+            amount,
+            date,
+            ...valuesWithoutImage
+        } = values;
 
-        const transactionData = {
+        const transactionDataModel = {
             ...valuesWithoutImage,
             imageUrl: imageUrl,
             isActive: true,
@@ -155,7 +187,42 @@ export default function NewTransactionModal() {
             creditCard: creditCard !== undefined ? creditCard : ''
         };
 
-        addTransaction(transactionData);
+        let counter = 0;
+        let installmentDate = new Date();
+        let remainingAmount = amount;
+
+        do {
+            counter++;
+            let installmentValue;
+
+            if (installmentEntry > 0 && installments > 1) {
+                if (counter === 1) {
+                    installmentValue = installmentEntry;
+                    remainingAmount -= installmentValue;
+                } else {
+                    installmentValue = remainingAmount / (installments - 1);
+                }
+            } else {
+                installmentValue = Number((amount / installments).toFixed(2));
+                if (counter === 1) {
+                    installmentValue +=  (amount - (installmentValue * installments));
+                }
+            }
+
+            switch (installmentTime) {
+                case 'months':
+                    installmentDate = new Date(date.getFullYear(), date.getMonth() + (counter - 1), date.getDate());
+                    break;
+                case 'weeks':
+                    installmentDate = new Date(date);
+                    installmentDate.setDate(date.getDate() + (counter - 1) * 7);
+                    break;
+            }
+
+            const transactionData = { ...transactionDataModel, amount: installmentValue, date: installmentDate };
+            addTransaction(transactionData);
+        } while (counter < installments);
+
         form.reset();
         setOpen(false);
     }
@@ -462,7 +529,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="place"
                                     render={({ field }) => (
-                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                        <FormItem className={noteVisible ? 'block' : 'hidden'}>
                                             <FormLabel>Local</FormLabel>
                                             <FormControl>
                                                 <Input type="text" {...field}></Input>
@@ -476,7 +543,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="note"
                                     render={({ field }) => (
-                                        <FormItem className={noteVisible ? 'hidden' : 'block'}>
+                                        <FormItem className={noteVisible ? 'block' : 'hidden'}>
                                             <FormLabel>Observação</FormLabel>
                                             <FormControl>
                                                 <Textarea {...field}></Textarea>
@@ -490,7 +557,7 @@ export default function NewTransactionModal() {
                                     control={form.control}
                                     name="image"
                                     render={({ field: { value, onChange, ...fieldProps } }) => (
-                                        <FormItem className={attachmentVisible ? 'hidden' : 'block'}>
+                                        <FormItem className={attachmentVisible ? 'block' : 'hidden'}>
                                             <FormControl>
                                                 <Input
                                                     {...fieldProps}
@@ -505,24 +572,79 @@ export default function NewTransactionModal() {
                                     )}
                                 />
 
+                                <div className={`space-y-3 ${repeatVisible ? '' : 'hidden'}`}>
+                                    <FormField
+                                        control={form.control}
+                                        name="installmentEntry"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <MoneyInput form={form} label='Valor de entrada' placeholder='' {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <p className='text-sm font-semibold'>Despesa parcelada em</p>
+
+                                    <div className='flex justify-around border rounded-lg p-2'>
+                                        <FormField
+                                            control={form.control}
+                                            name="installments"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <Input type='number' placeholder='Quantidade de parcelas' {...field} onChange={event => field.onChange(event.target.value)} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="installmentTime"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Período" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectLabel>Período</SelectLabel>
+                                                                <SelectItem value="months">Meses</SelectItem>
+                                                                <SelectItem value="weeks">Semanas</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className='flex w-full justify-center gap-8'>
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Observação</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? '' : 'bg-dark-600'}`}>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? 'bg-dark-600' : ''}`}>
                                             <MdOutlineMessage size={50} onClick={() => setNoteVisible(!noteVisible)} />
                                         </Button>
                                     </div>
 
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Repetir</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600`}>
-                                            <MdRepeat size={50} />
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${repeatVisible ? 'bg-dark-600' : ''}`}>
+                                            <MdRepeat size={50} onClick={() => setRepeatVisible(!repeatVisible)} />
                                         </Button>
                                     </div>
 
                                     <div className='flex flex-col items-center gap-1'>
                                         <p className='font-semibold text-sm'>Anexo</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${attachmentVisible ? '' : 'bg-dark-600'}`}>
+                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${attachmentVisible ? 'bg-dark-600' : ''}`}>
                                             <GoPaperclip size={50} onClick={() => setAttachmentVisible(!attachmentVisible)} />
                                         </Button>
                                     </div>
@@ -530,7 +652,7 @@ export default function NewTransactionModal() {
                             </div>
                         </ScrollArea>
                         <DialogFooter className="w-full flex self-end">
-                            <DialogClose asChild><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
+                            <DialogClose asChild><Button variant="ghost" className='border' onClick={() => form.reset}>Cancelar</Button></DialogClose>
                             <Button type="submit">Salvar</Button>
                         </DialogFooter>
                     </form>

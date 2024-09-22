@@ -130,13 +130,13 @@ export const columns: ColumnDef<TransactionProps>[] = [
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Desativar Produto</DialogTitle>
+              <DialogTitle>Desativar Transação</DialogTitle>
             </DialogHeader>
-            <DialogDescription>Deseja realmente desativar o produto?</DialogDescription>
+            <DialogDescription>Deseja realmente desativar a transação?</DialogDescription>
             <DialogFooter>
               <div className="flex justify-end gap-4">
                 <DialogClose><Button variant="ghost" className='border'>Cancelar</Button></DialogClose>
-                <Button onClick={disableButton}>Desabilitar</Button>
+                <Button onClick={disableButton}>Desativar</Button>
               </div>
             </DialogFooter>
           </DialogContent>
@@ -149,7 +149,7 @@ export const columns: ColumnDef<TransactionProps>[] = [
     header: () => <div>Editar</div>,
     cell: ({ row }) => {
       return (
-        <UpdateTransactionModal {...row.original}/>
+        <UpdateTransactionModal {...row.original} />
       )
     }
   },

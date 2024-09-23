@@ -24,7 +24,7 @@ import { FcGoogle } from "react-icons/fc";
 import { UserProps, useUserStore } from "@/stores/UserStore";
 import { useAccountStore } from "@/stores/AccountsStore"
 import { useEffect } from "react";
-import logoImg from "../assets/finance_logo.png"
+import logoImg from "../assets/logo_soprus.png"
 
 type userLoginProps = {
     email: string | null,

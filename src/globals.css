@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .logoImg {
-    filter: invert(1)
+    filter: brightness(0) invert(1);
 }
 
 @layer base {
@@ -76,7 +76,7 @@
     }
 
     body {
-        @apply bg-bg-gray text-foreground;
+        @apply bg-white-700 text-foreground;
     }
 }
 

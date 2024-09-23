@@ -28,10 +28,10 @@ export default function SelectAccount() {
     }, [])
 
     return (
-        <>
-            {userAccount[0] != undefined ? <div className="flex border rounded-lg p-2 gap-2">
+        <div className="flex items-center gap-1">
+            {userAccount[0] != undefined ?
                 <Select onValueChange={(e) => setCurrentAccount(e)} defaultValue={userAccount[0].id}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="bg-white w-[180px]">
                         <SelectValue placeholder="Selecione a conta" />
                     </SelectTrigger>
                     <SelectContent>
@@ -46,9 +46,10 @@ export default function SelectAccount() {
                         }
                     </SelectContent>
                 </Select>
-
-                <DataTableDialog inputValue="conta" addValue={addAccount} />
-            </div> : "Nenhuma conta encontrada!"}
-        </>
+                :
+                <p>Nenhuma conta encontrada!</p>
+            }
+            <DataTableDialog inputValue="conta" addValue={addAccount} />
+        </div>
     )
 }

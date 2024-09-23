@@ -37,7 +37,7 @@ export default function TransactionsTable() {
     })
 
     return (
-        <div className="bg-white border rounded-lg p-2 w-11/12 m-auto mt-10">
+        <div className="rounded-lg p-2 w-11/12 m-auto mt-5">
             {isLoading ? <div className="p-3">Carregando...</div> : <DataTable columns={columns} data={transactionsActive} />}
         </div>
     )

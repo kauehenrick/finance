@@ -57,7 +57,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <>
-            <div className="flex justify-between items-center mt-3 mb-6 mx-5">
+            <div className="flex justify-between items-center mb-6 mx-5">
                 <div className="flex flex-col md:flex-row gap-5">
                     <div className="flex flex-col gap-2">
                         <p className="text-sm font-medium">Selecione a conta:</p>
@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
                             onChange={(event) =>
                                 table.getColumn("title")?.setFilterValue(event.target.value)
                             }
-                            className="w-80"
+                            className="bg-white w-80"
                         />
                     </div>
                 </div>
@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
                 </div>
             </div>
 
-            <div className="rounded-md border">
+            <div className="bg-white-600 rounded-md border">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

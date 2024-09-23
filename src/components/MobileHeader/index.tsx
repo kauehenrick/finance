@@ -13,7 +13,7 @@ if (currentHour <= 12) {
 
 export default function MobileHeader() {
     return (
-        <div className="bg-dark-800 flex justify-center items-center flex-col h-48 md:hidden">
+        <div className="bg-blue flex justify-center items-center flex-col h-48 md:hidden">
             <div className="flex items-center w-full">
                 <div className="flex items-center gap-5 ml-8">
                     <AvatarDropdownMenu />

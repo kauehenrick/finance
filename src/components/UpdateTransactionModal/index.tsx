@@ -47,7 +47,7 @@ import CreditCard from "../CreditCard";
 import { useCreditCardStore } from "@/stores/CreditCardStore";
 import type { CreditCardProps } from "@/stores/CreditCardStore";
 import { useAuthStore } from "@/stores/AuthStore";
-import { MdOutlineMessage, MdRepeat } from "react-icons/md";
+import { MdOutlineMessage } from "react-icons/md";
 import { GoPaperclip } from "react-icons/go";
 import { useState } from "react";
 
@@ -178,7 +178,7 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                                                         <FormControl>
                                                             <RadioGroupItem value="deposit" className="sr-only" />
                                                         </FormControl>
-                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-800 font-bold text-white w-32 gap-2.5 p-3">
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
                                                             <CircleArrowUp color='green' />
                                                             <p>Entrada</p>
                                                         </div>
@@ -497,13 +497,6 @@ export default function UpdateTransactionModal(transaction: TransactionProps) {
                                         <p className='font-semibold text-sm'>Observação</p>
                                         <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600 ${noteVisible ? '' : 'bg-dark-600'}`}>
                                             <MdOutlineMessage size={50} onClick={() => setNoteVisible(!noteVisible)} />
-                                        </Button>
-                                    </div>
-
-                                    <div className='flex flex-col items-center gap-1'>
-                                        <p className='font-semibold text-sm'>Repetir</p>
-                                        <Button type='button' variant='outline' className={`rounded-full h-fit p-2 hover:bg-dark-600`}>
-                                            <MdRepeat size={50} />
                                         </Button>
                                     </div>
 

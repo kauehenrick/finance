@@ -38,11 +38,11 @@ export default function Summary() {
         withdraws: 0,
     })
 
-    const summaryCardStyle = "flex flex-col bg-white-700 rounded-xl py-3 pl-5 w-11/12 md:w-1/4 md:h-44 justify-center";
+    const summaryCardStyle = "flex flex-col bg-white-600 border-2 rounded-xl py-3 pl-5 w-11/12 md:w-1/4 md:h-44 justify-center";
 
     return (
-        <div className="bg-white rounded-xl w-11/12 md:w-3/4 m-auto flex flex-col md:flex-row items-center justify-center gap-3 -mt-9 md:mt-0 py-4 md:py-6">
-            <div className="flex bg-white-700 items-center rounded-xl py-3 w-11/12 md:w-1/4 md:h-44 md:pl-5">
+        <div className="rounded-xl w-11/12 md:w-3/4 m-auto flex flex-col md:flex-row items-center justify-center gap-3 -mt-9 md:mt-0 md:py-0">
+            <div className="flex bg-white-600 border-2 items-center rounded-xl py-3 w-11/12 md:w-1/4 md:h-44 md:pl-5">
                 <div className="border-2 h-[60px] border-green ml-4 mr-6 md:hidden"></div>
 
                 <div>

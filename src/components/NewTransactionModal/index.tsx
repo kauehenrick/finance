@@ -205,7 +205,7 @@ export default function NewTransactionModal() {
             } else {
                 installmentValue = Number((amount / installments).toFixed(2));
                 if (counter === 1) {
-                    installmentValue +=  (amount - (installmentValue * installments));
+                    installmentValue += (amount - (installmentValue * installments));
                 }
             }
 
@@ -230,7 +230,7 @@ export default function NewTransactionModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className='bg-blue text-white hover:text-black rounded-3xl min-w-16' variant="secondary">
+                <Button className='bg-blue max-sm:border text-white hover:text-black rounded-3xl min-w-16' variant="secondary">
                     <PlusCircle />
                     <p className='max-sm:hidden ml-2'>Nova Transação</p>
                 </Button>
@@ -260,7 +260,7 @@ export default function NewTransactionModal() {
                                                         <FormControl>
                                                             <RadioGroupItem value="deposit" className="sr-only" />
                                                         </FormControl>
-                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-800 font-bold text-white w-32 gap-2.5 p-3">
+                                                        <div className="flex items-center justify-center rounded-md border-2 border-muted bg-dark-600 font-bold text-white w-32 gap-2.5 p-3">
                                                             <CircleArrowUp color='green' />
                                                             <p>Entrada</p>
                                                         </div>

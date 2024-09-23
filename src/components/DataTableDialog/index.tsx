@@ -34,7 +34,9 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     
     let authStore = useAuthStore();
 
-    let { user } = authStore;
+    let { user, getUserInfo } = authStore;
+
+    const decryptedUser = getUserInfo(user);
 
     const capitalize = props.inputValue.charAt(0).toUpperCase() + props.inputValue.slice(1);
     const lowerCase = props.inputValue.toLowerCase();
@@ -48,7 +50,7 @@ export default function DataTableDialog(props: DataTableDialogProps) {
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        props.addValue({...values, email: user})
+        props.addValue({...values, email: decryptedUser.userEmail})
         form.reset();
         setOpen(false);
     }
@@ -72,7 +74,9 @@ export default function DataTableDialog(props: DataTableDialogProps) {
                         e => {
                             e.stopPropagation();
                             form.handleSubmit(onSubmit)(e)
-                        }}>
+                        }}
+                        className='space-y-3'
+                        >
 
                         <DialogHeader className="font-bold mb-5">
                             <DialogTitle>Adicionar {capitalize}</DialogTitle>

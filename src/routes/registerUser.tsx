@@ -21,7 +21,7 @@ import { auth } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom"
 import { useUserStore } from "@/stores/UserStore"
 import { useEffect } from "react"
-import logoImg from "../assets/finance_logo.png"
+import logoImg from "../assets/logo_soprus.png"
 
 const formSchema = z
     .object({
